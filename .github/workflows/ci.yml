@@ -86,7 +86,7 @@ jobs:
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
   swift-ui:
-    name: Swift UI library (build + test)
+    name: Swift UI library (build, test, parity)
     # The SwiftUI components (ui/swift) that the native app is built from; the tokens they use are checked fresh by
     # the frontend job's Vitest run.
     runs-on: macos-latest
@@ -112,6 +112,19 @@ jobs:
       - name: Every story renders
         working-directory: ui/swift
         run: swift run NibtreeShowcase --render "$RUNNER_TEMP/stories"
+
+      # Every component matches its ui/web twin to at least 99% in light and dark, and renders faster.
+      - name: Parity with ui/web (match and speed)
+        run: |
+          bunx --bun playwright install webkit
+          bun run ui:swift:parity
+
+      - name: Keep the parity pictures when it fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swift-parity
+          path: ui/swift/.parity
 
   # Windows runs as two jobs, like macOS, so the frontend checks and the slower Rust build run side by side.
   windows-frontend:

@@ -1,4 +1,5 @@
 import AppKit
+import NibtreeUI
 import SwiftUI
 
 /// The Swift UI library's showcase (`bun run ui:swift`), the twin of ui/web's (`bun run ui`): every component in
@@ -6,6 +7,10 @@ import SwiftUI
 @main
 struct ShowcaseApp: App {
     init() {
+        NTypography.matchWebTextRendering()
+        if ParityRunner.runIfRequested() {
+            exit(0)
+        }
         if let folder = StoryRenderer.requestedFolder {
             do {
                 let files = try StoryRenderer.renderAll(to: folder)

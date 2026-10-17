@@ -90,7 +90,6 @@ public struct NText: View {
     private let selectable: Bool
     private let tabular: Bool
     private let strike: Bool
-    @Environment(\.nibtreePalette) private var palette
 
     public init(
         _ content: String, variant: Variant = .body, tone: Tone? = nil, size: Size? = nil, weight: Weight? = nil,
@@ -121,33 +120,69 @@ public struct NText: View {
 
     public var body: some View {
         let style = variant.style
-        let points = size?.points ?? style.size
-        let text = Text(style.uppercase ? content.uppercased() : content)
-            .font(NTypography.font(style, size: points, weight: weight?.fontWeight, mono: mono))
-            .kerning(style.letterSpacing * points)
-            .strikethrough(strike)
-            .foregroundStyle(palette.color(resolvedTone.token))
-            .lineSpacing(NTypography.lineSpacing(style, size: points))
-            .lineLimit(truncate ? 1 : nil)
-            .truncationMode(.tail)
-        Group {
-            if selectable {
-                text.textSelection(.enabled)
-            } else {
-                text.textSelection(.disabled)
-            }
+        let font = NTypography.FontKey(style, size: size?.points, weight: weight?.fontWeight, mono: mono)
+        let line = NTextMetrics.lineBox(font, lineHeight: style.lineHeight)
+        let shown = style.uppercase ? content.uppercased() : content
+        let kerning = style.letterSpacing * font.size
+        if selectable {
+            NSelectableText(
+                text: shown, font: font, line: line, kerning: kerning, tone: resolvedTone.token, truncate: truncate,
+                tabular: tabular, strike: strike)
+        } else {
+            NTextCanvas(
+                spec: NTextSpec(
+                    text: shown, font: font, kerning: kerning, tabular: tabular, truncate: truncate, line: line,
+                    tone: resolvedTone.token, strike: strike))
+                // Read as its text: the canvas itself has no accessibility of its own.
+                .accessibilityLabel(content)
         }
-        .monospacedDigit(tabular)
     }
 }
 
-extension View {
-    @ViewBuilder
-    fileprivate func monospacedDigit(_ enabled: Bool) -> some View {
-        if enabled {
-            self.monospacedDigit()
+/// Selection needs a real text view: SwiftUI's Text, moved onto WebKit's line box. Rare in the app, so it may read
+/// the environment; plain `NText` does not, which keeps it cheap.
+private struct NSelectableText: View {
+    let text: String
+    let font: NTypography.FontKey
+    let line: NLineBox
+    let kerning: CGFloat
+    let tone: GMColorToken
+    let truncate: Bool
+    let tabular: Bool
+    let strike: Bool
+    @Environment(\.nibtreePalette) private var palette
+
+    var body: some View {
+        var shown = Text(text).font(NTypography.font(font)).foregroundStyle(palette.color(tone))
+        if kerning != 0 {
+            shown = shown.kerning(kerning)
+        }
+        if strike {
+            shown = shown.strikethrough()
+        }
+        return shown
+            .lineSpacing(max(0, line.between))
+            .lineLimit(truncate ? 1 : nil)
+            .padding(EdgeInsets(top: line.top, leading: 0, bottom: line.bottom, trailing: 0))
+            .modifier(NTextOptions(selectable: true, tabular: tabular))
+            .layoutValue(key: NExactWidth.self, value: NTextMetrics.width(of: text, font: font, kerning: kerning))
+    }
+}
+
+/// Selection and tabular digits, added only when asked for: most text has neither.
+private struct NTextOptions: ViewModifier {
+    let selectable: Bool
+    let tabular: Bool
+
+    func body(content: Content) -> some View {
+        if selectable && tabular {
+            content.textSelection(.enabled).monospacedDigit()
+        } else if selectable {
+            content.textSelection(.enabled)
+        } else if tabular {
+            content.monospacedDigit()
         } else {
-            self
+            content
         }
     }
 }

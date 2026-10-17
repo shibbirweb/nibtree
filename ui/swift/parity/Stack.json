@@ -1,0 +1,262 @@
+[
+  {
+    "id": "stack-row-gap",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "md"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "One"
+        },
+        {
+          "component": "Text",
+          "text": "Two"
+        },
+        {
+          "component": "Text",
+          "text": "Three"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-row-between",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "justify": "between"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Start"
+        },
+        {
+          "component": "Text",
+          "text": "End"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-column-panel",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs",
+        "padding": "lg",
+        "surface": "alt",
+        "line": "bottom"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "First"
+        },
+        {
+          "component": "Text",
+          "props": {
+            "tone": "dim"
+          },
+          "text": "Second"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-row-center",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "justify": "center",
+        "align": "center",
+        "gap": "lg"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "props": {
+            "variant": "title"
+          },
+          "text": "Big"
+        },
+        {
+          "component": "Text",
+          "text": "small"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-column-start",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "column",
+        "align": "start",
+        "justify": "start",
+        "paddingX": "sm",
+        "paddingY": "xs",
+        "surface": "none",
+        "line": "none"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Branches"
+        },
+        {
+          "component": "Text",
+          "text": "main",
+          "props": {
+            "tone": "dim"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "A longer third row"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-row-end",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "align": "end",
+        "justify": "end",
+        "gap": "sm",
+        "surface": "editor",
+        "line": "top"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Big",
+          "props": {
+            "variant": "title"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "end"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-grow-stretch",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "align": "stretch",
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "grow": true,
+            "surface": "panel",
+            "padding": "xs"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Grows"
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "padding": "xs",
+            "surface": "alt"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Stays"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "stack-scroll",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "scroll": "y"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Scrolls down"
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "scroll": "x"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Scrolls across"
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "scroll": "both"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Scrolls both ways"
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "scroll": "none"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Does not scroll"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

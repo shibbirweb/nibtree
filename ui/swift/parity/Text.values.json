@@ -1,0 +1,250 @@
+[
+  {
+    "id": "text-variants",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "body text",
+          "props": {
+            "variant": "body"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "bodyStrong text",
+          "props": {
+            "variant": "bodyStrong"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "label text",
+          "props": {
+            "variant": "label"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "small text",
+          "props": {
+            "variant": "small"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "panelTab text",
+          "props": {
+            "variant": "panelTab"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "heading text",
+          "props": {
+            "variant": "heading"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "pageTitle text",
+          "props": {
+            "variant": "pageTitle"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "display text",
+          "props": {
+            "variant": "display"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "codeSmall text",
+          "props": {
+            "variant": "codeSmall"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "badge text",
+          "props": {
+            "variant": "badge"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-tones",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "default tone",
+          "props": {
+            "tone": "default"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "faint tone",
+          "props": {
+            "tone": "faint"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "accent tone",
+          "props": {
+            "tone": "accent"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "success tone",
+          "props": {
+            "tone": "success"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "warning tone",
+          "props": {
+            "tone": "warning"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-sizes",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "micro size",
+          "props": {
+            "size": "micro"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "tiny size",
+          "props": {
+            "size": "tiny"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "xsmall size",
+          "props": {
+            "size": "xsmall"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "compact size",
+          "props": {
+            "size": "compact"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "small size",
+          "props": {
+            "size": "small"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "codeSmall size",
+          "props": {
+            "size": "codeSmall"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "ui size",
+          "props": {
+            "size": "ui"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "code size",
+          "props": {
+            "size": "code"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "title size",
+          "props": {
+            "size": "title"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "display size",
+          "props": {
+            "size": "display"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-weights",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "regular weight",
+          "props": {
+            "weight": "regular"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "medium weight",
+          "props": {
+            "weight": "medium"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-selectable",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "text": "Selectable commit message",
+      "props": {
+        "selectable": true
+      }
+    }
+  }
+]

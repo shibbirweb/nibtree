@@ -32,7 +32,11 @@ The package has three targets:
 
 A web prop with named values becomes a Swift enum with the same names: `gap: "md"` is `gap: .md`, and `NSpacing.md.points` is 8 because the space token says so. No component takes a free number for a size or a color, the same rule as `ui/web`. Props that only make sense in HTML (`element`, `role`, `hideAt`) are left out, and each component's doc comment says which ones.
 
-`NStack` lays out its children with `NStackLayout`, a small SwiftUI `Layout` that does the flexbox subset `Stack` uses: a gap, cross-axis alignment with stretch, and `justify: between`.
+`NStack` lays out its children with `NStackLayout`, a small SwiftUI `Layout` that does the flexbox subset `Stack` uses: a gap, cross-axis alignment with stretch, `justify: between`, `grow` (children marked with `NStackGrows` share the free length, like `flex: 1 1 0`), and the padding, so a stack is one SwiftUI view. A surface and a line are one canvas behind it. A `scroll` stack only becomes a scroll view when its content does not fit, like `overflow: auto`: a scroll view is an AppKit view and costs many times a stack. The catch is that its children are made again when it switches, so they lose their own state at that moment.
+
+### Text: Core Text, like WebKit
+
+`NText` draws with Core Text, the engine WebKit uses, in a SwiftUI `Canvas`, so glyphs and line breaks land where the web app puts them, at a fraction of a SwiftUI `Text`'s cost. [Swift UI Parity](Swift-UI-Parity.md) explains the details. Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 
 ## Where the code lives
 
@@ -52,13 +56,18 @@ A web prop with named values becomes a Swift enum with the same names: `gap: "md
 - `bun run ui:swift:test` runs the Swift tests. Without Xcode, Swift Testing lives in the Command Line Tools, and `test.sh` adds its paths.
 - `bun run ui:swift:coverage` lists the `ui/web` components that have no Swift twin yet, a burn-down to zero like `bun run ui:migration`.
 - `swift run NibtreeShowcase --render <folder>` (in `ui/swift`) draws every story in light and dark to PNG files, with no window and no screen recording permission.
+- `bun run ui:swift:parity [ids]` is the gate below.
+
+## The parity gate
+
+Every component must match its `ui/web` twin to at least 99% and render faster, with a scenario for every prop. `bun run ui:swift:parity` checks it, in CI too; [Swift UI Parity](Swift-UI-Parity.md) has the rules and how it works.
 
 ## Adding a component
 
 1. Read its `ui/web` doc (`ui/web/docs/components/<Name>.md`) and source.
 2. Add `Sources/NibtreeUI/Components/N<Name>.swift` with the same props as presets, sizes from its `GM<Name>Tokens` and colors from the palette.
-3. Add its story to `Stories.swift` and a test for anything that is not just drawing.
-4. Render the story, compare it with the web showcase, and run `bun run ui:swift:coverage`.
+3. Add its story to `Stories.swift`, its parity scenarios to `parity/<Name>.json` (every prop, every value of its own enums), its props to `ScenarioView.swift`, and a test for anything that is not just drawing.
+4. Run `bun run ui:swift:parity` until it passes, then `bun run ui:swift:coverage`.
 
 ## Design decisions
 
@@ -72,7 +81,10 @@ A web prop with named values becomes a Swift enum with the same names: `gap: "md
 
 - `Tests/NibtreeUITests`: every theme defines every color, dark themes are dark, an unknown theme falls back, the space steps equal the web gaps, and text styles carry their tones.
 - `ui/swift/scripts/coverage.test.ts` (Vitest): every Swift component is named after a web component and has a story.
-- CI (`swift-ui` in `ci.yml`): coverage check, a build with warnings as errors, the tests, and every story rendered.
+- `Tests/NibtreeUITests/StackTests.swift`: a scroll stack that fits has no scroll view, one that overflows has.
+- `Tests/NibtreeUITests/TextEngineTests.swift`: WebKit's line boxes, CSS weights, wrapping and truncation.
+- The parity tests: see [Swift UI Parity](Swift-UI-Parity.md).
+- CI (`swift-ui` in `ci.yml`): coverage check, a build with warnings as errors, the tests, every story rendered, and the parity gate.
 
 ## Keeping this page in sync
 

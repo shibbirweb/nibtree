@@ -134,6 +134,7 @@
     { "page": "developer/UI-Library-MCP.md", "summary": "The MCP server that answers AI agents' questions about components, tokens, icons and rules." },
     { "page": "developer/UI-Library-Bugs.md", "summary": "Bugs fixed in the UI library: what you saw, why, and the fix." },
     { "page": "developer/Swift-UI-Library.md", "summary": "The SwiftUI twin of the UI library that the native app is built from: palette, presets, showcase and coverage." },
+    { "page": "developer/Swift-UI-Parity.md", "summary": "The gate that keeps every Swift component at least 99% like its web twin, faster, and tested for every prop." },
     { "page": "developer/UI-Library-Migration.md", "summary": "How the app uses the library as a local package and moves onto it, screen by screen." },
     { "page": "developer/Contributing.md", "summary": "Code style, commits, pull requests and the docs checklist." }
   ],

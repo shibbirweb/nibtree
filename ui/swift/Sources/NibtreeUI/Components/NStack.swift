@@ -66,26 +66,74 @@ public struct NStack<Content: View>: View {
 
     public var body: some View {
         let layout = NStackLayout(
-            axis: direction == .row ? .horizontal : .vertical, spacing: gap.points, align: align, justify: justify)
+            axis: direction == .row ? .horizontal : .vertical, spacing: gap.points, align: align, justify: justify,
+            insets: insets, fills: grow)
         scrolled(layout { content })
-            .padding(.horizontal, (paddingX ?? padding).points)
-            .padding(.vertical, (paddingY ?? padding).points)
-            .frame(maxWidth: grow && direction == .row ? .infinity : nil, maxHeight: grow ? .infinity : nil)
-            .background(surfaceToken.map { palette.color($0) } ?? .clear)
-            .overlay(alignment: line == .top ? .top : .bottom) {
-                if line != .none {
-                    Rectangle().fill(palette.color(.borderStrong)).frame(height: 1)
-                }
-            }
+            .modifier(
+                NStackChrome(
+                    fill: surfaceToken.map { palette.cgColor($0) }, line: line,
+                    lineColor: palette.cgColor(.borderStrong), grow: grow))
     }
 
+    /// Padding, plus the line's 1 point at its edge (it adds to the height, like a CSS border).
+    private var insets: EdgeInsets {
+        let horizontal = (paddingX ?? padding).points
+        let vertical = (paddingY ?? padding).points
+        return EdgeInsets(
+            top: vertical + (line == .top ? 1 : 0), leading: horizontal,
+            bottom: vertical + (line == .bottom ? 1 : 0), trailing: horizontal)
+    }
+
+    /// A scroll view only when the content does not fit, like `overflow: auto`: a region that fits draws as a plain
+    /// stack, and a scroll view (an AppKit view) costs many times a stack.
     @ViewBuilder
     private func scrolled(_ inner: some View) -> some View {
         switch scroll {
         case .none: inner
-        case .y: ScrollView(.vertical) { inner }
-        case .x: ScrollView(.horizontal) { inner }
-        case .both: ScrollView([.horizontal, .vertical]) { inner }
+        case .y: ViewThatFits(in: .vertical) { inner; ScrollView(.vertical) { inner } }
+        case .x: ViewThatFits(in: .horizontal) { inner; ScrollView(.horizontal) { inner } }
+        case .both: ViewThatFits(in: [.horizontal, .vertical]) { inner; ScrollView([.horizontal, .vertical]) { inner } }
+        }
+    }
+}
+
+/// The surface and the line, drawn by one canvas behind the children, and the mark that makes a growing stack share
+/// its parent's free length: added only when set, since most stacks are plain.
+private struct NStackChrome: ViewModifier {
+    let fill: CGColor?
+    let line: NStackLine
+    let lineColor: CGColor
+    let grow: Bool
+
+    func body(content: Content) -> some View {
+        if grow {
+            decorated(content).layoutValue(key: NStackGrows.self, value: true)
+        } else {
+            decorated(content)
+        }
+    }
+
+    @ViewBuilder
+    private func decorated(_ content: Content) -> some View {
+        if fill == nil && line == .none {
+            content
+        } else {
+            content
+                .background {
+                    Canvas(opaque: false, rendersAsynchronously: false) { context, size in
+                        context.withCGContext { cg in
+                            if let fill {
+                                cg.setFillColor(fill)
+                                cg.fill(CGRect(origin: .zero, size: size))
+                            }
+                            if line != .none {
+                                cg.setFillColor(lineColor)
+                                let top = line == .top ? 0 : size.height - 1
+                                cg.fill(CGRect(x: 0, y: top, width: size.width, height: 1))
+                            }
+                        }
+                    }
+                }
         }
     }
 }

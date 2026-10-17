@@ -1,0 +1,190 @@
+// The native parity check (`bun run ui:swift:parity`): every scenario in ui/swift/parity is drawn by ui/web in WebKit
+// and by ui/swift with SwiftUI, in light and dark. A component passes when its pictures match at least 99% and its
+// Swift render is faster than the web one; any failure fails the run (and CI). Pictures, diffs and the report go to
+// ui/swift/.parity/ (not committed).
+//   bun run ui:swift:parity [scenario ids...]
+import { execFileSync } from "node:child_process";
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { webkit, type Page } from "playwright";
+import { createServer } from "vite";
+import { CHANNEL_TOLERANCE, compare, best, verdict, type Match, type Picture, type Verdict } from "./parity/compare";
+import { propProblems, swiftProps } from "./parity/props";
+import { scenarioProblems, type Scenario } from "./parity/scenario";
+import { swiftComponents } from "./coverage";
+
+const swiftRoot = fileURLToPath(new URL("..", import.meta.url));
+const webRoot = join(swiftRoot, "../web");
+const scenarioDir = join(swiftRoot, "parity");
+const outDir = join(swiftRoot, ".parity");
+const BENCH_COUNT = Number(process.env.NIBTREE_PARITY_COUNT ?? 200);
+const BENCH_WARMUP = 2;
+const BENCH_RUNS = 7;
+const THEMES = ["light", "dark"] as const;
+
+function loadScenarios(): Scenario[] {
+  const known = new Set(swiftComponents());
+  const seen = new Set<string>();
+  const problems: string[] = [];
+  const all: Scenario[] = [];
+  for (const file of readdirSync(scenarioDir).filter((name) => name.endsWith(".json"))) {
+    const content: unknown = JSON.parse(readFileSync(join(scenarioDir, file), "utf8"));
+    problems.push(...scenarioProblems(file, content, known, seen));
+    all.push(...(content as Scenario[]));
+  }
+  const harness = readFileSync(join(swiftRoot, "Sources/NibtreeShowcase/Parity/ScenarioView.swift"), "utf8");
+  for (const component of known) {
+    const source = readFileSync(join(swiftRoot, `Sources/NibtreeUI/Components/N${component}.swift`), "utf8");
+    problems.push(...propProblems(component, swiftProps(source), all, harness));
+  }
+  if (problems.length > 0) {
+    console.error(problems.join("\n"));
+    process.exit(1);
+  }
+  const only = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
+  return only.length ? all.filter((scenario) => only.includes(scenario.id)) : all;
+}
+
+function swiftBinary(): string {
+  execFileSync("swift", ["build", "-c", "release", "--product", "NibtreeShowcase"], {
+    cwd: swiftRoot,
+    stdio: "inherit",
+  });
+  const bin = execFileSync("swift", ["build", "-c", "release", "--show-bin-path"], { cwd: swiftRoot })
+    .toString()
+    .trim();
+  return join(bin, "NibtreeShowcase");
+}
+
+async function picture(page: Page, file: string): Promise<Picture> {
+  const base64 = readFileSync(file).toString("base64");
+  return page.evaluate(async (data) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${data}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    context.drawImage(image, 0, 0);
+    return {
+      width: image.width,
+      height: image.height,
+      data: [...context.getImageData(0, 0, image.width, image.height).data],
+    };
+  }, base64);
+}
+
+/** web | Swift | the pixels that differ beyond the tolerance in magenta, for a look at what to fix. */
+async function sideBySide(page: Page, webFile: string, swiftFile: string, outFile: string): Promise<void> {
+  const [web, swift] = [readFileSync(webFile), readFileSync(swiftFile)].map((data) => data.toString("base64"));
+  const png = await page.evaluate(
+    async ([webData, swiftData, tolerance]) => {
+      const load = async (data: string) => {
+        const image = new Image();
+        image.src = `data:image/png;base64,${data}`;
+        await image.decode();
+        return image;
+      };
+      const [a, b] = [await load(webData as string), await load(swiftData as string)];
+      const width = Math.max(a.width, b.width);
+      const height = Math.max(a.height, b.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = width * 3;
+      canvas.height = height;
+      const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+      context.drawImage(a, 0, 0);
+      context.drawImage(b, width, 0);
+      const pa = context.getImageData(0, 0, width, height).data;
+      const pb = context.getImageData(width, 0, width, height).data;
+      context.drawImage(b, width * 2, 0);
+      const out = context.getImageData(width * 2, 0, width, height);
+      for (let index = 0; index < pa.length; index += 4) {
+        const worst = Math.max(...[0, 1, 2, 3].map((channel) => Math.abs(pa[index + channel] - pb[index + channel])));
+        if (worst > (tolerance as number)) {
+          out.data.set([255, 0, 255, 255], index);
+        }
+      }
+      context.putImageData(out, width * 2, 0);
+      return canvas.toDataURL("image/png").split(",")[1];
+    },
+    [web, swift, CHANNEL_TOLERANCE] as const,
+  );
+  writeFileSync(outFile, Buffer.from(png, "base64"));
+}
+
+const scenarios = loadScenarios();
+mkdirSync(join(outDir, "web"), { recursive: true });
+mkdirSync(join(outDir, "diff"), { recursive: true });
+const binary = swiftBinary();
+execFileSync(binary, ["--parity", scenarioDir, join(outDir, "swift")], { stdio: "inherit" });
+const swiftTimes = new Map<string, number>();
+for (const line of execFileSync(binary, [
+  "--bench",
+  scenarioDir,
+  String(BENCH_COUNT),
+  String(BENCH_WARMUP),
+  String(BENCH_RUNS),
+])
+  .toString()
+  .split("\n")
+  .filter(Boolean)) {
+  const result = JSON.parse(line) as { id: string; ms: number };
+  swiftTimes.set(result.id, result.ms);
+}
+
+const server = await createServer({
+  configFile: join(webRoot, "vite.config.ts"),
+  server: { port: 1432 },
+  logLevel: "error",
+});
+await server.listen();
+const base = server.resolvedUrls?.local[0] ?? "http://localhost:1432/";
+const browser = await webkit.launch();
+const page = await browser.newPage({ viewport: { width: 1000, height: 800 }, deviceScaleFactor: 2 });
+const verdicts: Verdict[] = [];
+for (const scenario of scenarios) {
+  const matches: Match[] = [];
+  for (const theme of THEMES) {
+    await page.goto(`${base}native.html?scenario=${scenario.id}&theme=${theme}`);
+    await page.waitForSelector("#frame[data-ready]");
+    const webFile = join(outDir, "web", `${scenario.id}-${theme}.png`);
+    await page.locator("#frame").screenshot({ path: webFile });
+    const swiftFile = join(outDir, "swift", `${scenario.id}-${theme}.png`);
+    matches.push(compare(await picture(page, webFile), await picture(page, swiftFile)));
+    await sideBySide(page, webFile, swiftFile, join(outDir, "diff", `${scenario.id}-${theme}.png`));
+  }
+  // Warmed up, then the best of BENCH_RUNS in the same page: the component's own cost, not the machine's noise.
+  await page.goto(`${base}native.html?scenario=${scenario.id}&theme=light`);
+  await page.waitForSelector("#frame[data-ready]");
+  const webTimes: number[] = [];
+  for (let run = 0; run < BENCH_WARMUP + BENCH_RUNS; run += 1) {
+    const ms = await page.evaluate(
+      (count) => (window as unknown as { nativeBench(n: number): Promise<number> }).nativeBench(count),
+      BENCH_COUNT,
+    );
+    if (run >= BENCH_WARMUP) {
+      webTimes.push(ms);
+    }
+  }
+  verdicts.push(verdict(scenario.id, matches, best(webTimes), swiftTimes.get(scenario.id) ?? Number.NaN));
+}
+await browser.close();
+await server.close();
+
+writeFileSync(join(outDir, "report.json"), JSON.stringify(verdicts, null, 2));
+for (const one of verdicts) {
+  const mark = one.problems.length ? "FAIL" : "ok  ";
+  const speed = `${one.swiftMs.toFixed(1)} ms vs web ${one.webMs.toFixed(1)} ms`;
+  const strict = `(same spot ${(one.strict * 100).toFixed(2)}%)`;
+  console.log(`${mark} ${one.id.padEnd(28)} ${(one.match * 100).toFixed(2).padStart(6)}% ${strict}  ${speed}`);
+  for (const problem of one.problems) {
+    console.log(`       ${problem}`);
+  }
+}
+const failed = verdicts.filter((one) => one.problems.length > 0);
+console.log(
+  `\n${verdicts.length - failed.length} of ${verdicts.length} scenarios pass (pictures in ui/swift/.parity).`,
+);
+process.exit(failed.length > 0 ? 1 : 0);
