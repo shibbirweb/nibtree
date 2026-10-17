@@ -43,14 +43,23 @@ export const diffTheme = EditorView.theme({
   "&.cm-merge-a .cm-content .cm-line.cm-changedLine.cm-diffDeleted": { backgroundColor: "var(--diff-deleted)" },
   "&.cm-merge-a .cm-content .cm-line .cm-changedText, &.cm-merge-b .cm-content .cm-line .cm-changedText": {
     background: "var(--diff-inline)",
-    borderRadius: "var(--radius-tiny)",
+    borderRadius: "var(--inline-diff-change-radius)",
   },
   "&.cm-merge-a .cm-content .cm-diffDeleted .cm-changedText, &.cm-merge-b .cm-content .cm-diffAdded .cm-changedText": {
     background: "none",
   },
+  // A side by side diff's number rows take the change's color with no edge lines, like its text.
+  "&.cm-merge-a .cm-gutters .cm-gutterElement.cm-mc-gutter, &.cm-merge-b .cm-gutters .cm-gutterElement.cm-mc-gutter": {
+    "--mc-edge": "transparent",
+  },
   "&.cm-merge-a .cm-gutters .cm-changedLineGutter, &.cm-merge-b .cm-gutters .cm-changedLineGutter": {
     background: "var(--diff-modified-edge)",
   },
+});
+
+/** The one-column diff's lines. Side by side, CodeMirror marks added text with the same class, so it stays out of
+ *  `diffTheme`: there it would paint a second green over the line's own. */
+export const unifiedDiffTheme = EditorView.theme({
   ".cm-deletedChunk": { backgroundColor: "var(--diff-deleted)" },
   ".cm-insertedLine": { backgroundColor: "var(--diff-added)" },
   ".cm-deletedLine": { backgroundColor: "var(--diff-deleted)" },
@@ -64,6 +73,15 @@ export const mergeTheme = EditorView.theme({
   ".cm-mc-first": { boxShadow: "inset 0 1px 0 var(--mc-edge)" },
   ".cm-mc-last": { boxShadow: "inset 0 -1px 0 var(--mc-edge)" },
   ".cm-mc-single": { boxShadow: "inset 0 1px 0 var(--mc-edge), inset 0 -1px 0 var(--mc-edge)" },
+  ".cm-mc-edge-modified": { "--mc-edge": "var(--diff-modified-edge)" },
+  ".cm-mc-edge-added": { "--mc-edge": "var(--diff-added-edge)" },
+  ".cm-mc-edge-deleted": { "--mc-edge": "var(--diff-deleted-edge)" },
+  ".cm-mc-edge-conflict": { "--mc-edge": "var(--diff-conflict-edge)" },
+  ".cm-mc-inline": { backgroundColor: "var(--diff-inline)", borderRadius: "var(--merge-view-inline-radius)" },
+  // An empty side of a change: a line where its lines would be.
+  ".cm-mc-gap-before": { boxShadow: "inset 0 var(--merge-view-gap-edge) 0 var(--mc-edge)" },
+  ".cm-mc-gap-after": { boxShadow: "inset 0 calc(-1 * var(--merge-view-gap-edge)) 0 var(--mc-edge)" },
+  // Keep the active-line tint from hiding chunk colors.
   ".cm-activeLine.cm-mc-line": {
     backgroundImage: "linear-gradient(var(--editor-active-line), var(--editor-active-line))",
     backgroundBlendMode: "multiply",

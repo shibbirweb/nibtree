@@ -37,7 +37,7 @@ flowchart LR
 
 - loads the language with `languageFor` and creates a `MergeView` with two read-only editors from `baseExtensions`, without padding and joined by bands ([How the connected diff works](How-the-Connected-Diff-Works.md)),
 - folds unchanged lines with `splitFolds` (`foldField.ts`, rules in `foldModel.ts`) when `diffPrefs.collapseUnchanged` is on (saved in local storage),
-- adds `chunkKinds`, `diffTheme` and `sideColors` (`mergeExtensions.ts`): `--diff-removed` old side, `--diff-added` new side; `DiffFrame colors="oldToNew"` fades the bands,
+- adds `chunkKinds` and the library's `diffTheme` and `sideColors`: `--diff-removed` old side, `--diff-added` new side; `DiffFrame colors="oldToNew"` fades the bands,
 - puts a "Stage this change" (unstaged) or "Unstage this change" (staged) arrow on each band, none when read-only,
 - draws the overview ruler with `createStrip`, `layoutTicks` and `renderTicks` from `scrollMarkers.ts`, next to the merge view's scroll container,
 - binds F7 and Shift+F7 to `goToChunk` and restores the scroll position on a rebuild.
@@ -95,7 +95,7 @@ In the Log, `CommitDetails.svelte` loads `getCommitFileDiff` and shows the view 
 | `src/lib/diff/DiffView.svelte`, `DiffToolbar.svelte` | The view and its toolbar |
 | `src/lib/diff/diffEditors.svelte.ts`, `diffViews.ts` | Building the editors, ruler, navigation, selection |
 | `ui/web/src/lib/components/DiffFrame.svelte` | Labels, find bar hosts, body, split handle (UI library) |
-| `src/lib/diff/mergeExtensions.ts` | `chunkKinds`, `diffTheme`, `revertButton` |
+| `src/lib/diff/mergeExtensions.ts` | `chunkKinds`, `revertButton` |
 | `src/lib/diff/prefs.svelte.ts` | The Collapse unchanged preference |
 | `src/lib/diff/split.ts` | The split range, `clampDiffSplit`, `splitFromPointer` |
 | `src/lib/views/changes/ChangesDiff.svelte` | The Diff tab for the selected change |
@@ -118,7 +118,7 @@ In the Log, `CommitDetails.svelte` loads `getCommitFileDiff` and shows the view 
 
 **Let the UI compute the diff.** One engine draws what you see, and the hunk buttons come free with `@codemirror/merge`.
 
-**Our own folds.** The library's `collapseUnchanged` opens only whole runs; ours opens 10 lines at a time, on both sides.
+**Our own folds.** The library's `collapseUnchanged` opens only whole runs; ours opens 10 lines at a time, buttons at the left.
 
 **One split for every diff.** The ratio is layout state, like panel widths, so it lives in `state.json` and every diff shares it.
 

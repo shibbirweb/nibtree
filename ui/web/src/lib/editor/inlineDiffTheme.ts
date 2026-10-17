@@ -1,4 +1,5 @@
-// The inline diff's look: removed lines soft red and added lines green, changed words, the number, sign and button columns.
+// The inline diff's look: removed lines soft red and added lines green, changed words, and the number, sign and
+// button columns.
 
 import { EditorView } from "@codemirror/view";
 

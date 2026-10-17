@@ -18,6 +18,7 @@ import {
   type Scope,
   stickyLinesFor,
 } from "./stickyScope";
+import { stickyScrollTheme } from "@nibtree/ui/editor/overlayThemes";
 
 /** The line number gutter's right padding (codeEditor.gutterPaddingRight), so sticky numbers line up. */
 const GUTTER_PADDING_RIGHT = componentTokens.codeEditor.gutterPaddingRight;
@@ -113,46 +114,6 @@ interface StickyMeasure {
   numberRight: number;
   textLeft: number;
 }
-
-const theme = EditorView.baseTheme({
-  ".cm-gm-sticky": {
-    position: "absolute",
-    zIndex: "4",
-    overflow: "hidden",
-    backgroundColor: "var(--editor-bg)",
-    borderBottom: "1px solid var(--border-strong)",
-    fontFamily: "var(--font-mono)",
-    fontWeight: "var(--code-weight, 400)",
-    cursor: "pointer",
-  },
-  ".cm-gm-sticky-row": {
-    position: "relative",
-    whiteSpace: "pre",
-  },
-  ".cm-gm-sticky-row:hover": {
-    backgroundColor: "var(--hover)",
-  },
-  ".cm-gm-sticky-number": {
-    position: "absolute",
-    left: "0",
-    top: "0",
-    textAlign: "right",
-    color: "var(--editor-line-number)",
-    backgroundColor: "var(--editor-gutter)",
-    boxSizing: "border-box",
-  },
-  ".cm-gm-sticky-clip": {
-    position: "absolute",
-    top: "0",
-    right: "0",
-    bottom: "0",
-    overflow: "hidden",
-  },
-  ".cm-gm-sticky-text": {
-    position: "absolute",
-    top: "0",
-  },
-});
 
 const plugin = ViewPlugin.fromClass(
   class {
@@ -346,5 +307,5 @@ const plugin = ViewPlugin.fromClass(
 );
 
 export function stickyScroll(): Extension {
-  return [plugin, theme];
+  return [plugin, stickyScrollTheme];
 }

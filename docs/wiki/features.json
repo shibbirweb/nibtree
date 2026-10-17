@@ -98,6 +98,8 @@
     { "page": "developer/Project-Color-And-Title-Bar.md", "summary": "The project's color glow and the macOS window buttons in the top bar." },
     { "page": "developer/One-Diff-View.md", "summary": "How every place that shows a diff shares one view, its panes and its buttons." },
     { "page": "developer/Diff-Bugs-We-Fixed.md", "summary": "The diff view bugs we found, why they happened and how we fixed them." },
+    { "page": "developer/Merge-Tool-Layouts.md", "summary": "The merge tool's Columns and Stacked layouts: one set of editors moved between two frames." },
+    { "page": "developer/Merge-Tool-Bugs-We-Fixed.md", "summary": "The merge tool bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Color-Theme-Bugs-We-Fixed.md", "summary": "The color theme bugs we found, why they happened and how we fixed them." },
     { "page": "developer/How-the-Connected-Diff-Works.md", "summary": "Side by side without padding: each side scrolls itself, bands join the changes." },
     { "page": "developer/Rounded-Panels-Bugs-We-Fixed.md", "summary": "The rounded panels bugs we found, why they happened and how we fixed them." },
@@ -354,7 +356,7 @@
       "title": "Merge tool",
       "usage": "usage/Merge-Tool.md",
       "developer": "developer/How-the-Merge-Tool-Works.md",
-      "screenshots": ["merge-tool.png", "merge-tool-resolved.png"]
+      "screenshots": ["merge-tool.png", "merge-tool-resolved.png", "merge-tool-stacked.png"]
     },
     {
       "id": "blame",

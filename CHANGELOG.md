@@ -13,6 +13,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Added
 
+- The merge tool has two layouts. **Columns** shows yours, the result and theirs side by side; **Stacked** shows yours and theirs on top and the result across the bottom, with **Accept**, **Accept both** and **Ignore** above each change and a note on each open conflict in the result. Switch with the buttons in the toolbar, without losing any work; the choice is remembered and **Merge tool layout** in Settings > Git sets it.
 - The window glows softly in the open project's color from its top left corner, the same color as its tile on the Welcome page, so windows are easy to tell apart. On macOS the window buttons now sit in the app's top bar, with no separate title strip. Turn the color off with **Project color in the top bar** in Settings > Appearance.
 - A commit's message and details (History panel and commit tabs) can be resized: drag the bar above the changed files. The height is remembered.
 - Every diff (Changes, the Changes tab, commits in History and commit tabs, branch and revision compares, shelves, Compare Files and local history) is one view with the same toolbar and buttons. A commit's diff gets **Revert this change** and **Apply this change** for your working tree, and three columns (parent, commit and working tree); **Side by side for commits** in Settings > Git picks them.
@@ -147,6 +148,8 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Changed
 
+- A folded run of unchanged lines in a diff always shows its buttons, at the left of the fold in every layout, instead of only under the pointer. They read **10 more from the top** and **10 more from the bottom**, with arrows pointing the way the lines open.
+- Every diff and the merge tool (side by side diffs, the staging view, merge commits, a commit next to your working tree) color each change through its line numbers, so it runs as one band from pane to pane. Each side's line numbers face the middle, the Apply, Ignore and Revert buttons sit beside them without covering any number, and the gaps between panes are narrower. The panes scroll together with one scrollbar at the right edge.
 - Git Manager is now **Nibtree**: the app (`Nibtree.app`), its identifier (`io.github.shibbirweb.nibtree`), the command line tool (`nibtree`), the settings folder (`~/.nibtree`, moved from `~/.gitmanager` on first start), saved workspaces (`.nibtree-workspace`; old `.gitmanager-workspace` files still open) and the repository (`shibbirweb/nibtree`). Install the command again from Settings, set up `git mergetool` again with the new lines, and sign in to GitHub again.
 - Six color themes have new names, with the same colors: Classic Light, Islet Light, Islet Dark, Dusk, Light+ and Dark+. A saved choice of one of them falls back to the default theme once; pick it again in Settings > Editor.
 - Three-pane diffs (the staging view and merge commits) use the same colors too: a change is soft red on its older side and green on its newer side, and the bands fade between them.
@@ -196,6 +199,8 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- With **Rounded panels** on, the merge, rebase and bisect banners are rounded panels with a gap around them, like the panels below, instead of a bar across the whole window.
+- On macOS the window buttons no longer cover the title of the merge tool ("Merge Revisions for"): its top bar leaves room for them, and you can drag the window by it.
 - Three panes (the staging view, merge commits and the merge tool) can be resized: drag the edge of a column of bands, double-click for equal widths. The widths are remembered.
 - The Changes tab (status bar > N changes) has the **Revert this change** button too, side by side and inline: the change goes back to the last commit, and the staged version stays staged.
 - The Changes tab (status bar > N changes) offers the **Three panes** staging view too, like the Changes diff: HEAD, the index and the working tree, with stage and unstage buttons.

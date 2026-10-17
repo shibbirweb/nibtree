@@ -11,7 +11,8 @@ Group: Editor. Also known as: Ribbon, Connector.
 ## When to use
 
 MergeFrame and DiffFrame draw this between their panes; use it alone only for a custom layout. Its buttons stay inside
-the column while any of the chunk shows, and each shows only with its handler.
+the column while any of the chunk shows, and each shows only with its handler. Without any handler it draws ribbons
+alone and is narrow; the app's views put their buttons in the panes' gutters instead (editor/mergeGutters.ts).
 
 ## Props
 

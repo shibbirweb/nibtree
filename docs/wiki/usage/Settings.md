@@ -10,7 +10,7 @@ Settings change how Nibtree looks and behaves, apply at once and are saved. A ma
 
 Settings opens on **Appearance**. The status bar's **Spaces** opens **Editor**, the terminal's **Default Shell...** opens **Terminal**, and **About Nibtree** opens **About**.
 
-The sections are on the left, with a [search field](Settings-Search.md) above them. Esc or the x closes it. Drag the title to move it; double-click it to center it.
+The sections are on the left, under a [search field](Settings-Search.md). Esc or the x closes it. Drag the title to move it; double-click it to center it.
 
 **Reset to Defaults** at the bottom left puts every setting in `settings.json` back to its default, after asking (**Reset Settings**). Panel choices and sizes live in `state.json` and are kept.
 
@@ -29,7 +29,7 @@ The sections are on the left, with a [search field](Settings-Search.md) above th
 | Interface font size | Size of menus, lists and buttons, 11 to 16 px in half steps. | 13 px |
 | File icons | **No icons**, **Minimal** or **Material Icons** in the file lists. See [File Icons](File-Icons.md). | No icons |
 
-The theme is also in **View > Appearance**. The sun button in the header (**Toggle light/dark theme**) switches between Light and Dark; pick **System** to follow the system again.
+The theme is also in **View > Appearance**. The sun button in the header (**Toggle light/dark theme**) switches between Light and Dark; **System** follows the system.
 
 ![Dark theme](../images/dark-theme.png)
 
@@ -83,7 +83,8 @@ Type a font list and press Enter, or click a font name below it. **Reset** goes 
 | --- | --- | --- |
 | Diff layout | Every diff **Side by side** or **Inline** ([Inline Diffs](Inline-Diffs.md)); the diff toolbar's buttons set it too. | Side by side |
 | Side by side in Changes, for commits | **3 columns**: the [Staging View](Staging-View.md), or a commit beside your working tree. | 2, 3 |
-| Ignore whitespace in the merge tool | Hides whitespace-only differences when a merge starts; the [Merge Tool](Merge-Tool.md) button sets it too. | Off |
+| Merge tool layout | [Merge Tool](Merge-Tool.md) panes: Columns or Stacked. | Columns |
+| Ignore whitespace in the merge tool | Hides whitespace-only differences when a merge starts; its button sets it too. | Off |
 | Show all branches in the log | Includes every local and remote branch in the [Log](History-and-Log.md). | On |
 | Sign off commits | Adds a `Signed-off-by` line to every commit (`--signoff`). Also in [Commit Options](Commit-Options.md). | Off |
 | Commit box | **Single** or **Per repository** ([Commit Box Layout](Commit-Box-Layout.md)). | Single |

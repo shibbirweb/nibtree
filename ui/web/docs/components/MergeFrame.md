@@ -11,7 +11,9 @@ Group: Editor. Also known as: Merge, Merge host.
 ## When to use
 
 Use when the app builds the merge's CodeMirror editors itself (its own chunks, undo and scrolling). `onready` hands over
-the three panes and the box the ribbons are measured from. MergeView is built on it.
+the three panes and the box the ribbons are measured from. Without `onapply`, `onignore` and `onrevert` the connectors
+draw ribbons alone in narrow gaps, as when the panes carry the buttons beside their line numbers (editor/mergeGutters.ts
+`paneGutters`). MergeView is built on it.
 
 ## Props
 

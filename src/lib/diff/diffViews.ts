@@ -12,6 +12,7 @@ import { applyBlock, buildInlineDoc, fallbackHunks, type InlineDoc } from "./inl
 import { type InlineControl, inlineDiffExtensions } from "./inlineView";
 import { hunkSelection } from "./revertChange";
 import type { DiffSide } from "./lineSelection";
+import { splitPaneGutters } from "@nibtree/ui/editor/splitGutters";
 import { unpadded } from "./splitLink";
 
 /** A side's extensions: with `changes`, its revert listener; its find bar goes into `findHost`. */
@@ -75,7 +76,8 @@ export function splitEditors(
   blameExtensions: Extension,
 ): MergeView {
   const { diff: fileDiff, mode, parts } = request;
-  // The stage and unstage arrows are on the connector's bands (SplitLink.copy), not MergeView's revert column.
+  // The band's buttons (stage, unstage, apply, revert) sit in one side's gutter, not in MergeView's revert column.
+  const actions = (side: "left" | "right") => (request.bands?.side === side ? request.bands.actions : null);
   // The backend's line hunks, refined to characters inside each one; without them (an older payload) CodeMirror
   // diffs the whole texts itself.
   const diffConfig = fileDiff.hunks
@@ -83,14 +85,27 @@ export function splitEditors(
     : { scanLimit: SCAN_LIMIT };
   const folds = request.collapse ? splitFolds() : [];
   const view = new MergeView({
-    a: { doc: fileDiff.original, extensions: [sideExtensions(mode === "unstaged", parts.findOriginal, "old"), folds] },
+    a: {
+      doc: fileDiff.original,
+      extensions: [
+        sideExtensions(mode === "unstaged", parts.findOriginal, "old", false),
+        splitPaneGutters("a", actions("left")),
+        folds,
+      ],
+    },
     b: {
       doc: fileDiff.modified,
-      extensions: [sideExtensions(mode === "staged", parts.findModified, "new"), blameExtensions, folds],
+      extensions: [
+        sideExtensions(mode === "staged", parts.findModified, "new", false),
+        splitPaneGutters("b", actions("right")),
+        blameExtensions,
+        folds,
+      ],
     },
     parent: parts.body,
     diffConfig,
-    gutter: true,
+    // Each change is colored through the line numbers (splitPaneGutters), so no separate change bar.
+    gutter: false,
     highlightChanges: true,
   });
   return unpadded(view);

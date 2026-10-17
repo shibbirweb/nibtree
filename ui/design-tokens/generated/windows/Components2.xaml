@@ -131,6 +131,7 @@
     <x:Double x:Key="GmCodeEditorGutterMinWidth">40</x:Double>
     <x:Double x:Key="GmCodeEditorSelectionRadius">3</x:Double>
     <x:Double x:Key="GmMergeViewGap">52</x:Double>
+    <x:Double x:Key="GmMergeViewRibbonGap">32</x:Double>
     <x:Double x:Key="GmMergeViewLabelPaddingX">12</x:Double>
     <x:Double x:Key="GmMergeViewLabelPaddingY">5</x:Double>
     <x:Double x:Key="GmMergeViewButtonWidth">18</x:Double>
@@ -138,6 +139,15 @@
     <x:Double x:Key="GmMergeViewButtonInset">2</x:Double>
     <x:Double x:Key="GmMergeViewGapEdge">2</x:Double>
     <x:Double x:Key="GmMergeViewInlineRadius">2</x:Double>
+    <x:Double x:Key="GmMergeViewActionsWidth">36</x:Double>
+    <x:Double x:Key="GmMergeViewActionsPaddingX">2</x:Double>
+    <x:Double x:Key="GmMergeViewActionsGap">0</x:Double>
+    <x:Double x:Key="GmMergeViewActionSize">18</x:Double>
+    <x:Double x:Key="GmMergeViewActionIcon">13</x:Double>
+    <x:Double x:Key="GmMergeViewStackResultMin">120</x:Double>
+    <x:Double x:Key="GmMergeLensGap">6</x:Double>
+    <x:Double x:Key="GmMergeLensPaddingY">2</x:Double>
+    <x:Double x:Key="GmMergeLensPaddingX">4</x:Double>
     <x:Double x:Key="GmFormatToolbarMinHeight">28</x:Double>
     <x:Double x:Key="GmFormatToolbarPaddingY">2</x:Double>
     <x:Double x:Key="GmFormatToolbarPaddingLeft">6</x:Double>
@@ -255,22 +265,4 @@
     <x:Double x:Key="GmSectionTitlePickerPaddingTop">6</x:Double>
     <x:Double x:Key="GmSectionTitlePickerPaddingX">8</x:Double>
     <x:Double x:Key="GmSectionTitlePickerPaddingBottom">2</x:Double>
-    <x:Double x:Key="GmToggleButtonToolWidth">24</x:Double>
-    <x:Double x:Key="GmToggleButtonToolHeight">22</x:Double>
-    <x:Double x:Key="GmToggleButtonChipPaddingY">2</x:Double>
-    <x:Double x:Key="GmToggleButtonChipPaddingX">6</x:Double>
-    <x:Double x:Key="GmToggleButtonChipGap">5</x:Double>
-    <x:Double x:Key="GmToggleButtonPlainHeight">24</x:Double>
-    <x:Double x:Key="GmToggleButtonPlainPaddingX">8</x:Double>
-    <x:Double x:Key="GmToggleButtonPlainGap">5</x:Double>
-    <x:Double x:Key="GmToggleButtonIconPaddingX">6</x:Double>
-    <x:Double x:Key="GmToggleButtonOutlineHeight">26</x:Double>
-    <x:Double x:Key="GmToggleButtonOutlinePaddingX">10</x:Double>
-    <x:Double x:Key="GmToggleButtonOutlineGap">6</x:Double>
-    <x:Double x:Key="GmToggleButtonFilterHeight">26</x:Double>
-    <x:Double x:Key="GmToggleButtonFilterPaddingX">9</x:Double>
-    <x:Double x:Key="GmChoiceListGap">6</x:Double>
-    <x:Double x:Key="GmChoiceListPaddingY">8</x:Double>
-    <x:Double x:Key="GmChoiceListPaddingX">12</x:Double>
-    <x:Double x:Key="GmChoiceListLineGap">2</x:Double>
 </ResourceDictionary>

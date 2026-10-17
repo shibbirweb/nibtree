@@ -53,5 +53,5 @@ SplitGrid, PaneRow, SplitHandle
 [What each one is for](docs/groups/Editor.md)
 
 SearchToggles, FindBar, CodeView, MarkdownPreview, MarkdownEditor, CodeBlock, HighlightText, CommitGraph, CodeEditor,
-DiffView, DiffFrame, MergeFrame, MergeView, MergeConnector, MarkdownView, FormatToolbar, MediaView, TerminalView,
-TerminalScreen, PatchView, ZoomBar, ImageCanvas, MediaCompare, RichEditorHost, FloatingFindBar, FontSample
+DiffView, DiffFrame, MergeFrame, MergeStackFrame, MergeView, MergeConnector, MarkdownView, FormatToolbar, MediaView,
+TerminalView, TerminalScreen, PatchView, ZoomBar, ImageCanvas, MediaCompare, RichEditorHost, FloatingFindBar, FontSample

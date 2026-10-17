@@ -25,7 +25,7 @@ flowchart LR
 
 ### The title bar on macOS
 
-The windows use `titleBarStyle: Overlay` with a hidden title: in `tauri.conf.json` for the first window, and `mac_title_bar` in `commands/window.rs` for New Window. The buttons are placed by `trafficLightPosition` (`TRAFFIC_LIGHTS`), on the same line as the back arrow. `windowChrome.controlsInBar` is true on macOS outside full screen; it gives `AppHeader` `windowControls`, which leaves `--app-header-controls-inset` for the buttons and marks the bar's empty space with `data-tauri-drag-region` (the `start-dragging` and `internal-toggle-maximize` permissions). The Welcome screen and the merge tool show the same bar at their top.
+The windows use `titleBarStyle: Overlay` with a hidden title: in `tauri.conf.json` for the first window, and `mac_title_bar` in `commands/window.rs` for New Window. The buttons are placed by `trafficLightPosition` (`TRAFFIC_LIGHTS`), on the same line as the back arrow. `windowChrome.controlsInBar` is true on macOS outside full screen; it gives `AppHeader` `windowControls`, which leaves `--app-header-controls-inset` for the buttons and marks the bar's empty space with `data-tauri-drag-region` (the `start-dragging` and `internal-toggle-maximize` permissions). The Welcome screen, the `git mergetool` window and the merge tool over the main window show the same bar at their top: anything that covers the top bar must, or the buttons land on its content.
 
 ## Where the code lives
 

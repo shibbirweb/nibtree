@@ -69,6 +69,7 @@ The app imports the library as the local package `@nibtree/ui`; how it moves ont
 | `ui/design-tokens/scripts/tokens.ts` | `bun run ui:tokens` (`--check` fails on stale files) |
 | `ui/web/src/lib/components/` | The Svelte components |
 | `ui/web/src/lib/docs/` | One doc per component and the Markdown writer |
+| `ui/web/src/lib/editor/` | Editor looks |
 | `ui/web/src/showcase/` | The local site, stories and foundation pages |
 | `ui/web/scripts/docs.ts` | `bun run ui:docs` (`--check` fails on stale pages) |
 

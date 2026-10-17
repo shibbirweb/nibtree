@@ -43,6 +43,7 @@ import {
   type ConfigName,
   type DiffLayout,
   type DiffPanes,
+  type MergeLayout,
   type Json,
   type LeftPanel,
   type LoadErrors,
@@ -92,6 +93,7 @@ export {
   COMMIT_BOX_LAYOUT_CHOICES,
   DIFF_LAYOUT_CHOICES,
   DIFF_PANES_CHOICES,
+  MERGE_LAYOUT_CHOICES,
   EDITOR_CURSOR_BLINKING_CHOICES,
   EDITOR_CURSOR_STYLE_CHOICES,
   EDITOR_CURSOR_WIDTH_RANGE,
@@ -220,6 +222,7 @@ class SettingsStore {
   diffLayout = $state<DiffLayout>(initialPreferences.diffLayout);
   changesDiffPanes = $state<DiffPanes>(initialPreferences.changesDiffPanes);
   mergeDiffPanes = $state<DiffPanes>(initialPreferences.mergeDiffPanes);
+  mergeLayout = $state<MergeLayout>(initialPreferences.mergeLayout);
   logAllRefs = $state(initialPreferences.logAllRefs);
   autoFetch = $state(initialPreferences.autoFetch);
   autoFetchIntervalMinutes = $state(initialPreferences.autoFetchIntervalMinutes);
@@ -301,6 +304,8 @@ class SettingsStore {
   rightBarVisible = $state(initialState.rightBarVisible);
   diffSplitRatio = $state(initialState.diffSplitRatio);
   threePaneSplit = $state.raw(initialState.threePaneSplit);
+  mergeStackHeight = $state(initialState.mergeStackHeight);
+  mergeStackRatio = $state(initialState.mergeStackRatio);
   leftPanel = $state<LeftPanel>(initialState.leftPanel);
   sidebarWidth = $state(initialState.sidebarWidth);
   explorerWidth = $state(initialState.explorerWidth);
@@ -484,6 +489,7 @@ class SettingsStore {
       diffLayout: this.diffLayout,
       changesDiffPanes: this.changesDiffPanes,
       mergeDiffPanes: this.mergeDiffPanes,
+      mergeLayout: this.mergeLayout,
       logAllRefs: this.logAllRefs,
       autoFetch: this.autoFetch,
       autoFetchIntervalMinutes: this.autoFetchIntervalMinutes,
@@ -565,6 +571,8 @@ class SettingsStore {
       rightBarVisible: this.rightBarVisible,
       diffSplitRatio: this.diffSplitRatio,
       threePaneSplit: this.threePaneSplit,
+      mergeStackHeight: this.mergeStackHeight,
+      mergeStackRatio: this.mergeStackRatio,
       leftPanel: this.leftPanel,
       sidebarWidth: this.sidebarWidth,
       explorerWidth: this.explorerWidth,

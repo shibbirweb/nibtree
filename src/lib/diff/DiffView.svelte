@@ -12,7 +12,7 @@
   import { toast } from "$lib/ui/toast.svelte";
   import { lfsContentChanged, lfsSizeText } from "$lib/views/git/lfs/lfsModel";
   import { type PreviewSides, showsBinaryPreview } from "./binaryPreview";
-  import { DiffEditors, type DiffMode } from "./diffEditors.svelte";
+  import { type DiffBuild, DiffEditors, type DiffMode } from "./diffEditors.svelte";
   import { openLineMenu } from "./diffLineMenu";
   import { openWorkingFile } from "./openWorkingFile";
   import { diffLines } from "./diffLines.svelte";
@@ -136,11 +136,12 @@
     const layout = settings.diffLayout;
     const scrollKey = `${mode}:${collapse}:${layout}:${path}`;
     // Blame and the change callback are read when built, as before, without rebuilding when they change.
-    const { blameTarget, changed, reverting, applying } = untrack(() => ({
+    const { blameTarget, changed, reverting, applying, bands } = untrack(() => ({
       blameTarget: blame,
       changed: onChange,
       reverting: revert,
       applying: mode === "readonly" ? onApply : null,
+      bands: bandActions(),
     }));
     void editors.build({
       parts: target,
@@ -154,6 +155,7 @@
       onChange: changed,
       onRevert: reverting,
       onApply: applying,
+      bands,
     });
     return () => editors.teardown(scrollKey);
   });
@@ -193,6 +195,25 @@
     }
     return onApply ? (index: number) => applySelection(editors.changeLines(index)) : undefined;
   });
+
+  /** Side by side: the band's buttons, in the gutter of the side its change is taken from. */
+  function bandActions(): DiffBuild["bands"] {
+    const reverting = revert && !inline ? (index: number) => revertSelection(editors.changeLines(index)) : undefined;
+    if (!bandApply && !reverting) {
+      return null;
+    }
+    const side = mode === "unstaged" ? "right" : "left";
+    return {
+      side,
+      actions: {
+        apply: bandApply,
+        revert: reverting,
+        toward: side === "left" ? "right" : "left",
+        applyTitle: () => APPLY_TITLES[mode],
+        revertTitle: "Revert this change",
+      },
+    };
+  }
 
   /** Opens the real file in an editor tab, at the same line when the right side is the work tree. */
   function openFile(): void {
@@ -248,11 +269,6 @@
       label="Diff of {fileName}"
       sideLabels={{ original: leftLabel, modified: rightLabel }}
       ribbons={inline ? null : editors.ribbons}
-      applySide={mode === "unstaged" ? "right" : "left"}
-      onapply={bandApply}
-      applyTitle={APPLY_TITLES[mode]}
-      onrevert={revert && !inline ? (index) => revertSelection(editors.changeLines(index)) : undefined}
-      revertTitle="Revert this change"
       colors="oldToNew"
       ruler
       bind:ratio={() => clampDiffSplit(settings.diffSplitRatio), (ratio) => (settings.diffSplitRatio = ratio)}

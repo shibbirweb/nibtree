@@ -1,5 +1,6 @@
-<!-- The 3-way merge tool: a toolbar, the library's MergeFrame filled with the editors of mergeSession.svelte.ts,
-     and a footer with Accept Left, Accept Right, Cancel and Apply. -->
+<!-- The 3-way merge tool: a toolbar, the frame of the chosen layout (Columns: the library's MergeFrame; Stacked:
+     MergeStackFrame, loaded only when picked) filled with the editors of mergeSession.svelte.ts, and a footer with
+     Accept Left, Accept Right, Cancel and Apply. Switching the layout moves the same editors into the other frame. -->
 <script lang="ts">
   import Button from "@nibtree/ui/components/Button.svelte";
   import Divider from "@nibtree/ui/components/Divider.svelte";
@@ -9,10 +10,11 @@
   import Text from "@nibtree/ui/components/Text.svelte";
   import ToggleButton from "@nibtree/ui/components/ToggleButton.svelte";
   import Toolbar from "@nibtree/ui/components/Toolbar.svelte";
-  import { untrack } from "svelte";
+  import { onDestroy, untrack } from "svelte";
   import { localKeys } from "$lib/commands/commandRuntime";
   import { editorLanguage } from "$lib/editor/setup";
   import { settings } from "$lib/stores/settings.svelte";
+  import type { MergeLayout } from "$lib/stores/settingsData";
   import type { MergeDocument } from "$lib/types";
   import { dialogs } from "$lib/ui/dialog.svelte";
   import { confirmDiscard, confirmReload, confirmSave, statusText } from "./mergeConfirm";
@@ -47,24 +49,44 @@
   const fileName = $derived(doc.path.split("/").pop() ?? doc.path);
   const statusTone = $derived(counts.changes === 0 ? "success" : counts.conflicts > 0 ? "danger" : "dim");
 
-  /** The frame's panes are in the page: the editors go in once the file's language is loaded. */
-  function build(parts: Parameters<MergeSession["build"]>[0]): () => void {
+  /** The setting is the layout of every merge; the toolbar's switch changes it too, like Ignore whitespace. */
+  const layout = $derived(settings.mergeLayout);
+
+  function setLayout(next: MergeLayout): void {
+    settings.mergeLayout = next;
+    settings.save();
+  }
+
+  /**
+   * A frame's panes are in the page. The first frame gets new editors once the file's language is loaded; a frame
+   * shown after a layout switch gets the same editors moved in, so nothing in them changes.
+   */
+  function attach(parts: Parameters<MergeSession["build"]>[0]): () => void {
     let cancelled = false;
     let observer: ResizeObserver | null = null;
-    void editorLanguage(doc.path).then((language) => {
-      if (cancelled) {
-        return;
-      }
-      session.build(parts, language);
+    const shown = untrack(() => layout);
+    const ready = () => {
       observer = new ResizeObserver(() => session.scheduleDraw());
       observer.observe(parts.panes);
-    });
+    };
+    if (session.views) {
+      session.relayout(parts, shown);
+      ready();
+    } else {
+      void editorLanguage(doc.path).then((language) => {
+        if (!cancelled) {
+          session.build(parts, language, shown);
+          ready();
+        }
+      });
+    }
     return () => {
       cancelled = true;
       observer?.disconnect();
-      session.destroy();
     };
   }
+
+  onDestroy(() => session.destroy());
 
   async function acceptWhole(side: SideName): Promise<void> {
     if (session.views) {
@@ -201,23 +223,54 @@
       title="Ignore whitespace differences when comparing"
       bind:pressed={() => doc.ignoreWhitespace, () => void toggleWhitespace()}
     />
+    <Divider direction="vertical" />
+    <Stack direction="row" gap="none" role="group" label="Merge layout">
+      <ToggleButton
+        icon="split-three"
+        label="Columns"
+        title="Columns: yours, the result and theirs side by side"
+        bind:pressed={() => layout === "columns", (on) => on && setLayout("columns")}
+      />
+      <ToggleButton
+        icon="split-stacked"
+        label="Stacked"
+        title="Stacked: yours and theirs on top, the result below"
+        bind:pressed={() => layout === "stacked", (on) => on && setLayout("stacked")}
+      />
+    </Stack>
     {#snippet end()}
       <Text weight="medium" tone={statusTone}>{statusText(counts)}</Text>
     {/snippet}
   </Toolbar>
 
-  <MergeFrame
-    label="Merge {fileName}"
-    labels={{ left: doc.oursLabel, result: "Result", right: doc.theirsLabel }}
-    {fileName}
-    leftRibbons={session.leftRibbons}
-    rightRibbons={session.rightRibbons}
-    onapply={(chunkId, side) => session.apply(chunkId, side === "left" ? "ours" : "theirs")}
-    onignore={(chunkId, side) => session.ignore(chunkId, side === "left" ? "ours" : "theirs")}
-    bind:split={() => settings.threePaneSplit, (split) => (settings.threePaneSplit = split)}
-    oncommitsplit={() => settings.save()}
-    onready={build}
-  />
+  {#if layout === "columns"}
+    <MergeFrame
+      label="Merge {fileName}"
+      labels={{ left: doc.oursLabel, result: "Result", right: doc.theirsLabel }}
+      {fileName}
+      leftRibbons={session.leftRibbons}
+      rightRibbons={session.rightRibbons}
+      bind:split={() => settings.threePaneSplit, (split) => (settings.threePaneSplit = split)}
+      oncommitsplit={() => settings.save()}
+      onready={attach}
+    />
+  {:else}
+    {#await import("@nibtree/ui/components/MergeStackFrame.svelte") then stacked}
+      <stacked.default
+        label="Merge {fileName}"
+        labels={{ left: doc.oursLabel, result: "Result", right: doc.theirsLabel }}
+        {fileName}
+        bind:topHeight={() => settings.mergeStackHeight, (height) => (settings.mergeStackHeight = height)}
+        bind:ratio={() => settings.mergeStackRatio, (ratio) => (settings.mergeStackRatio = ratio)}
+        oncommit={() => settings.save()}
+        onready={attach}
+      >
+        {#snippet resultEnd()}
+          <Text size="small" tone={statusTone}>{statusText(counts)}</Text>
+        {/snippet}
+      </stacked.default>
+    {/await}
+  {/if}
 
   <Toolbar variant="footer" label="Merge actions">
     <Button onclick={() => acceptWhole("ours")} disabled={saving} title="Resolve the whole file with the left version">

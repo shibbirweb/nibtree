@@ -18,22 +18,7 @@ import { type EditorKind, featureOptions } from "./featurePlan";
 import { editorFeatures } from "./features";
 import { indentation } from "./indentation";
 import { renderWhitespace } from "./whitespace";
-
-// The editor look comes from the library (design tokens); the app adds only the panels CodeMirror draws.
-const panelTheme = EditorView.theme({
-  ".cm-panels": {
-    backgroundColor: "var(--panel)",
-    color: "var(--text)",
-    borderColor: "var(--border-strong)",
-  },
-  ".cm-panels input, .cm-panels button": {
-    fontFamily: "var(--font-ui)",
-  },
-  // The find bar draws its own bottom border.
-  ".cm-panels.cm-panels-top": {
-    borderBottom: "none",
-  },
-});
+import { panelTheme } from "@nibtree/ui/editor/panelThemes";
 
 export const editorTheme: Extension = [libraryEditorTheme, panelTheme];
 

@@ -9,6 +9,7 @@ import { language, StreamLanguage, syntaxTree } from "@codemirror/language";
 import { type EditorState, type Extension, RangeSetBuilder } from "@codemirror/state";
 import { Decoration, type DecorationSet, EditorView, ViewPlugin, type ViewUpdate } from "@codemirror/view";
 import { BRACKET_LEVELS, bracketCandidates, colorBrackets, isOpenBracket } from "./bracketDepth";
+import { bracketColorTheme } from "@nibtree/ui/editor/guideThemes";
 
 // @lezer/common is not a direct dependency; its types come through @codemirror/language.
 type Tree = ReturnType<typeof syntaxTree>;
@@ -73,13 +74,6 @@ export function bracketDecorations(
   return builder.finish();
 }
 
-const theme = EditorView.baseTheme({
-  ".cm-gm-bracket-1": { color: "var(--bracket-1)" },
-  ".cm-gm-bracket-2": { color: "var(--bracket-2)" },
-  ".cm-gm-bracket-3": { color: "var(--bracket-3)" },
-  ".cm-gm-bracket-unmatched": { color: "var(--tok-invalid)" },
-});
-
 const plugin = ViewPlugin.fromClass(
   class {
     decorations: DecorationSet;
@@ -98,5 +92,5 @@ const plugin = ViewPlugin.fromClass(
 );
 
 export function bracketPairColors(): Extension {
-  return [plugin, theme];
+  return [plugin, bracketColorTheme];
 }

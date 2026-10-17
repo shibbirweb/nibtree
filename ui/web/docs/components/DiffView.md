@@ -10,8 +10,9 @@ Group: Editor. Also known as: Diff, Compare.
 
 ## When to use
 
-Use for file diffs, the Changes diff and compare tabs. The app adds staging buttons and its other diff features through
-`extensions`.
+Use for file diffs, the Changes diff and compare tabs. Side by side, each side's line numbers face the other and a
+change's color runs through them (editor/splitGutters.ts). The app adds staging buttons (`splitPaneGutters`, beside the
+numbers), folds (editor/foldRow.ts) and its other diff features through `extensions`.
 
 ## Props
 

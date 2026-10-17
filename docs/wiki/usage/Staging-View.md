@@ -24,8 +24,10 @@ To make a pane wider, drag the edge of a column of bands, like the line between 
 
 ## Stage and unstage
 
-- **«** on a right band, **Stage this change**, copies that change from the working tree into the index.
-- **»** on a left band, **Unstage this change**, puts HEAD's lines back into the index.
+The buttons sit on a change's first line, beside its line numbers:
+
+- **«** in the working tree pane, **Stage this change**, copies that change from the working tree into the index.
+- **»** in the HEAD pane, **Unstage this change**, puts HEAD's lines back into the index.
 
 The panes update after each click, and the lists in Changes follow.
 

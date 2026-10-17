@@ -64,7 +64,8 @@ sequenceDiagram
 | File | What it does |
 | --- | --- |
 | `src/lib/editor/featurePlan.ts` | Kinds, `FEATURE_KINDS`, `featureOptions`, `changedFeatures`, `wordsWhileTyping` (pure) |
-| `src/lib/editor/features.ts` | Compartments, registry, lazy autocomplete, themes, `editorFeatures`, `setEditorFeatures` |
+| `src/lib/editor/features.ts` | Compartments, registry, lazy autocomplete, `editorFeatures`, `setEditorFeatures` |
+| `ui/web/src/lib/editor/panelThemes.ts`, `guideThemes.ts`, `overlayThemes.ts`, `blameTheme.ts`, `conflictTheme.ts` | Every editor feature's look (the library) |
 | `src/lib/editor/indentGuides.ts` | Guide levels, runs and the layer |
 | `src/lib/editor/ruler.ts`, `layerGeometry.ts` | The margin line and the text origin |
 | `src/lib/editor/languages.ts` | Names, grammars and lazy imports |

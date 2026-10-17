@@ -2,6 +2,7 @@
   import ActivityBar from "$ui/components/ActivityBar.svelte";
   import AppShell from "$ui/components/AppShell.svelte";
   import EmptyState from "$ui/components/EmptyState.svelte";
+  import Notice from "$ui/components/Notice.svelte";
   import Segmented from "$ui/components/Segmented.svelte";
   import Stack from "$ui/components/Stack.svelte";
   import StatusBar from "$ui/components/StatusBar.svelte";
@@ -35,6 +36,12 @@
         { id: "log", icon: "history", label: "Log" },
       ]}
     />
+  {/snippet}
+  {#snippet banners()}
+    <Notice variant="banner" tone="danger" icon="alert">
+      <Text weight="semibold">Merging feature into main</Text>
+      <Text tone="dim">&middot; 2 files have conflicts</Text>
+    </Notice>
   {/snippet}
   {#snippet sidebar()}<EmptyState title="Sidebar" hint={left ?? "closed"} />{/snippet}
   {#snippet editor()}<EmptyState title="Editor" hint="Keeps at least 360 px" />{/snippet}

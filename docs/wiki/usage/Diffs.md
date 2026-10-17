@@ -1,10 +1,10 @@
 # Diffs
 
-A diff shows two versions of a file side by side, with the differences highlighted. A colored band between the sides joins each change's lines, so you see where a block came from and where it went. Each side scrolls on its own, and the other follows to keep matching lines level. Use it to check your work before you commit, and to stage only some of the changes in a file.
+A diff shows two versions of a file side by side, with the differences highlighted. A colored band joins each change's lines across the sides, through the line numbers, so you see where a block came from and where it went. Each side scrolls on its own, and the other follows to keep matching lines level. Use it to check your work before you commit, and to stage only some of the changes in a file.
 
 ![Side-by-side diff](../images/diff-view.png)
 
-*A side-by-side diff of cart.ts: the toolbar, the Index and Working Tree labels, folded unchanged lines and a band with a stage button for each change.*
+*A side-by-side diff of cart.ts: the toolbar, the Index and Working Tree labels, folded unchanged lines and a band for each change.*
 
 ## Open a diff
 
@@ -60,15 +60,15 @@ Click into one side and press Cmd+F. That side's find bar opens above the diff, 
 
 ## Collapse unchanged lines
 
-**Collapse unchanged** (on by default) folds long runs of lines that are the same on both sides, keeping three lines of context around each change. A folded run shows as a wavy line named after the code below it, such as **Cart > remove()** (or **23 unchanged lines** outside a class or function). Hover it for **10 lines** buttons that show more at either end; a click elsewhere shows it all. Turn the button off to see the whole file. Nibtree remembers your choice for every diff.
+**Collapse unchanged** (on by default) folds long runs of lines that are the same on both sides, keeping three lines of context around each change. A folded run shows as a wavy line named after the code below it, such as **Cart > remove()** (or **23 unchanged lines** outside a class or function). At its left, **10 more from the top** and **10 more from the bottom** open its ends; a click elsewhere shows it all. Turn the button off to see the whole file. Nibtree remembers your choice for every diff.
 
 ## Stage or unstage one change
 
-You do not have to stage a whole file. Each change (a "hunk", one block of changed lines) has its own button on its band.
+You do not have to stage a whole file. Each change (a "hunk", one block of changed lines) has its own button beside its line numbers.
 
 ![Staging one change](../images/diff-hunk-staging.png)
 
-*The diff toolbar at 1 of 2, and the first change with its « button on its band.*
+*The diff toolbar at 1 of 2, and the first change with its « button beside its line number.*
 
 - In a diff from **Changes**, **«** (**Stage this change**) copies that one change into the index. The curved arrow next to it reverts the change ([Revert a Change](Revert-a-Change.md)).
 - In a diff from **Staged**, **»** (**Unstage this change**) takes that one change out of the index.

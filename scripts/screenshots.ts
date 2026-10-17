@@ -1462,6 +1462,18 @@ define("merge-tool", async (shot) => {
   await shot.save();
 });
 
+// Opens in Columns, takes the non-conflicting changes, then switches: the same editors move over with that work.
+define("merge-tool-stacked", async (shot) => {
+  await openMergeTool(shot);
+  await shot.page.getByTitle("Apply all non-conflicting changes", { exact: true }).click();
+  await shot.settle(300);
+  await shot.page.getByRole("button", { name: "Stacked", exact: true }).click();
+  await shot.page.locator(".cm-mc-lens").first().waitFor();
+  await shot.settle(500);
+  await shot.page.mouse.move(640, 790);
+  await shot.save();
+});
+
 define("merge-tool-resolved", async (shot) => {
   await openMergeTool(shot);
   await shot.page.getByTitle("Apply all non-conflicting changes", { exact: true }).click();

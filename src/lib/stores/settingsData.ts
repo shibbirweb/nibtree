@@ -42,6 +42,14 @@ export const DIFF_PANES_CHOICES: { value: DiffPanes; label: string }[] = [
 ];
 const DIFF_PANES = DIFF_PANES_CHOICES.map((choice) => choice.value);
 
+/** The merge tool's layout: the three panes side by side, or the two sides on top and the result below. */
+export type MergeLayout = "columns" | "stacked";
+export const MERGE_LAYOUT_CHOICES: { value: MergeLayout; label: string }[] = [
+  { value: "columns", label: "Columns" },
+  { value: "stacked", label: "Stacked" },
+];
+const MERGE_LAYOUTS = MERGE_LAYOUT_CHOICES.map((choice) => choice.value);
+
 /** Where the Changes view puts its commit box: one at the bottom, or one per repository. */
 export type CommitBoxLayout = "single" | "perRepo";
 export const COMMIT_BOX_LAYOUT_CHOICES: { value: CommitBoxLayout; label: string }[] = [
@@ -408,6 +416,7 @@ export interface Preferences {
   changesDiffPanes: DiffPanes;
   /** A merge commit's file changed on both sides: one parent against the result, or both parents around it. */
   mergeDiffPanes: DiffPanes;
+  mergeLayout: MergeLayout;
   logAllRefs: boolean;
   /** Fetch every remote in the background while the window is in use. */
   autoFetch: boolean;
@@ -609,6 +618,7 @@ export const defaultPreferences: Preferences = {
   diffLayout: "sideBySide",
   changesDiffPanes: "two",
   mergeDiffPanes: "three",
+  mergeLayout: "columns",
   logAllRefs: true,
   autoFetch: true,
   autoFetchIntervalMinutes: DEFAULT_AUTO_FETCH_MINUTES,
@@ -726,6 +736,9 @@ export interface UiState {
   diffSplitRatio: number;
   /** The panes' widths in a three-pane diff (see ui/web/src/lib/logic/threeSplit.ts). */
   threePaneSplit: ThreeSplit;
+  /** The stacked merge's top row height in px (0: half the frame) and its two top panes' split. */
+  mergeStackHeight: number;
+  mergeStackRatio: number;
   leftPanel: LeftPanel;
   sidebarWidth: number;
   explorerWidth: number;
@@ -914,6 +927,8 @@ const STATE_KEYS = [
   "rightBarVisible",
   "diffSplitRatio",
   "threePaneSplit",
+  "mergeStackHeight",
+  "mergeStackRatio",
   "leftPanel",
   "sidebarWidth",
   "explorerWidth",
@@ -1037,6 +1052,7 @@ export function parsePreferences(value: unknown): { preferences: Preferences; ex
     diffLayout: pickOneOf(data.diffLayout, DIFF_LAYOUTS, defaultPreferences.diffLayout),
     changesDiffPanes: pickOneOf(data.changesDiffPanes, DIFF_PANES, defaultPreferences.changesDiffPanes),
     mergeDiffPanes: pickOneOf(data.mergeDiffPanes, DIFF_PANES, defaultPreferences.mergeDiffPanes),
+    mergeLayout: pickOneOf(data.mergeLayout, MERGE_LAYOUTS, defaultPreferences.mergeLayout),
     logAllRefs: pickBoolean(data.logAllRefs, defaultPreferences.logAllRefs),
     autoFetch: pickBoolean(data.autoFetch, defaultPreferences.autoFetch),
     autoFetchIntervalMinutes: pickInteger(
@@ -1200,6 +1216,8 @@ export function parseState(value: unknown): { state: UiState; extra: Json } {
     rightBarVisible: pickBoolean(data.rightBarVisible, true),
     diffSplitRatio: pickNumber(data.diffSplitRatio, 0.5, 0.15, 0.85),
     threePaneSplit: readThreeSplit(data.threePaneSplit),
+    mergeStackHeight: pickNumber(data.mergeStackHeight, 0, 0, 4000),
+    mergeStackRatio: pickNumber(data.mergeStackRatio, 0.5, 0.15, 0.85),
     leftPanel: panel === "changes" || panel === "branches" || panel === "scripts" || panel === null ? panel : "changes",
     sidebarWidth: pickNumber(data.sidebarWidth, DEFAULT_PANEL_WIDTH, 120, 2000),
     explorerWidth: pickNumber(data.explorerWidth, DEFAULT_PANEL_WIDTH, 120, 2000),
@@ -1238,6 +1256,8 @@ export const WINDOW_STATE_KEYS = [
   "rightBarVisible",
   "diffSplitRatio",
   "threePaneSplit",
+  "mergeStackHeight",
+  "mergeStackRatio",
   "leftPanel",
   "sidebarWidth",
   "explorerWidth",
@@ -1266,6 +1286,8 @@ export function stateToJson(state: UiState, extra: Json): Json {
     rightBarVisible: state.rightBarVisible,
     diffSplitRatio: state.diffSplitRatio,
     threePaneSplit: [...state.threePaneSplit],
+    mergeStackHeight: state.mergeStackHeight,
+    mergeStackRatio: state.mergeStackRatio,
     leftPanel: state.leftPanel,
     sidebarWidth: state.sidebarWidth,
     explorerWidth: state.explorerWidth,

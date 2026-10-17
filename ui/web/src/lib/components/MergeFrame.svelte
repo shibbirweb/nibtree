@@ -1,7 +1,8 @@
 <!-- The frame of a 3-way merge: the three panes' titles, the three panes that MergeView (or the app's merge tool)
      fills with editors, and the connector columns between them. It draws no editor: `onready` hands over the pane
      elements and the box the ribbons are measured from, and the ribbons come back as props. Without `onapply` and
-     `onignore` the connectors draw ribbons alone, for a read-only 3-pane diff such as a merge commit's; `colors` picks
+     `onignore` the connectors draw ribbons alone, in a narrower gap: for a read-only 3-pane diff, or when the panes
+     put their buttons in their own gutters (editor/mergeGutters.ts, as MergeView and the app do); `colors` picks
      each connector's ribbon colors (by kind, or red to green from the older pane to the newer). A handle on each
      connector's edge resizes the panes, which `split` holds; double-click puts them back to even thirds. -->
 <script module lang="ts">
@@ -65,7 +66,8 @@
   let result = $state<HTMLDivElement | null>(null);
   let right = $state<HTMLDivElement | null>(null);
   let panes = $state<HTMLDivElement | null>(null);
-  const gap = componentTokens.mergeView.gap;
+  const buttons = $derived(Boolean(onapply || onignore || onrevert));
+  const gap = $derived(buttons ? componentTokens.mergeView.gap : componentTokens.mergeView.ribbonGap);
   const acts = (side: "left" | "right") => actionSides.includes(side);
 
   $effect(() => {
@@ -84,6 +86,7 @@
   style:--merge-left={split[0]}
   style:--merge-result={split[1] - split[0]}
   style:--merge-right={1 - split[1]}
+  style:--merge-gap={buttons ? "var(--merge-view-gap)" : "var(--merge-view-ribbon-gap)"}
 >
   <div class="labels">
     <div class="label" title={labels.left}>{labels.left}</div>
@@ -199,7 +202,7 @@
 
   .label-gap {
     flex: none;
-    width: var(--merge-view-gap);
+    width: var(--merge-gap);
   }
 
   .panes {
@@ -228,11 +231,11 @@
 
   .handle-box.first {
     left: 0;
-    right: var(--merge-view-gap);
+    right: var(--merge-gap);
   }
 
   .handle-box.second {
-    left: var(--merge-view-gap);
+    left: var(--merge-gap);
     right: 0;
   }
 

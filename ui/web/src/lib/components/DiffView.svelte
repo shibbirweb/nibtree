@@ -9,7 +9,10 @@
   import { classHighlighter } from "@lezer/highlight";
   import { onDestroy } from "svelte";
   import { languageSupport, type CodeLanguage } from "../editor/languages";
-  import { diffTheme, editorTheme } from "../editor/theme";
+  import { mergeGutterTheme } from "../editor/mergeGutterTheme";
+  import { sideLineNumbers } from "../editor/mergeGutters";
+  import { splitGutterColors } from "../editor/splitGutters";
+  import { diffTheme, editorTheme, unifiedDiffTheme } from "../editor/theme";
   import { presetVar, type ViewHeight } from "../logic/presets";
   import DiffFrame from "./DiffFrame.svelte";
 
@@ -51,7 +54,6 @@
     const target = host;
     const support = await languageSupport(language);
     const common = [
-      lineNumbers(),
       syntaxHighlighting(classHighlighter),
       editorTheme,
       diffTheme,
@@ -61,11 +63,15 @@
       ...extensions,
     ];
     if (layout === "split") {
+      // Each side's numbers face the other, and a change's color runs through them (no separate change bar).
       const merge = new MergeView({
-        a: { doc: original, extensions: common },
-        b: { doc: modified, extensions: common },
+        a: {
+          doc: original,
+          extensions: [...common, splitGutterColors("a"), sideLineNumbers("after"), mergeGutterTheme],
+        },
+        b: { doc: modified, extensions: [...common, splitGutterColors("b"), lineNumbers(), mergeGutterTheme] },
         parent: target,
-        gutter: true,
+        gutter: false,
         highlightChanges: true,
       });
       teardown = () => merge.destroy();
@@ -73,7 +79,12 @@
       const view = new EditorView({
         parent: target,
         doc: modified,
-        extensions: [...common, unifiedMergeView({ original, mergeControls: false, gutter: true })],
+        extensions: [
+          ...common,
+          unifiedDiffTheme,
+          lineNumbers(),
+          unifiedMergeView({ original, mergeControls: false, gutter: true }),
+        ],
       });
       teardown = () => view.destroy();
     }

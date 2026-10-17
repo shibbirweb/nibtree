@@ -145,8 +145,10 @@
   "reorderList": {"rowPaddingY": 4, "rowPaddingLeft": 6, "rowPaddingRight": 10, "gap": 8, "dropLine": 2},
   "shortcutRecorder": {"width": 150, "minHeight": 26, "paddingX": 6},
   "codeEditor": {"gutterPaddingLeft": 12, "gutterPaddingRight": 10, "gutterMinWidth": 40, "selectionRadius": 3},
-  "mergeView": {"gap": 52, "labelPaddingX": 12, "labelPaddingY": 5, "buttonWidth": 18, "buttonHeight": 17,
-    "buttonInset": 2, "gapEdge": 2, "inlineRadius": "{radius.tiny}"},
+  "mergeView": {"gap": 52, "ribbonGap": 32, "labelPaddingX": 12, "labelPaddingY": 5, "buttonWidth": 18,
+    "buttonHeight": 17, "buttonInset": 2, "gapEdge": 2, "inlineRadius": "{radius.tiny}", "actionsWidth": 36,
+    "actionsPaddingX": 2, "actionsGap": 0, "actionSize": 18, "actionIcon": 13, "stackResultMin": 120},
+  "mergeLens": {"gap": 6, "paddingY": 2, "paddingX": 4},
   "formatToolbar": {
     "minHeight": 28, "paddingY": 2, "paddingLeft": 6, "paddingRight": 10, "groupGap": 12, "toolHeight": 22,
     "toolMinWidth": 24, "toolPaddingX": 5, "dividerHeight": 14

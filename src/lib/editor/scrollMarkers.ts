@@ -5,6 +5,7 @@
 import { type EditorState, type Extension, RangeSet, StateEffect, StateField } from "@codemirror/state";
 import { EditorView, GutterMarker, gutter, ViewPlugin, type ViewUpdate } from "@codemirror/view";
 import type { ChangeMark } from "./lineDiff";
+import { changeGutterTheme, scrollStripTheme } from "@nibtree/ui/editor/overlayThemes";
 
 export const setChangeMarks = StateEffect.define<ChangeMark[]>();
 
@@ -103,13 +104,11 @@ export function createStrip(onJump: (line: number) => void): HTMLDivElement {
   return strip;
 }
 
-// Strip and tick styles live in the library's styles/code.css so the diff view can reuse them outside an editor.
-const stripTheme = EditorView.theme({
-  "&.cm-with-scroll-markers .cm-scroller": { marginRight: "var(--scroll-markers-width)" },
-});
+/** `end` beside the scrollbar, `start` at the left edge, `onText` over the lines' ends (merge colors run under). */
+export type StripPlace = "end" | "start" | "onText";
 
 /** Overview ruler for an editor that scrolls itself. */
-export function scrollMarkers(source: MarkSource = fieldSource): Extension {
+export function scrollMarkers(source: MarkSource = fieldSource, place: StripPlace = "end"): Extension {
   const plugin = ViewPlugin.fromClass(
     class {
       strip: HTMLDivElement;
@@ -143,7 +142,8 @@ export function scrollMarkers(source: MarkSource = fieldSource): Extension {
       }
     },
   );
-  return [plugin, stripTheme, EditorView.editorAttributes.of({ class: "cm-with-scroll-markers" })];
+  const placeClass = { end: "", start: " cm-scroll-markers-at-start", onText: " cm-scroll-markers-on-text" }[place];
+  return [plugin, scrollStripTheme, EditorView.editorAttributes.of({ class: `cm-with-scroll-markers${placeClass}` })];
 }
 
 class ChangeGutterMarker extends GutterMarker {
@@ -172,27 +172,6 @@ const gutterMarkers = {
   deletedAtEnd: new ChangeGutterMarker("deleted", true),
   conflict: new ChangeGutterMarker("conflict"),
 };
-
-const gutterTheme = EditorView.theme({
-  ".cm-change-gutter": { width: "var(--change-gutter-width)" },
-  ".cm-change-gutter .cm-gutterElement": { position: "relative", padding: "0" },
-  ".cm-change-bar": { position: "absolute", left: "0", width: "var(--change-gutter-bar)", top: "0", bottom: "0" },
-  ".cm-change-bar-added": { background: "var(--diff-added-edge)" },
-  ".cm-change-bar-modified": { background: "var(--diff-modified-edge)" },
-  ".cm-change-bar-conflict": { background: "var(--danger)" },
-  // Deletions sit between lines: a small wedge on the next line's top edge.
-  ".cm-change-bar-deleted": {
-    bottom: "auto",
-    height: "0",
-    width: "0",
-    top: "calc(-1 * var(--change-gutter-deleted-half))",
-    borderTop: "var(--change-gutter-deleted-half) solid transparent",
-    borderBottom: "var(--change-gutter-deleted-half) solid transparent",
-    borderLeft: "var(--change-gutter-deleted-depth) solid var(--danger)",
-  },
-  ".cm-change-bar-deleted.at-end": { top: "auto", bottom: "calc(-1 * var(--change-gutter-deleted-half))" },
-  ".cm-change-clickable .cm-change-bar:not(.cm-change-bar-conflict)": { cursor: "pointer" },
-});
 
 /** Gutter markers for `marks` (0-based line ranges) in `doc`. */
 export function buildGutterSet(doc: EditorState["doc"], marks: readonly ChangeMark[]): RangeSet<GutterMarker> {
@@ -289,6 +268,6 @@ export function changeGutter(source: MarkSource = fieldSource, onBarClick?: (lin
       markers: (view) => markers(view.state),
       domEventHandlers: clicks,
     }),
-    gutterTheme,
+    changeGutterTheme,
   ];
 }

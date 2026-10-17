@@ -86,7 +86,7 @@
   style:flex={shownHeight && "none"}
 >
   {@render header?.()}
-  {@render banners?.()}
+  <div class="banners">{@render banners?.()}</div>
   <div class="body" bind:clientWidth={bodyWidth}>
     {#if leftBar}
       <div class="bar" bind:clientWidth={leftBarWidth}>{@render leftBar()}</div>
@@ -242,6 +242,14 @@
       transparent 100%
     );
     background-repeat: no-repeat;
+  }
+
+  /* Banners are rounded panels too, a gap from the window's edges and from the panels under them. */
+  .rounded .banners > :global(*) {
+    margin: 0 var(--app-shell-panel-gap) var(--app-shell-panel-gap);
+    border: none;
+    border-radius: var(--app-shell-panel-radius);
+    overflow: hidden;
   }
 
   .rounded .body {

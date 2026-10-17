@@ -1,13 +1,13 @@
-// The three read-only editors of a 3-pane diff, built into the library's MergeFrame: a merge commit's parent 1, merge
-// result and parent 2, or the staging view's HEAD, index and work tree. The middle is the hub: scrolling any pane maps
-// its center line through the changes to the others, and the connectors' bands join each side's changes to it.
+// The three read-only editors of a 3-pane diff in the library's MergeFrame: a merge commit's parents and result, or
+// HEAD, index and work tree. The middle is the hub: scrolling any pane maps its center line to the others.
 import { EditorState, type Extension, Text } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import type { ConnectorRibbon } from "@nibtree/ui/components/MergeConnector.svelte";
 import type { MergeFrameParts } from "@nibtree/ui/components/MergeFrame.svelte";
-import { changeMarkField, scrollMarkers, setChangeMarks } from "$lib/editor/scrollMarkers";
+import { changeMarkField } from "$lib/editor/scrollMarkers";
 import { baseExtensions, editorLanguage } from "$lib/editor/setup";
-import { type LineMark, setSideMarks, sideExtensions } from "$lib/merge/extensions";
+import { type LineMark, sideExtensions } from "$lib/merge/extensions";
+import { markEffects, type PaneActions, paneChrome } from "./threeWayGutters";
 import { lineAtCenter, scrollToLine } from "$lib/merge/mergeScroll";
 import { type Anchor, invertAnchors, mapLine } from "$lib/merge/model";
 import type { FileDiff, LineRange, LineSelection } from "$lib/types";
@@ -28,7 +28,6 @@ import {
   type ParentSide,
   resultFolds,
   resultMarks,
-  rulerMarks,
   takeChange,
   threeWayChanges,
   type ThreeWayChange,
@@ -48,6 +47,7 @@ export interface ThreeWayBuild {
   /** The middle pane's scroll position to start at, after a rebuild (staging a change rebuilds the view). */
   scrollTop?: number | null;
   blame?: ThreeWayBlame | null;
+  actions?: PaneActions;
 }
 
 export class ThreeWayEditors {
@@ -121,12 +121,12 @@ export class ThreeWayEditors {
         state: EditorState.create({
           doc: texts[name],
           extensions: [
-            baseExtensions({ readOnly: true, kind: "merge" }),
+            baseExtensions({ readOnly: true, kind: "merge", lineNumbers: false }),
             language,
             sideExtensions(),
             [diffTheme, toneColors],
             changeMarkField,
-            scrollMarkers(),
+            paneChrome(name, request.actions ?? {}),
             navigation,
             geometry,
             foldsOf(name),
@@ -143,7 +143,7 @@ export class ThreeWayEditors {
     };
     for (const name of ["left", "result", "right"] as const) {
       const view = this.#views[name];
-      view.dispatch({ effects: [setSideMarks.of(marksOf[name]), setChangeMarks.of(rulerMarks(marksOf[name]))] });
+      view.dispatch({ effects: markEffects(name, marksOf[name]) });
       view.scrollDOM.addEventListener("scroll", () => this.#follow(name), { passive: true });
     }
     this.blameView = startBlame(this.#views, request.blame ?? null, left, right);

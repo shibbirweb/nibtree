@@ -8,6 +8,7 @@
     defaultPreferences,
     DIFF_LAYOUT_CHOICES,
     DIFF_PANES_CHOICES,
+    MERGE_LAYOUT_CHOICES,
     settings,
   } from "$lib/stores/settings.svelte";
   import { terminalStore } from "$lib/terminal/terminalStore.svelte";
@@ -93,6 +94,18 @@
     options={DIFF_PANES_CHOICES}
     value={settings.mergeDiffPanes}
     onchange={(panes) => set("mergeDiffPanes", panes)}
+  />
+</SettingsRow>
+<SettingsRow title="Merge tool layout">
+  {#snippet hintContent()}
+    Columns shows yours, the result and theirs side by side. Stacked shows yours and theirs on top and the result below.
+    The buttons in the merge tool's toolbar switch it too.
+  {/snippet}
+  <Segmented
+    label="Merge tool layout"
+    options={MERGE_LAYOUT_CHOICES}
+    value={settings.mergeLayout}
+    onchange={(layout) => set("mergeLayout", layout)}
   />
 </SettingsRow>
 <SettingsRow title="Ignore whitespace in the merge tool" toggle>

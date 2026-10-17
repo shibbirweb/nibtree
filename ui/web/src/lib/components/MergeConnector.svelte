@@ -48,7 +48,9 @@
   /** Unique per connector, so the gradients of several diffs on screen never mix. */
   const gradient = $props.id();
 
-  const width = componentTokens.mergeView.gap;
+  /** Narrow when it draws ribbons alone: the buttons then sit in the panes' gutters, or there are none. */
+  const buttons = $derived(Boolean(onapply || onignore || onrevert));
+  const width = $derived(buttons ? componentTokens.mergeView.gap : componentTokens.mergeView.ribbonGap);
   const { buttonHeight, buttonInset } = componentTokens.mergeView;
   let height = $state(0);
 
@@ -61,7 +63,7 @@
   }
 </script>
 
-<div class="connector" bind:clientHeight={height}>
+<div class="connector" class:narrow={!buttons} bind:clientHeight={height}>
   <svg {width} aria-hidden="true">
     {#if colors !== "kinds"}
       <defs>
@@ -84,7 +86,7 @@
       />
     {/each}
   </svg>
-  {#if onapply || onignore || onrevert}
+  {#if buttons}
     {#each ribbons as ribbon (ribbon.index)}
       <!-- Apply sits next to its own pane: first on the left, last on the right. -->
       <div class="buttons {side}" style:top="{buttonTop(side === 'left' ? ribbon.aTop : ribbon.bTop)}px">
@@ -133,6 +135,10 @@
     position: relative;
     overflow: hidden;
     background: var(--editor-bg);
+  }
+
+  .connector.narrow {
+    width: var(--merge-view-ribbon-gap);
   }
 
   svg {

@@ -5,11 +5,10 @@
 
 import { type Chunk, getChunks, mergeViewSiblings } from "@codemirror/merge";
 import { type EditorState, type Extension, Facet, StateEffect, StateField } from "@codemirror/state";
-import { Decoration, type DecorationSet, EditorView, WidgetType } from "@codemirror/view";
-import { scales } from "@nibtree/ui/tokens";
+import { Decoration, type DecorationSet, EditorView } from "@codemirror/view";
+import { FoldRowWidget, type FoldRowHandlers, foldRowTheme } from "@nibtree/ui/editor/foldRow";
 import { type FoldEdge, type FoldRange, FOLD_STEP, foldEdges, foldRanges, revealFold } from "./foldModel";
 import { scopeLabelAt } from "./foldScope";
-import { iconSvg } from "./mergeExtensions";
 
 /** Every fold field of an editor, so the folds on screen can be read (tests). */
 const foldFields = Facet.define<StateField<DecorationSet>>();
@@ -54,77 +53,24 @@ function stepFold(view: EditorView, pos: number, edge: FoldEdge): void {
   }
 }
 
-function edgeButton(view: EditorView, element: HTMLElement, edge: "top" | "bottom"): HTMLElement {
-  const button = document.createElement("button");
-  const title =
-    edge === "top" ? `Show ${FOLD_STEP} more lines at the top` : `Show ${FOLD_STEP} more lines at the bottom`;
-  button.className = "cm-diffFoldStep";
-  button.title = title;
-  button.setAttribute("aria-label", title);
-  button.appendChild(iconSvg(edge === "top" ? "chevron-up" : "chevron-down", scales.iconSize.compact));
-  button.appendChild(document.createTextNode(`${FOLD_STEP} lines`));
-  button.addEventListener("click", (event) => {
-    event.stopPropagation();
-    stepFold(view, view.posAtDOM(element), edge);
-  });
-  return button;
-}
-
-/**
- * A fold names the code after it ("Api > DistrictController > store()"), over a wavy line;
- * code outside any declaration shows the count. `labelLine` is the line the name is read at.
- */
-class FoldWidget extends WidgetType {
-  constructor(
-    readonly count: number,
-    readonly top: boolean,
-    readonly bottom: boolean,
-    readonly labelLine: number,
-  ) {
-    super();
-  }
-
-  eq(other: FoldWidget): boolean {
-    return (
-      other.count === this.count &&
-      other.top === this.top &&
-      other.bottom === this.bottom &&
-      other.labelLine === this.labelLine
-    );
-  }
-
-  toDOM(view: EditorView): HTMLElement {
-    const element = document.createElement("div");
-    element.className = "cm-diffFold";
-    if (this.top) {
-      element.appendChild(edgeButton(view, element, "top"));
-    }
-    const label = document.createElement("span");
-    label.className = "cm-diffFoldLabel";
-    label.textContent = scopeLabelAt(view.state, this.labelLine) ?? `${this.count} unchanged lines`;
-    element.title = `${this.count} unchanged lines, click to show them`;
-    const wave = document.createElement("span");
-    wave.className = "cm-diffFoldWave";
-    element.append(label, wave);
-    if (this.bottom) {
-      element.appendChild(edgeButton(view, element, "bottom"));
-    }
-    element.addEventListener("click", () => {
-      stepFold(view, view.posAtDOM(element), "all");
-    });
-    return element;
-  }
-
-  ignoreEvent(): boolean {
-    return true;
-  }
-}
+/** The fold row's labels and clicks: the scope it hides, and steps sent to this editor and its sibling. */
+const foldRowHandlers: FoldRowHandlers = {
+  label: (view, labelLine) => scopeLabelAt(view.state, labelLine),
+  open: (view, row, edge) => stepFold(view, view.posAtDOM(row), edge),
+};
 
 function foldDecoration(state: EditorState, range: FoldRange) {
   const edges = foldEdges(range, state.doc.lines);
   const labelLine = Math.min(range.last + 1, state.doc.lines);
   return Decoration.replace({
-    widget: new FoldWidget(range.last - range.first + 1, edges.top, edges.bottom, labelLine),
+    widget: new FoldRowWidget(
+      range.last - range.first + 1,
+      edges.top,
+      edges.bottom,
+      labelLine,
+      FOLD_STEP,
+      foldRowHandlers,
+    ),
     block: true,
   }).range(state.doc.line(range.first).from, state.doc.line(range.last).to);
 }
@@ -240,10 +186,10 @@ export function splitFolds(): Extension {
       other.dispatch({ effects: opened.map((from) => foldStep.of({ pos: mapPos(from, chunks, isA), edge: "all" })) });
     });
   });
-  return [field, follow];
+  return [field, follow, foldRowTheme];
 }
 
 /** Folds for the inline diff, from its runs of unchanged lines. */
 export function inlineFolds(ranges: readonly FoldRange[]): Extension {
-  return foldField(() => ranges);
+  return [foldField(() => ranges), foldRowTheme];
 }

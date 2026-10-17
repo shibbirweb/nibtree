@@ -3,8 +3,12 @@
 
 import { invertedEffects } from "@codemirror/commands";
 import { Prec, StateEffect, StateField, type Extension, type Range, type Text } from "@codemirror/state";
-import { Decoration, type DecorationSet, EditorView, keymap } from "@codemirror/view";
+import { Decoration, type DecorationSet, EditorView, gutterLineClass, keymap } from "@codemirror/view";
+import { chunkGutterClasses, type GutterChunk, paneGutters, setGutterChunks } from "@nibtree/ui/editor/mergeGutters";
+import { mergeGutterTheme, noVerticalScrollbar } from "@nibtree/ui/editor/mergeGutterTheme";
+import { mergeTheme } from "@nibtree/ui/editor/theme";
 import type { LineRange } from "$lib/types";
+import { scrollMarkers } from "$lib/editor/scrollMarkers";
 import type { TextSpan } from "./inline";
 import {
   changeType,
@@ -57,6 +61,8 @@ export interface LineMark {
   inline?: TextSpan[] | null;
   /** The older or newer side of its change, for the 3-pane diff's red and green; the merge tool leaves it out. */
   tone?: "old" | "new" | null;
+  /** The merge chunk it shows, for its buttons in the gutter. */
+  chunkId?: number;
 }
 
 const inlineMarks = {
@@ -118,6 +124,7 @@ export function sideMarks(
       range: sideRange(chunk, side),
       type: changeType(chunk, side),
       inline: inlineFor?.(chunk) ?? null,
+      chunkId: chunk.id,
     }));
 }
 
@@ -125,49 +132,82 @@ const resultDecorations = EditorView.decorations.compute([chunkField, "doc"], (s
   lineDecorations(state.doc, resultMarks(state.field(chunkField))),
 );
 
+/** The marks as gutter rows, so a change's color runs through the line numbers too; `index` is the chunk's id. */
+export function gutterChunks(marks: LineMark[]): GutterChunk[] {
+  return marks.map((mark, index) => ({
+    index: mark.chunkId ?? index,
+    kind: mark.type,
+    start: mark.range.start,
+    end: mark.range.end,
+    tone: mark.tone ?? null,
+  }));
+}
+
+const resultGutters = gutterLineClass.compute([chunkField, "doc"], (state) =>
+  chunkGutterClasses(state.doc, gutterChunks(resultMarks(state.field(chunkField)))),
+);
+
 export const setSideMarks = StateEffect.define<LineMark[]>();
 
-const sideMarkField = StateField.define<DecorationSet>({
-  create: () => Decoration.none,
+const sideMarkField = StateField.define<{ lines: DecorationSet; gutters: ReturnType<typeof chunkGutterClasses> }>({
+  create: (state) => ({ lines: Decoration.none, gutters: chunkGutterClasses(state.doc, []) }),
   update(value, tr) {
     for (const effect of tr.effects) {
       if (effect.is(setSideMarks)) {
-        return lineDecorations(tr.state.doc, effect.value);
+        return {
+          lines: lineDecorations(tr.state.doc, effect.value),
+          gutters: chunkGutterClasses(tr.state.doc, gutterChunks(effect.value)),
+        };
       }
     }
     return value;
   },
-  provide: (field) => EditorView.decorations.from(field),
-});
-
-const mergeTheme = EditorView.theme({
-  ".cm-mc-line.cm-mc-modified": { backgroundColor: "var(--diff-modified)", "--mc-edge": "var(--diff-modified-edge)" },
-  ".cm-mc-line.cm-mc-added": { backgroundColor: "var(--diff-added)", "--mc-edge": "var(--diff-added-edge)" },
-  ".cm-mc-line.cm-mc-deleted": { backgroundColor: "var(--diff-deleted)", "--mc-edge": "var(--diff-deleted-edge)" },
-  ".cm-mc-line.cm-mc-conflict": { backgroundColor: "var(--diff-conflict)", "--mc-edge": "var(--diff-conflict-edge)" },
-  ".cm-mc-first": { boxShadow: "inset 0 1px 0 var(--mc-edge)" },
-  ".cm-mc-last": { boxShadow: "inset 0 -1px 0 var(--mc-edge)" },
-  ".cm-mc-single": { boxShadow: "inset 0 1px 0 var(--mc-edge), inset 0 -1px 0 var(--mc-edge)" },
-  ".cm-mc-edge-modified": { "--mc-edge": "var(--diff-modified-edge)" },
-  ".cm-mc-edge-added": { "--mc-edge": "var(--diff-added-edge)" },
-  ".cm-mc-edge-deleted": { "--mc-edge": "var(--diff-deleted-edge)" },
-  ".cm-mc-edge-conflict": { "--mc-edge": "var(--diff-conflict-edge)" },
-  ".cm-mc-inline": { backgroundColor: "var(--diff-inline)", borderRadius: "var(--merge-view-inline-radius)" },
-  ".cm-mc-gap-before": { boxShadow: "inset 0 var(--merge-view-gap-edge) 0 var(--mc-edge)" },
-  ".cm-mc-gap-after": { boxShadow: "inset 0 calc(-1 * var(--merge-view-gap-edge)) 0 var(--mc-edge)" },
-  // Keep the active-line tint from hiding chunk colors.
-  ".cm-activeLine.cm-mc-line": {
-    backgroundImage: "linear-gradient(var(--editor-active-line), var(--editor-active-line))",
-    backgroundBlendMode: "multiply",
-  },
+  provide: (field) => [
+    EditorView.decorations.from(field, (value) => value.lines),
+    gutterLineClass.from(field, (value) => value.gutters),
+  ],
 });
 
 export function resultExtensions(initial: ChunkState[]): Extension[] {
-  return [chunkField.init(() => initial), chunkHistory, resultDecorations, mergeTheme];
+  return [chunkField.init(() => initial), chunkHistory, resultDecorations, resultGutters, mergeTheme, mergeGutterTheme];
 }
 
 export function sideExtensions(): Extension[] {
-  return [sideMarkField, mergeTheme];
+  return [sideMarkField, mergeTheme, mergeGutterTheme];
+}
+
+/** What a side's chunk buttons call: the merge session. */
+export interface ChunkActionTarget {
+  apply(chunkId: number, side: SideName): void;
+  ignore(chunkId: number, side: SideName): void;
+}
+
+/**
+ * A merge side's gutters: its line numbers next to the result (ours has them on its right) and its chunks' Apply and
+ * Ignore buttons beside them, never over a number; ours keeps its ruler at its outer edge and no vertical scrollbar,
+ * so a band runs unbroken into the connector. The rows take their color from `sideExtensions`.
+ */
+export function sideGutters(side: SideName, target: ChunkActionTarget): Extension[] {
+  const name = side === "ours" ? "left" : "right";
+  const gutters = paneGutters(
+    side === "ours" ? "after" : "before",
+    {
+      apply: (chunkId) => target.apply(chunkId, side),
+      ignore: (chunkId) => target.ignore(chunkId, side),
+      toward: side === "ours" ? "right" : "left",
+      applyTitle: () => `Apply ${name} change`,
+      ignoreTitle: `Ignore ${name} change`,
+    },
+    false,
+  );
+  return side === "ours"
+    ? [gutters, scrollMarkers(undefined, "start"), noVerticalScrollbar]
+    : [gutters, scrollMarkers(undefined, "end")];
+}
+
+/** The side marks and their gutter buttons for a side editor. */
+export function sideMarkEffects(marks: LineMark[]) {
+  return [setSideMarks.of(marks), setGutterChunks.of(gutterChunks(marks))];
 }
 
 /**

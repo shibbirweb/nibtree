@@ -34,7 +34,8 @@ flowchart LR
 
 | File | What it does |
 | --- | --- |
-| `src/lib/editor/cursor.ts` | `cursorOptions`, `cursorThemeSpec`, `cursorTracker`, `editorCursor`, `setEditorCursor` |
+| `src/lib/editor/cursor.ts` | `cursorOptions`, `cursorTracker`, `editorCursor`, `setEditorCursor` |
+| `ui/web/src/lib/editor/cursorStyle.ts` | `cursorThemeSpec`: every shape and blink as styles (the library) |
 | `src/lib/editor/setup.ts` | Adds `editorCursor(cursorOptions(settings))` and `drawRoundedSelection()` to every editor, diff and merge pane |
 | `ui/web/src/lib/editor/selection.ts` | `drawRoundedSelection` and `outerCorners`, also used by the library's `CodeEditor` |
 | `src/lib/App.svelte` | The effect that applies changed cursor settings |
@@ -57,7 +58,7 @@ flowchart LR
 
 ## Tests
 
-- `src/lib/editor/cursor.test.ts`: each shape, the width and thin styles, the extra height, smooth movement, the layer blink turned off, the two keyframe copies and each blinking mode.
+- `ui/web/src/lib/editor/cursorStyle.test.ts`: each shape, the width and thin styles, the extra height, smooth movement, the layer blink turned off, the two keyframe copies and each blinking mode.
 - `ui/web/src/lib/editor/selection.test.ts`: which corners are rounded for one line, three boxes, lines that only touch at a point, lines that overlap and boxes a pixel apart.
 - `src/lib/stores/settingsData.test.ts`: defaults and the clamping of hand-edited cursor values.
 

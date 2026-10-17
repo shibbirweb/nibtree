@@ -1,13 +1,16 @@
 <!-- The 3-way merge view: your version, the result and their version side by side, chunks tinted by kind
-     (modified, added, deleted, conflict), ribbons joining them across the gaps with Apply and Ignore buttons. The
-     result is editable; scrolling one pane scrolls the others. The app computes the chunks and applies them. -->
+     (modified, added, deleted, conflict) through the text and the line numbers, ribbons joining them across the
+     gaps. Each side's numbers face the result, with its chunks' Apply and Ignore buttons beside them. The result is
+     editable; scrolling one pane scrolls the others. The app computes the chunks and applies them. -->
 <script lang="ts">
   import { syntaxHighlighting } from "@codemirror/language";
   import { EditorState, type Extension } from "@codemirror/state";
   import { EditorView, lineNumbers } from "@codemirror/view";
   import { classHighlighter } from "@lezer/highlight";
   import { onDestroy } from "svelte";
-  import { chunkDecorations, setChunks, type ChunkSide } from "../editor/chunks";
+  import { chunkDecorations, gutterChunksOf, setChunks, type ChunkSide } from "../editor/chunks";
+  import { paneGutters, setGutterChunks, type ChunkActions } from "../editor/mergeGutters";
+  import { mergeGutterTheme } from "../editor/mergeGutterTheme";
   import { languageSupport, type CodeLanguage } from "../editor/languages";
   import { editorTheme, mergeTheme } from "../editor/theme";
   import type { MergeChunk } from "../logic/mergeGeometry";
@@ -96,6 +99,28 @@
     requestAnimationFrame(measure);
   }
 
+  /** A side's gutters: numbers next to the result, and its chunks' Apply and Ignore beside them. */
+  function sideGutters(side: "left" | "right"): Extension {
+    const actions: ChunkActions | null =
+      onapply || onignore
+        ? {
+            apply: onapply ? (index) => onapply(index, side) : undefined,
+            ignore: onignore ? (index) => onignore(index, side) : undefined,
+            toward: side === "left" ? "right" : "left",
+            applyTitle: () => `Apply ${side} change`,
+            ignoreTitle: `Ignore ${side} change`,
+          }
+        : null;
+    return paneGutters(side === "left" ? "after" : "before", actions, false);
+  }
+
+  /** The chunk effects for a pane: its tints, and for a side its gutter buttons. */
+  function chunkEffects(side: ChunkSide, next: MergeChunk[]) {
+    return side === "result"
+      ? [setChunks.of(next)]
+      : [setChunks.of(next), setGutterChunks.of(gutterChunksOf(next, side))];
+  }
+
   /** The frame's panes are in the page: an editor goes into each. */
   async function build(parts: MergeFrameParts): Promise<void> {
     panesEl = parts.panes;
@@ -109,10 +134,11 @@
         parent: host,
         doc: side === "left" ? left : side === "right" ? right : result,
         extensions: [
-          lineNumbers(),
+          side === "result" ? lineNumbers() : sideGutters(side),
           syntaxHighlighting(classHighlighter),
           editorTheme,
           mergeTheme,
+          mergeGutterTheme,
           support,
           chunkDecorations(side, chunks),
           side === "result" ? [] : [EditorState.readOnly.of(true), EditorView.editable.of(false)],
@@ -129,14 +155,17 @@
         ],
       });
       views[side].scrollDOM.addEventListener("scroll", () => syncScroll(side));
+      if (side !== "result") {
+        views[side].dispatch({ effects: setGutterChunks.of(gutterChunksOf(chunks, side)) });
+      }
     }
     requestAnimationFrame(measure);
   }
 
   $effect(() => {
     const next = chunks;
-    for (const view of Object.values(views)) {
-      view?.dispatch({ effects: setChunks.of(next) });
+    for (const side of ["left", "result", "right"] as const) {
+      views[side]?.dispatch({ effects: chunkEffects(side, next) });
     }
     requestAnimationFrame(measure);
   });
@@ -144,14 +173,4 @@
   onDestroy(() => Object.values(views).forEach((view) => view?.destroy()));
 </script>
 
-<MergeFrame
-  {label}
-  {labels}
-  {fileName}
-  {height}
-  {leftRibbons}
-  {rightRibbons}
-  {onapply}
-  {onignore}
-  onready={(parts) => void build(parts)}
-/>
+<MergeFrame {label} {labels} {fileName} {height} {leftRibbons} {rightRibbons} onready={(parts) => void build(parts)} />

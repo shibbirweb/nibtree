@@ -288,6 +288,9 @@ describe("parsePreferences", () => {
     expect(parsePreferences({ fileIcons: "material" }).preferences.fileIcons).toBe("material");
     expect(parsePreferences({ fileIcons: "minimal" }).preferences.fileIcons).toBe("minimal");
     expect(parsePreferences({ fileIcons: true }).preferences.fileIcons).toBe("off");
+    expect(defaultPreferences.mergeLayout).toBe("columns");
+    expect(parsePreferences({ mergeLayout: "stacked" }).preferences.mergeLayout).toBe("stacked");
+    expect(parsePreferences({ mergeLayout: "rows" }).preferences.mergeLayout).toBe("columns");
     expect(defaultPreferences.roundedPanels).toBe(false);
     expect(parsePreferences({ roundedPanels: true }).preferences.roundedPanels).toBe(true);
     expect(parsePreferences({ roundedPanels: "yes" }).preferences.roundedPanels).toBe(false);
@@ -642,6 +645,10 @@ describe("parseState", () => {
     expect(parseState({ threePaneSplit: [0.2, 0.6] }).state.threePaneSplit).toEqual([0.2, 0.6]);
     expect(parseState({ threePaneSplit: [0.6, 0.2] }).state.threePaneSplit).toEqual([1 / 3, 2 / 3]);
     expect(parseState({ threePaneSplit: "wide" }).state.threePaneSplit).toEqual([1 / 3, 2 / 3]);
+    expect(parseState({}).state.mergeStackHeight).toBe(0);
+    expect(parseState({ mergeStackHeight: 420 }).state.mergeStackHeight).toBe(420);
+    expect(parseState({}).state.mergeStackRatio).toBe(0.5);
+    expect(parseState({ mergeStackRatio: 0.95 }).state.mergeStackRatio).toBe(0.85);
   });
 
   it("shows both activity bars unless state.json says otherwise", () => {

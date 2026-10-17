@@ -36,7 +36,7 @@ The arrow on a band is **Stage this change** (Changes) or **Unstage this change*
 
 ## Fold labels
 
-A fold names the code after it: `FoldWidget` (`foldField.ts`) reads `scopeLabelAt(state, line)` (`foldScope.ts`) for the line below the fold. That uses sticky scroll's `scopeSource` (the syntax tree, markdown headings or indentation) for the enclosing blocks, takes each block's first line (or the line before a lone `{`), and `foldLabel.ts` turns them into names: `class Cart` is `Cart`, `public function store(` is `store()`, and blocks such as `if` drop out. A PHP `namespace` or Java `package` line leads the label. With no named block the bar shows the count. The wavy line is a CSS mask, so it takes the theme's `--border-strong`. The 3-pane merge diff folds the same runs in all panes and mirrors each step (`foldStep`) to the others.
+A fold names the code after it: the library's `FoldRowWidget` (`editor/foldRow.ts`, drawn for `foldField.ts`) reads `scopeLabelAt(state, line)` (`foldScope.ts`) for the line below the fold. That uses sticky scroll's `scopeSource` (the syntax tree, markdown headings or indentation) for the enclosing blocks, takes each block's first line (or the line before a lone `{`), and `foldLabel.ts` turns them into names: `class Cart` is `Cart`, `public function store(` is `store()`, and blocks such as `if` drop out. A PHP `namespace` or Java `package` line leads the label. With no named block the bar shows the count. The wavy line is a CSS mask, so it takes the theme's `--border-strong`. The 3-pane merge diff folds the same runs in all panes and mirrors each step (`foldStep`) to the others.
 
 ## Where the code lives
 
@@ -48,17 +48,19 @@ A fold names the code after it: `FoldWidget` (`foldField.ts`) reads `scopeLabelA
 | `src/lib/diff/foldLabel.ts`, `foldScope.ts` | Fold labels |
 | `ui/web/src/lib/components/DiffFrame.svelte` | `ribbons`, `applySide`, `onapply`, `applyTitle`; one scroller per side |
 | `ui/web/src/lib/components/MergeConnector.svelte` | The bands and their optional buttons |
+| `ui/web/src/lib/editor/splitGutters.ts` (`splitPaneGutters`) | Colored number rows, numbers facing the middle, the change buttons |
 
 ## Design decisions
 
 - **Keep MergeView.** Writing our own two-editor diff would mean rebuilding highlights, the gutter and the chunk updates on edits. Turning off one private method is a small, contained dependency; a `@codemirror/merge` update that renames `measure` brings the padding back but breaks nothing else.
 - **Center line sync.** Mapping the center keeps the change you look at level on both sides, even inside a long added block.
-- **Arrows on the bands.** The stage button belongs to the change it moves, so the old arrows column is gone.
+- **Buttons beside the line numbers.** A change's stage, unstage, apply and revert buttons sit in its side's gutter on its first line (the library's `splitPaneGutters` in `editor/splitGutters.ts`, built on `editor/mergeGutters.ts`), next to the numbers but never over them. The old side's numbers move to its right edge (`sideLineNumbers("after")`) and each change's color runs through the numbers (`splitGutterColors`, from `getChunks`), so a band reads as one shape from text to text. With no buttons on it, the connector is narrow, and only the new side keeps a vertical scrollbar. The merge tool and the three-pane diffs draw the same way.
 
 ## Tests
 
 - `src/lib/diff/foldLabel.test.ts`: names of classes, functions, methods and headings, skipped control blocks, namespaces.
 - `src/lib/diff/splitChunks.test.ts`: changed, added and removed lines, changes at the end of the text, anchors, and staging and unstaging edits checked against the other side's text.
+- `ui/web/src/lib/editor/splitGutters.test.ts`: each side's rows of a changed, added or removed block.
 - The look and the scrolling need a visual check: `diff-view`, `diff-hunk-staging`, `commit-tab` and `color-theme-high-contrast` in `scripts/screenshots.ts`.
 
 ## Keeping this page in sync

@@ -25,6 +25,7 @@ import {
   topLineForDrag,
   windowCovers,
 } from "./minimapModel";
+import { minimapTheme } from "@nibtree/ui/editor/overlayThemes";
 
 /** Gap left of the painted text. */
 const LEFT_PAD = 4;
@@ -41,45 +42,6 @@ interface MinimapMeasure {
   /** scrollTop of the scroller at the top of the document, to scroll to a line without a transaction. */
   documentOffset: number;
 }
-
-const theme = EditorView.theme({
-  "&.cm-with-minimap .cm-scroller": { marginRight: "var(--minimap-width)" },
-  "&.cm-with-minimap.cm-with-scroll-markers .cm-scroller": {
-    marginRight: "calc(var(--minimap-width) + var(--scroll-markers-width))",
-  },
-  ".cm-gm-minimap": {
-    position: "absolute",
-    right: "0",
-    width: "var(--minimap-width)",
-    zIndex: "4",
-    overflow: "hidden",
-    backgroundColor: "var(--editor-bg)",
-    borderLeft: "1px solid color-mix(in srgb, var(--border-strong) 60%, transparent)",
-    boxSizing: "border-box",
-  },
-  "&.cm-with-scroll-markers .cm-gm-minimap": { right: "var(--scroll-markers-width)" },
-  ".cm-gm-minimap canvas": {
-    position: "absolute",
-    left: "0",
-    top: "0",
-  },
-  ".cm-gm-minimap-slider": {
-    position: "absolute",
-    left: "0",
-    right: "0",
-    backgroundColor: "color-mix(in srgb, var(--text) 9%, transparent)",
-  },
-  ".cm-gm-minimap:hover .cm-gm-minimap-slider": {
-    backgroundColor: "color-mix(in srgb, var(--text) 14%, transparent)",
-  },
-  ".cm-gm-minimap-slider.dragging": {
-    backgroundColor: "color-mix(in srgb, var(--text) 20%, transparent)",
-  },
-  ".cm-gm-minimap-probe": {
-    position: "absolute",
-    visibility: "hidden",
-  },
-});
 
 /** Syntax styles of `from` to `to`, in order. */
 function styledRanges(state: EditorState, from: number, to: number): StyledRange[] {
@@ -347,5 +309,5 @@ const plugin = ViewPlugin.fromClass(
 );
 
 export function minimap(): Extension {
-  return [plugin, theme, EditorView.editorAttributes.of({ class: "cm-with-minimap" })];
+  return [plugin, minimapTheme, EditorView.editorAttributes.of({ class: "cm-with-minimap" })];
 }

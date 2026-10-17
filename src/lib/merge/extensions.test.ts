@@ -2,7 +2,7 @@ import { defaultKeymap } from "@codemirror/commands";
 import { EditorState } from "@codemirror/state";
 import { type EditorView, keymap } from "@codemirror/view";
 import { describe, expect, it } from "vitest";
-import { applyKeymap } from "./extensions";
+import { applyKeymap, gutterChunks } from "./extensions";
 
 function modEnterBindings(state: EditorState) {
   return state
@@ -33,5 +33,15 @@ describe("applyKeymap", () => {
     const [binding] = modEnterBindings(EditorState.create({ extensions: applyKeymap(() => undefined) }));
     expect(binding.scope?.split(" ")).toEqual(["editor", "search-panel"]);
     expect(binding.preventDefault).toBe(true);
+  });
+});
+
+describe("gutterChunks", () => {
+  it("indexes a side's buttons by chunk id, and the 3-pane diff's by their place", () => {
+    const range = { start: 2, end: 4 };
+    expect(gutterChunks([{ range, type: "conflict", chunkId: 7 }])).toEqual([
+      { index: 7, kind: "conflict", start: 2, end: 4, tone: null },
+    ]);
+    expect(gutterChunks([{ range, type: "added", tone: "new" }])[0]).toMatchObject({ index: 0, tone: "new" });
   });
 });

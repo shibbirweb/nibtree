@@ -1,18 +1,19 @@
 <!-- The merge tool over the whole window, opened from a conflicted file: loads the conflict, offers whole-file
      choices for binary and deleted files, and otherwise shows MergeEditor. -->
 <script lang="ts">
+  import AppHeader from "@nibtree/ui/components/AppHeader.svelte";
   import Button from "@nibtree/ui/components/Button.svelte";
   import CodeBlock from "@nibtree/ui/components/CodeBlock.svelte";
   import EmptyState from "@nibtree/ui/components/EmptyState.svelte";
   import IconButton from "@nibtree/ui/components/IconButton.svelte";
   import Stack from "@nibtree/ui/components/Stack.svelte";
   import Text from "@nibtree/ui/components/Text.svelte";
-  import Toolbar from "@nibtree/ui/components/Toolbar.svelte";
   import WindowLayer from "@nibtree/ui/components/WindowLayer.svelte";
   import { onMount } from "svelte";
   import { api, errorMessage } from "$lib/api";
   import { repoStore } from "$lib/stores/repo.svelte";
   import { settings } from "$lib/stores/settings.svelte";
+  import { windowChrome } from "$lib/stores/windowChrome.svelte";
   import type { MergeDocument, Side } from "$lib/types";
   import Icon from "@nibtree/ui/components/Icon.svelte";
   import MergeEditor from "./MergeEditor.svelte";
@@ -102,14 +103,17 @@
 </script>
 
 <WindowLayer label="Merge {conflictPath}">
-  <Toolbar variant="tab" label="Merge">
-    <Icon name="merge" size="regular" tone="dim" />
-    <Text weight="semibold">Merge Revisions for</Text>
-    <Text mono truncate selectable>{conflictPath}</Text>
+  <!-- It covers the window's top bar, so on macOS the window's own buttons sit at its left and it moves the window. -->
+  <AppHeader windowControls={windowChrome.controlsInBar}>
+    {#snippet start()}
+      <Icon name="merge" size="regular" tone="dim" />
+      <Text weight="semibold">Merge Revisions for</Text>
+      <Text mono truncate selectable>{conflictPath}</Text>
+    {/snippet}
     {#snippet end()}
       <IconButton icon="x" iconSize="regular" label="Close merge" title="Close" onclick={close} />
     {/snippet}
-  </Toolbar>
+  </AppHeader>
   <Stack gap="none" grow>
     {#if loadError}
       <EmptyState icon="alert" title="Could not load this conflict.">

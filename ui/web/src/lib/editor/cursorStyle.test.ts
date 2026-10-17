@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BLINK_MS, type CursorOptions, cursorThemeSpec } from "./cursor";
+import { BLINK_MS, type CursorOptions, cursorThemeSpec } from "./cursorStyle";
 
 const CURSOR = ".cm-cursorLayer .cm-cursor";
 

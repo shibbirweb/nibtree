@@ -11,7 +11,9 @@ Group: Editor. Also known as: Diff, Diff host.
 ## When to use
 
 Use when the app builds the diff's CodeMirror editors itself (staging, blame, folds). `onready` hands over the body and
-a find bar container per side; labels, find bars and editors share `ratio`. DiffView is built on it.
+a find bar container per side; labels, find bars and editors share `ratio`. Without `onapply` and `onrevert` the
+connector draws ribbons alone in a narrow gap, as when the sides carry the buttons in their gutters
+(editor/splitGutters.ts). DiffView is built on it.
 
 ## Props
 

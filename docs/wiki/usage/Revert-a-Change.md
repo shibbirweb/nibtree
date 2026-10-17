@@ -8,9 +8,9 @@ You can revert in the Changes diff, in a commit's diff, and in the file editor. 
 
 ![Stage and Revert buttons on a change](../images/revert-change-diff.png)
 
-*The first change of cart.ts with its Revert button (under the pointer) and its Stage arrow on its band.*
+*The first change of cart.ts with its Stage arrow and its Revert button (under the pointer) beside its line number.*
 
-Select a file under **Changes** to open its diff. Each change has two buttons:
+Select a file under **Changes** to open its diff. Each change has two buttons on its first line, beside the working tree's line numbers:
 
 - **«**, **Stage this change**, copies the change into the index (the staging area, what the next commit will hold).
 - The curved arrow next to it, **Revert this change**, puts the staged version of those lines back in your working tree file.
@@ -45,7 +45,7 @@ Conflict blocks have their own bar and are not reverted this way; use the confli
 
 [TODO:revert-change-commit.png]
 
-*A commit's diff in the History panel, with Revert under the pointer and the Apply arrow on the change's band.*
+*A commit's diff in the History panel, with Revert under the pointer and the Apply arrow beside the change's line number.*
 
 Every diff that shows a commit, in the History panel or a commit tab, has two buttons on each change. A branch compare has them too.
 
@@ -58,7 +58,7 @@ Inline, the same buttons sit on the first line of each change. Revert asks first
 
 ### Three panes for a commit
 
-Like the staging view, a commit can show three columns: its **parent**, the **commit** and your **Working Tree**. Pick **Three panes** in the diff toolbar, or **Side by side for commits** in Settings > Git. The bands on the left show the commit's changes, with the same Revert and Apply buttons; the bands on the right show how your file differs from the commit. A merge commit shows parent 1, the merge and parent 2 instead (see [Merge Commits](Merge-Commits.md)).
+Like the staging view, a commit can show three columns: its **parent**, the **commit** and your **Working Tree**. Pick **Three panes** in the diff toolbar, or **Side by side for commits** in Settings > Git. The bands on the left show the commit's changes, with the same Revert and Apply buttons beside the parent's line numbers; the bands on the right show how your file differs from the commit. A merge commit shows parent 1, the merge and parent 2 instead (see [Merge Commits](Merge-Commits.md)).
 
 ## Which version comes back
 

@@ -28,6 +28,18 @@
   border-left: 1px solid var(--border-strong);
 }
 
+.cm-scroll-markers-at-start .cm-scroll-markers {
+  left: 0;
+  right: auto;
+  border-left: none;
+  border-right: 1px solid var(--border-strong);
+}
+
+.cm-scroll-markers-on-text .cm-scroll-markers {
+  background: transparent;
+  border-left: none;
+}
+
 .cm-scroll-mark {
   position: absolute;
   left: var(--scroll-markers-mark-inset);

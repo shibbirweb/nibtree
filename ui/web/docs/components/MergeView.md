@@ -11,7 +11,8 @@ Group: Editor. Also known as: Merge, 3-way merge, Conflict.
 ## When to use
 
 Use for resolving a conflicted file. The app computes the chunks (line ranges in each pane) and applies a chunk when
-`onapply` is called; scrolling one pane scrolls the others. Built on MergeFrame.
+`onapply` is called; scrolling one pane scrolls the others. Each side's line numbers face the result with its Apply and
+Ignore beside them, and a chunk's color runs through the numbers. Built on MergeFrame.
 
 ## Props
 

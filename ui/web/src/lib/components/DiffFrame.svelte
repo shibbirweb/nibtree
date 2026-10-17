@@ -2,8 +2,8 @@
      only while a bar is open, so it never scrolls away with the text), the body the editors go into and the handle
      between the sides. Labels, find bars and editors share `ratio`, so they stay lined up. With `ribbons` (side by
      side), each side scrolls itself and a MergeConnector between them joins every change's lines, with the apply
-     arrow on it when `onapply` is set and a revert button when `onrevert` is; `ruler` leaves room for a change
-     overview at the right. -->
+     arrow on it when `onapply` is set and a revert button when `onrevert` is (without them the gap is narrow, as
+     when the sides draw the buttons in their gutters); `ruler` leaves room for a change overview at the right. -->
 <script module lang="ts">
   export interface DiffFrameParts {
     /** Where the editors go: a MergeView or one EditorView. The connector's ribbons are measured from its top. */
@@ -62,9 +62,10 @@
   let findModified = $state<HTMLDivElement | null>(null);
   const connected = $derived(layout === "split" && ribbons !== null);
   // The editors stop short of the ruler, so the gap's place leaves it out too.
-  const gutter = $derived(
-    connected ? componentTokens.mergeView.gap + (ruler ? componentTokens.diffFrame.ruler : 0) : 0,
-  );
+  // With no buttons on the connector (the app puts them in the sides' gutters) the gap is narrow.
+  const buttons = $derived(Boolean(onapply || onrevert));
+  const gap = $derived(buttons ? componentTokens.mergeView.gap : componentTokens.mergeView.ribbonGap);
+  const gutter = $derived(connected ? gap + (ruler ? componentTokens.diffFrame.ruler : 0) : 0);
 
   // The parts stay the same across layouts, so switching layout never hands out new elements.
   $effect(() => {
@@ -74,7 +75,14 @@
   });
 </script>
 
-<div class="frame" role="region" aria-label={label} style:--diff-left={ratio} style:--diff-right={1 - ratio}>
+<div
+  class="frame"
+  role="region"
+  aria-label={label}
+  style:--diff-left={ratio}
+  style:--diff-right={1 - ratio}
+  style:--diff-gap={buttons ? "var(--merge-view-gap)" : "var(--merge-view-ribbon-gap)"}
+>
   {#if sideLabels}
     <div class="labels" class:connected>
       {#if layout === "inline"}
@@ -158,7 +166,7 @@
   }
 
   .connected .gap {
-    width: var(--merge-view-gap);
+    width: var(--diff-gap);
     background: transparent;
   }
 
@@ -248,7 +256,7 @@
 
   .connected :global(.cm-mergeViewEditors) {
     height: 100%;
-    gap: var(--merge-view-gap);
+    gap: var(--diff-gap);
   }
 
   .connected :global(.cm-mergeViewEditor) {

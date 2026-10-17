@@ -15,6 +15,8 @@
   import type { ParentSide, ThreeWayOptions } from "./threeWay";
   import type { ThreeWayBlame } from "./threeWayBlame";
   import { ThreeWayEditors } from "./threeWayEditors.svelte";
+  import type { PaneActions } from "./threeWayGutters";
+  import type { ChunkActions } from "@nibtree/ui/editor/mergeGutters";
 
   interface Props {
     /** The left pane (original) against the middle (modified). */
@@ -100,6 +102,21 @@
       lineActions?.onrevert(change.lines);
     }
   }
+
+  /** Each side's change buttons, in its gutter beside the line numbers. */
+  const actions = $derived.by((): PaneActions => {
+    const forSide = (side: ParentSide): ChunkActions => ({
+      apply: (index) => apply(index, side),
+      revert: lineActions ? (index) => revert(index, side) : undefined,
+      toward: side === "left" ? "right" : "left",
+      applyTitle: () => (lineActions ? APPLY_TO_WORK_TREE : (applyTitles?.[side] ?? `Apply ${side} change`)),
+      revertTitle: "Revert this change in the working tree",
+    });
+    if (lineActions) {
+      return { [lineActions.side]: forSide(lineActions.side) };
+    }
+    return onapply ? { left: forSide("left"), right: forSide("right") } : {};
+  });
 </script>
 
 <Stack grow gap="none">
@@ -126,17 +143,12 @@
           {labels}
           leftRibbons={editors.leftRibbons}
           rightRibbons={editors.rightRibbons}
-          onapply={onapply || lineActions ? apply : undefined}
-          onrevert={lineActions ? revert : undefined}
-          applyTitles={lineActions ? { left: APPLY_TO_WORK_TREE, right: APPLY_TO_WORK_TREE } : applyTitles}
-          revertTitle="Revert this change in the working tree"
-          actionSides={lineActions ? [lineActions.side] : ["left", "right"]}
           colors={{ left: "oldToNew", right: options.rightNewer ? "oldToNew" : "newToOld" }}
           bind:split={() => settings.threePaneSplit, (split) => (settings.threePaneSplit = split)}
           oncommitsplit={() => settings.save()}
           onready={(parts) => {
             const collapse = diffPrefs.collapseUnchanged;
-            void editors.build({ parts, left, right, path, collapse, options, scrollTop: keptScroll, blame });
+            void editors.build({ parts, left, right, path, collapse, options, scrollTop: keptScroll, blame, actions });
             return () => {
               keptScroll = editors.scrollTop();
               editors.destroy();

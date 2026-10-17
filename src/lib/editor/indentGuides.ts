@@ -5,6 +5,7 @@ import { getIndentUnit } from "@codemirror/language";
 import type { Extension } from "@codemirror/state";
 import { EditorView, layer, RectangleMarker, type ViewUpdate } from "@codemirror/view";
 import { textOrigin } from "./layerGeometry";
+import { indentGuideTheme } from "@nibtree/ui/editor/guideThemes";
 
 /** How far a blank line looks up and down for the code around it. */
 const MAX_BLANK_SCAN = 200;
@@ -185,15 +186,6 @@ function markers(view: EditorView): readonly RectangleMarker[] {
   );
 }
 
-const theme = EditorView.baseTheme({
-  ".cm-gm-indentLayer": {
-    pointerEvents: "none",
-  },
-  ".cm-gm-indentGuide": {
-    borderLeft: "1px solid color-mix(in srgb, var(--text-faint) 38%, transparent)",
-  },
-});
-
 /**
  * Indent guides for an editor. They are a layer above the text, like the cursor, so the
  * active line's background never hides them; they only cross indentation, which is blank.
@@ -211,6 +203,6 @@ export function indentGuides(): Extension {
         update.startState.tabSize !== update.state.tabSize ||
         getIndentUnit(update.startState) !== getIndentUnit(update.state),
     }),
-    theme,
+    indentGuideTheme,
   ];
 }

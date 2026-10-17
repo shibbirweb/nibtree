@@ -78,6 +78,7 @@ const SECTION_ENTRIES: Record<SettingsSection, EntrySpec[]> = {
     ["Diff layout", "side by side inline unified split one column compare view"],
     ["Side by side in Changes", "three 3 two 2 columns panes staged index staging", "Diff layout"],
     ["Side by side for commits", "three 3 two 2 columns panes parents merge result working tree", "Diff layout"],
+    ["Merge tool layout", "columns stacked three panes result below conflicts view"],
     ["Ignore whitespace in the merge tool", "conflicts spaces"],
     ["Show all branches in the log", "history graph remotes"],
     ["Auto fetch", "background fetch remotes"],

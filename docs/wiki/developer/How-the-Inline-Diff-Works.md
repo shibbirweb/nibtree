@@ -56,8 +56,10 @@ Everything outside the editor speaks in new-text lines or old and new lines, so 
 | File | What it does |
 | --- | --- |
 | `src/lib/diff/inlineDoc.ts` | The document, word marks, selection, `applyBlock`, folds, line mapping |
-| `src/lib/diff/inlineView.ts`, `inlineTheme.ts` | `inlineDiffExtensions`: colors, gutters, signs, buttons, folds; the look |
-| `src/lib/diff/foldField.ts`, `foldModel.ts` | The fold bars and their 10 line steps, shared with side by side |
+| `src/lib/diff/inlineView.ts` | `inlineDiffExtensions`: colors, gutters, signs, buttons, folds |
+| `ui/web/src/lib/editor/inlineDiffTheme.ts` | The inline diff's look (the library) |
+| `src/lib/diff/foldField.ts`, `foldModel.ts` | The folds and their 10 line steps, shared with side by side |
+| `ui/web/src/lib/editor/foldRow.ts` | The fold row the folds draw: its buttons, label and wave |
 | `src/lib/diff/DiffToolbar.svelte`, `diffViews.ts` | The toolbar buttons and building either layout |
 | `src/lib/editor/blame.ts`, `blameModel.ts` | `loadBlame` for an inline source, `expandBlame`, `REMOVED_LINE` |
 | `src/lib/editor/setup.ts` | The `lineNumbers` option of `baseExtensions` |

@@ -2,6 +2,7 @@
 // (inlineDoc.ts), built into the body of the library's DiffFrame. Keeps the change count and position, the
 // selection's changed lines, the connector's bands and the overview ruler; DiffView.svelte draws the toolbar.
 import type { MergeView } from "@codemirror/merge";
+import type { ChunkActions } from "@nibtree/ui/editor/mergeGutters";
 import type { Extension } from "@codemirror/state";
 import { EditorView, keymap, panels } from "@codemirror/view";
 import type { DiffFrameParts } from "@nibtree/ui/components/DiffFrame.svelte";
@@ -37,6 +38,8 @@ export interface DiffBuild {
   onRevert?: ((selection: LineSelection) => void) | null;
   /** The inline layout's Apply button on each change of a read-only diff (a commit's change into the work tree). */
   onApply?: ((selection: LineSelection) => void) | null;
+  /** Side by side: the band's buttons, in the gutter of `side`. */
+  bands?: { side: "left" | "right"; actions: ChunkActions } | null;
 }
 
 export class DiffEditors {
