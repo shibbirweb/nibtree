@@ -34,6 +34,9 @@
     "ui:mcp": "bun ui/mcp/server.ts",
     "ui:themes": "bun --bun ui/web/scripts/themes.ts",
     "ui:migration": "bun ui/web/scripts/migration.ts",
+    "ui:swift": "cd ui/swift && swift run NibtreeShowcase",
+    "ui:swift:test": "sh ui/swift/scripts/test.sh",
+    "ui:swift:coverage": "bun ui/swift/scripts/coverage.ts",
     "format": "bun --bun prettier --write \"src/**/*.{ts,svelte,css}\" \"ui/**/*.{ts,svelte,css,json}\" \"scripts/**/*.ts\"",
     "format:check": "bun --bun prettier --check \"src/**/*.{ts,svelte,css}\" \"ui/**/*.{ts,svelte,css,json}\" \"scripts/**/*.ts\""
   },

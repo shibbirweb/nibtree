@@ -85,6 +85,34 @@ jobs:
       - name: Clippy
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
+  swift-ui:
+    name: Swift UI library (build + test)
+    # The SwiftUI components (ui/swift) that the native app is built from; the tokens they use are checked fresh by
+    # the frontend job's Vitest run.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Every Swift component has a ui/web twin and a story
+        run: |
+          bun install --frozen-lockfile
+          bun run ui:swift:coverage --check
+
+      - name: Build
+        working-directory: ui/swift
+        run: swift build -Xswiftc -warnings-as-errors
+
+      - name: Tests
+        run: sh ui/swift/scripts/test.sh
+
+      - name: Every story renders
+        working-directory: ui/swift
+        run: swift run NibtreeShowcase --render "$RUNNER_TEMP/stories"
+
   # Windows runs as two jobs, like macOS, so the frontend checks and the slower Rust build run side by side.
   windows-frontend:
     name: Windows frontend (check + Vitest)
