@@ -60,13 +60,14 @@ programs are then built in release mode, smoke tested, and kept as artifacts. A 
 - platform packages first, the launcher last, so the launcher never points at a missing package;
 - betas under the `next` tag (`npx nibtree@next`), stable versions under `latest` (`npx nibtree`);
 - a version that is already on npm is skipped, so rerunning a release is safe;
-- without the `NPM_TOKEN` secret the release fails, instead of quietly publishing nothing.
+- npm's trusted publishing signs in, so each version shows its provenance on npm
+  ([Browser Release Checks](Browser-Release-Checks.md)).
 
 Every push to `develop` rehearses all of this without uploading, and after a release `verify-npm` installs what
 npm serves on Linux, macOS and Windows. See [Browser Release Checks](Browser-Release-Checks.md).
 
-Setup, once: create the free `nibtree` organization on npmjs.com (it owns the `@nibtree` scope), make an npm
-granular access token that may publish `nibtree` and `@nibtree/*`, and save it as the repository secret `NPM_TOKEN`.
+Setup, once: create the free `nibtree` organization on npmjs.com (it owns the `@nibtree` scope), and on each of
+the seven packages add the trusted publishers `beta-publish.yml` and `stable-publish.yml` of this repository.
 
 ## Where the code lives
 
@@ -87,8 +88,9 @@ granular access token that may publish `nibtree` and `@nibtree/*`, and save it a
 **The page in each platform package.** One copy in the launcher would be smaller to publish, but then the program
 would only work through the launcher. Each user downloads only one platform package, so the size is the same for them.
 
-**Bun publishes.** The repository uses Bun only, and `bun publish` takes a packed tarball, so the exact file the
-smoke test checked is the one that goes to npm. Node is installed in CI only to run the launcher the way `npx` does.
+**Bun packs, npm publishes.** The repository uses Bun, but `bun publish` has no trusted publishing, so the
+publish job alone runs `npm publish` on the tarballs Bun packed: the exact files the smoke test checked. Node is
+otherwise installed in CI only to run the launcher the way `npx` does.
 
 **Our own tarball reader.** On Windows runners, Git Bash's GNU `tar` reads `C:\...` as a remote host name. Reading
 the tarball in TypeScript works the same everywhere.

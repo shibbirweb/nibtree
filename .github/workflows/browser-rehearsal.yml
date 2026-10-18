@@ -20,10 +20,12 @@ concurrency:
 jobs:
   rehearse:
     name: Rehearse
-    # browser.yml's Docker job asks for packages: write even when it pushes nothing.
+    # browser.yml's Docker job asks for packages: write and its npm job for id-token: write, even when they
+    # upload nothing.
     permissions:
       contents: read
       packages: write
+      id-token: write
     uses: ./.github/workflows/browser.yml
     with:
       tag: ${{ github.sha }}

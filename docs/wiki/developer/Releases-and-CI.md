@@ -133,7 +133,7 @@ It checks that every file agrees on the version, that the tag is exactly `v` plu
 - Optionally protect `develop` and `master`: pull requests only, CI required.
 - Keep the repository public, so the in-app update check can see releases.
 - Open the Wiki tab and save any page once, so the wiki repository exists.
-- For npm: the `nibtree` organization on npmjs.com and the `NPM_TOKEN` secret ([Browser Version Packages](Browser-Version-Packages.md)); for Docker Hub: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` ([Docker Image](Docker-Image.md)).
+- For npm: the `nibtree` organization on npmjs.com and the trusted publishers on each package, no secret ([Browser Version Packages](Browser-Version-Packages.md)); for Docker Hub: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` ([Docker Image](Docker-Image.md)).
 
 ## Why it is built this way
 

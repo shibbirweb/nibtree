@@ -14,7 +14,7 @@
 # would ship an app reporting the wrong version. So the tag, the pre-release flag and the code must agree.
 #
 # The browser version (npx nibtree) is built for every platform and published by browser.yml: to npm (betas under
-# `next`, stable versions under `latest`; the NPM_TOKEN secret, else a dry run) and as a Docker image to ghcr.io
+# `next`, stable versions under `latest`; npm's trusted publishing, no token) and as a Docker image to ghcr.io
 # and, with the DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets, Docker Hub.
 #
 # The Windows installer is built only when the repository variable WINDOWS_RELEASES is "true" (Settings,
@@ -214,16 +214,17 @@ jobs:
     name: Publish the browser version (npm and Docker)
     needs: [version, test]
     if: ${{ !cancelled() && needs.version.result == 'success' && contains(fromJSON('["success", "skipped"]'), needs.test.result) }}
-    # The Docker image goes to ghcr.io with the built-in token, which needs packages: write.
+    # The Docker image goes to ghcr.io with the built-in token, which needs packages: write; npm's trusted
+    # publishing needs id-token: write.
     permissions:
       contents: read
       packages: write
+      id-token: write
     uses: ./.github/workflows/browser.yml
     with:
       tag: ${{ needs.version.outputs.tag }}
       publish: true
     secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 

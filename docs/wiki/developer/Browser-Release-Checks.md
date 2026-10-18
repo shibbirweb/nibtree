@@ -14,17 +14,17 @@ calls `browser.yml` with `publish: true` and `dry_run: true`, so it walks the re
 1. release-mode programs (`--release`, with LTO and `panic = "abort"`) on all six platforms, each smoke tested
    with Bun and Node;
 2. the Docker image on amd64 and arm64, each smoke tested in a container;
-3. `bun scripts/npm-package.ts publish --dry-run` over every tarball: the registry check, the dist-tag and the
-   order, with nothing uploaded;
+3. `bun scripts/npm-package.ts publish --dry-run` over every tarball (`npm publish --dry-run`): the registry
+   check, the dist-tag and the order, with nothing uploaded;
 4. the two-architecture Buildx build with every tag, without `--push`.
 
 A newer push cancels an older rehearsal. Run workflow starts one by hand.
 
 ## During a release: no quiet skips
 
-A release fails when `NPM_TOKEN`, `DOCKERHUB_USERNAME` or `DOCKERHUB_TOKEN` is missing. Earlier, a missing secret
-only printed a warning: the run stayed green while nothing was published, which is the worst kind of failure
-because nobody notices it.
+A release fails when `DOCKERHUB_USERNAME` or `DOCKERHUB_TOKEN` is missing, or when npm turns down the sign-in
+below. Earlier, a missing secret only printed a warning: the run stayed green while nothing was published, which
+is the worst kind of failure because nobody notices it.
 
 ```mermaid
 flowchart LR
@@ -35,6 +35,34 @@ flowchart LR
 npm and Docker are separate jobs, so one can fail while the other succeeds. The npm side publishes the platform
 packages first and the launcher last: if anything fails in between, `nibtree@<version>` does not exist, so nobody
 can install a launcher that points at a missing program.
+
+## Signing in to npm: trusted publishing
+
+npm trusts this repository's release workflows directly, so publishing needs no long-lived token. The publish job
+asks GitHub for a short-lived OIDC token (an identity card that says which repository and workflow is running)
+and npm swaps it for a one-time publish token. npm then also records provenance: the commit and the workflow
+that built each package, shown on its npm page.
+
+```mermaid
+sequenceDiagram
+  participant J as publish job
+  participant G as GitHub
+  participant N as npm
+  J->>G: OIDC token for this run
+  J->>N: npm publish with the OIDC token
+  N->>N: repository and workflow match a trusted publisher?
+  N-->>J: published, with provenance
+```
+
+- **Which workflow npm sees.** For a called workflow, npm checks the one that started the run, not the one with
+  the publish step. Betas start in `beta-publish.yml` and stable releases in `stable-publish.yml`, so each
+  package lists both as trusted publishers.
+- **`id-token: write` on every level.** A called job gets no more than its caller grants, so `beta-publish.yml`,
+  `stable-publish.yml`, `release.yml` and `browser-rehearsal.yml` all grant it, as the publish job asks for it.
+- **The npm CLI, only here.** `bun publish` cannot sign in this way, so the publish job installs Node 24 and
+  npm 11, which trusted publishing needs. Everything else stays on Bun.
+- **No npm token.** The repository has no `NPM_TOKEN` secret: nothing long-lived can leak, and a publisher that
+  does not match fails the release instead of falling back to another sign-in.
 
 ## After a release: verify jobs
 
@@ -63,7 +91,7 @@ If the fix needs a code change, it goes into the next release: a published npm v
 | File | What it does |
 | --- | --- |
 | `.github/workflows/browser-rehearsal.yml` | the rehearsal on `develop` |
-| `.github/workflows/browser.yml` | `dry_run` and the secret checks |
+| `.github/workflows/browser.yml` | `dry_run`, the secret checks and the npm sign-in |
 | `.github/workflows/browser-verify.yml` | `verify-npm` and `verify-docker`, run by `release.yml` (or by hand for a tag) |
 | `scripts/release-verify.ts` | the checks after publishing |
 | `scripts/dockerImage.ts` | `imagePlatforms`, read from the image index (tested) |
@@ -82,7 +110,7 @@ package that was published but cannot be installed.
 ## Bugs we fixed
 
 **The first rehearsal on `develop` failed at Publish to npm.** `bun publish --dry-run` stopped with "missing
-authentication", though a dry run sends nothing. The rehearsal has no `NPM_TOKEN` on purpose, so it cannot upload
+authentication", though a dry run sends nothing. The rehearsal had no `NPM_TOKEN` on purpose, so it cannot upload
 by mistake. `scripts/npm-package.ts` now gives a dry run a placeholder token when there is no real one: bun is
-happy, and a placeholder could not publish even if the dry-run flag were lost. A real publish still needs the
-secret and fails loudly without it.
+happy, and a placeholder could not publish even if the dry-run flag were lost. Since then npm publishes instead of
+bun (trusted publishing), and `npm publish --dry-run` needs no token, so the placeholder is gone.

@@ -7,7 +7,8 @@
  *     bun scripts/npm-package.ts publish --dir <folder> [--dry-run]
  *         publishes every tarball there that npm does not have yet, platform packages first, betas to `next`
  *
- * Publishing takes the token from NPM_CONFIG_TOKEN (the NPM_TOKEN secret, .github/workflows/browser.yml).
+ * Publishing runs only in CI (.github/workflows/browser.yml) and is the one place that uses the npm CLI: npm's
+ * trusted publishing (GitHub's OIDC token, with provenance, and no npm token at all) is not in `bun publish`.
  */
 import { execFileSync } from "node:child_process";
 import {
@@ -107,15 +108,6 @@ async function isPublished(manifest: Manifest): Promise<boolean> {
   return manifest.version in (document.versions ?? {});
 }
 
-// `bun publish --dry-run` still refuses to run without a token, though it sends nothing. The release rehearsal
-// has no NPM_TOKEN on purpose, so a dry run gets a placeholder.
-function publishEnv(dryRun: boolean): NodeJS.ProcessEnv {
-  if (!dryRun || process.env.NPM_CONFIG_TOKEN) {
-    return process.env;
-  }
-  return { ...process.env, NPM_CONFIG_TOKEN: "dry-run" };
-}
-
 async function publish(args: string[]): Promise<number> {
   const folder = pathOption(args, "--dir");
   const dryRun = args.includes("--dry-run");
@@ -136,12 +128,7 @@ async function publish(args: string[]): Promise<number> {
     }
     const flags = ["--access", "public", "--tag", distTag(manifest.version), ...(dryRun ? ["--dry-run"] : [])];
     console.log(`${dryRun ? "Would publish" : "Publishing"} ${name}@${manifest.version} (${flags.join(" ")})`);
-    // From the launcher's folder: bun checks the launcher's `bin` entry against the current folder.
-    execFileSync(process.execPath, ["publish", file, ...flags], {
-      cwd: LAUNCHER,
-      stdio: "inherit",
-      env: publishEnv(dryRun),
-    });
+    execFileSync("npm", ["publish", file, ...flags], { stdio: "inherit" });
   }
   return 0;
 }
