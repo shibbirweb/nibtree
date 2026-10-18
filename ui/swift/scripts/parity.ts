@@ -142,6 +142,15 @@ for (const one of verdicts) {
   }
 }
 const failed = verdicts.filter((one) => one.problems.length > 0);
+if (process.env.GITHUB_ACTIONS && failed.length > 0) {
+  // An annotation, unlike the log, can be read without signing in to GitHub (the check run's annotations API).
+  const lines = failed.map((one) => `${one.id}: ${one.problems.join("; ")}`);
+  console.log(`::error title=${failed.length} of ${verdicts.length} scenarios fail::${lines.join("%0A")}`);
+}
+if (process.env.GITHUB_ACTIONS && checkSpeed) {
+  const times = verdicts.map((one) => `${one.id} ${one.swiftMs.toFixed(1)} / ${one.webMs.toFixed(1)}`);
+  console.log(`::notice title=Swift / web ms::${times.join("%0A")}`);
+}
 console.log(
   `\n${verdicts.length - failed.length} of ${verdicts.length} scenarios pass (pictures in ui/swift/.parity).`,
 );

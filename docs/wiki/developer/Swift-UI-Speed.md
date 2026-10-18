@@ -6,7 +6,8 @@ it, and how the gate times both sides fairly.
 
 ## How the gate times a scenario
 
-Each side builds, lays out and draws 200 copies of the scenario, a few times after warming up, and keeps its best time.
+Each side builds and lays out 200 copies of the scenario, draws the ones in a 1000 by 800 point window, a few times
+after warming up, and keeps its best time.
 The web side does it in a fresh WebKit page per scenario. The Swift side runs `NibtreeShowcase --bench` once per
 scenario, in its own process, for the same reason (see the bugs below). Both sides are timed back to back, and a
 scenario Swift loses is timed twice more, both sides, before it fails.
@@ -42,11 +43,9 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
   draws the box and the words; a stack, a box canvas and an `NText` took a column of six checkboxes from 100 ms to
   227 ms, where the web took 164.
 - No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
-  is one: an empty `.help` cost as much as a whole `NMark`, and choosing inside the component cost almost as much.
-  When the tooltip is the component's own (an `NIconButton`'s label), it is made only while the pointer is over the
-  button, which already tracks hover for its color: a tooltip on every icon button cost a fifth of its time. A
-  StatusIcon's tooltip is its label: a `.help` on every mark cost a row of them a third of its time, so it too is
-  made only while hovered (`NHoverHelp`), which costs about half that.
+  is one: an empty `.help` cost as much as a whole `NMark`. When the tooltip is the component's own (an
+  `NIconButton`'s or a StatusIcon's label), it is made only while the pointer is over it (`NHoverHelp`): a `.help` on
+  every mark cost a row of them a third of its time.
 
 The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title
 strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles. There are no
@@ -79,8 +78,7 @@ about 440 MB), and every scenario after it ran about 1.7 times slower. Draining 
 help: the process stays slower once it has grown.
 
 Fix: `parity.ts` runs the bench once per scenario (`--bench <folder> <count> <warmup> <runs> <id>`), the way the web
-side loads a fresh page per scenario. Each scenario is timed on its own, so one heavy scenario cannot hide or cause a
-failure in another. A run takes a little longer (about four minutes in all), which is worth a fair verdict.
+side loads a fresh page per scenario, so one heavy scenario cannot hide or cause a failure in another.
 
 **CI failed the speed check while a Mac passed.** On GitHub's runner a third of the scenarios were slower than the
 web, and different ones in each run, while every one passed on a Mac.
@@ -92,6 +90,10 @@ slow as on a Mac, the web side as fast. A loaded Mac flattered Swift the same wa
 Fix: each scenario is timed Swift then web, back to back, so both see the same machine; a loser is timed twice more
 before it fails; and the CI speed job turns Spotlight off. CI runs match and speed as two jobs side by side, so the
 speed job is not also taking pictures.
+
+**Swift drew copies no one could see.** Why: the bench clips its list to the window, but SwiftUI still records every
+copy's drawing; WebKit paints only what is on screen. Fix: copies below the window are `.hidden()` (laid out, not
+drawn). `text-sizes` went from 266 to 128 ms.
 
 ## Where the code lives
 

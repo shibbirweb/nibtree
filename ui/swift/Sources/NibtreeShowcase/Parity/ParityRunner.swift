@@ -5,9 +5,9 @@ import SwiftUI
 /// The Swift half of the parity check (scripts/parity.ts):
 /// - `--parity <scenarios> <out>` draws every scenario in light and dark to `<out>/<id>-<light|dark>.png`.
 /// - `--bench <scenarios> <count> <warmup> <runs> [id ...]` prints one JSON line per scenario (only the ids given, if
-///   any): the fastest of `runs` timings (after `warmup` unmeasured ones) to lay out and draw `count` copies, like the
-///   web side's `nativeBench`. parity.ts benches each scenario in its own process: a big scenario leaves the process
-///   slower for every one after it (icon-every-name made the rest about 1.7 times slower).
+///   any): the fastest of `runs` timings (after `warmup` unmeasured ones) to lay out `count` copies and draw those in
+///   the viewport, like the web side's `nativeBench`. parity.ts benches each scenario in its own process: a big
+///   scenario leaves the process slower for every one after it (icon-every-name made the rest about 1.7 times slower).
 @MainActor
 enum ParityRunner {
     /// Handles the parity arguments if present; returns whether it did.
@@ -80,13 +80,17 @@ enum ParityRunner {
     }
 
     private static func bench(_ scenarios: [Scenario], count: Int, warmup: Int, runs: Int) {
+        // An app's main thread runs user-interactive, as does WebKit's page process; a tool started by a CI runner
+        // (a background service) may not.
+        pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0)
         for scenario in scenarios {
             let resolved = ResolvedNode(scenario.node)
+            let shown = shownCopies(scenario)
             var times: [Double] = []
             for run in 0..<(warmup + runs) {
                 // Each run's renderer leaves autoreleased drawings behind: drained per run, or every scenario after a
                 // big one (icon-every-name) runs in a bloated process and times slower than it is.
-                let ms = autoreleasepool { time(resolved, scenario, count: count) }
+                let ms = autoreleasepool { time(resolved, scenario, count: count, shown: shown) }
                 if run >= warmup {
                     times.append(ms)
                 }
@@ -95,13 +99,24 @@ enum ParityRunner {
         }
     }
 
-    /// Lays out `count` copies of the scenario and draws them; returns the milliseconds it took.
-    private static func time(_ resolved: ResolvedNode, _ scenario: Scenario, count: Int) -> Double {
+    /// How many copies reach into the 1000 by 800 point viewport, with one to spare, from one copy's height.
+    private static func shownCopies(_ scenario: Scenario) -> Int {
+        let renderer = ImageRenderer(content: frame(scenario, scheme: .light))
+        renderer.scale = 1
+        let height = Double(renderer.cgImage?.height ?? 1)
+        return Int((800 / max(1, height - 1)).rounded(.up)) + 1
+    }
+
+    /// Lays out `count` copies of the scenario and draws the first `shown`; returns the milliseconds it took.
+    private static func time(_ resolved: ResolvedNode, _ scenario: Scenario, count: Int, shown: Int) -> Double {
         let start = DispatchTime.now().uptimeNanoseconds
-        // Like the web side: every copy is laid out, but only a 1000 by 800 point viewport is drawn.
+        // Like the web side: every copy is laid out, but only a 1000 by 800 point viewport is drawn. A clip alone
+        // still records every copy's drawing (each canvas runs), which WebKit skips for what is off screen.
         let list = ParityFrame(width: scenario.width) {
             VStack(spacing: 0) {
-                ForEach(0..<count, id: \.self) { _ in ScenarioView(node: resolved).sized(scenario.height) }
+                ForEach(0..<count, id: \.self) { index in
+                    ScenarioView(node: resolved).sized(scenario.height).modifier(OffScreen(hidden: index >= shown))
+                }
             }
         }
         .frame(width: 1000, height: 800, alignment: .topLeading)
@@ -111,6 +126,19 @@ enum ParityRunner {
         renderer.scale = 2
         _ = renderer.cgImage
         return Double(DispatchTime.now().uptimeNanoseconds - start) / 1_000_000
+    }
+}
+
+/// A copy below the viewport: laid out, but not drawn.
+private struct OffScreen: ViewModifier {
+    let hidden: Bool
+
+    func body(content: Content) -> some View {
+        if hidden {
+            content.hidden()
+        } else {
+            content
+        }
     }
 }
 
