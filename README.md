@@ -153,20 +153,32 @@ docker run --rm -p 4410:4410 \
 
 Then open `http://localhost:4410/?token=pick-a-secret`.
 
-| Tag | Gets |
-| --- | --- |
-| `latest` | the newest stable release |
-| `next` | the newest beta |
-| `0.1.0-beta.13` | exactly that version |
-
-- `/workspace` is the folder it opens; the `nibtree-home` volume keeps settings between runs.
-- Add `-v ~/.gitconfig:/home/nibtree/.gitconfig:ro -v ~/.ssh:/home/nibtree/.ssh:ro` for your git identity and SSH keys.
-- On Linux add `--user "$(id -u):$(id -g)"`, so files it writes belong to you.
-- Another outside port, such as `-p 9000:4410`, needs `-e NIBTREE_PUBLIC_URL=http://localhost:9000` so the printed address is right.
-
 #### With Docker Compose
 
-[`docker/compose.yaml`](docker/compose.yaml) does the same, listening only on this machine. Put it in the folder you want to open, then:
+The same with Docker Compose, listening only on this machine. Save this as `compose.yaml` in the folder you want to open (it is [`docker/compose.yaml`](docker/compose.yaml), which explains each line):
+
+```yaml
+services:
+  nibtree:
+    image: ${NIBTREE_IMAGE:-ghcr.io/shibbirweb/nibtree:${NIBTREE_TAG:-next}}
+    ports:
+      - "127.0.0.1:${NIBTREE_OUTSIDE_PORT:-4410}:4410"
+    environment:
+      NIBTREE_TOKEN: ${NIBTREE_TOKEN:-}
+      NIBTREE_PUBLIC_URL: http://localhost:${NIBTREE_OUTSIDE_PORT:-4410}
+    user: ${NIBTREE_USER:-1000:1000}
+    volumes:
+      - ${NIBTREE_WORKSPACE:-.}:/workspace
+      - nibtree-home:/home/nibtree
+      # - ~/.gitconfig:/home/nibtree/.gitconfig:ro
+      # - ~/.ssh:/home/nibtree/.ssh:ro
+    restart: unless-stopped
+
+volumes:
+  nibtree-home:
+```
+
+Then:
 
 ```sh
 NIBTREE_TOKEN=pick-a-secret docker compose up -d   # start it in the background
@@ -184,6 +196,21 @@ docker compose down                                # stop it (settings stay in t
 | `NIBTREE_USER` | On Linux, `"$(id -u):$(id -g)"`, so files it writes belong to you |
 
 Uncomment its two `.gitconfig` and `.ssh` lines to use your git identity and SSH keys inside.
+
+#### Tags and options
+
+| Tag | Gets |
+| --- | --- |
+| `latest` | the newest stable release |
+| `next` | the newest beta |
+| `0.1.0-beta.13` | exactly that version |
+
+With `docker run`:
+
+- `/workspace` is the folder it opens; the `nibtree-home` volume keeps settings between runs.
+- Add `-v ~/.gitconfig:/home/nibtree/.gitconfig:ro -v ~/.ssh:/home/nibtree/.ssh:ro` for your git identity and SSH keys.
+- On Linux add `--user "$(id -u):$(id -g)"`, so files it writes belong to you.
+- Another outside port, such as `-p 9000:4410`, needs `-e NIBTREE_PUBLIC_URL=http://localhost:9000` so the printed address is right.
 
 Details: [Docker Image](https://github.com/shibbirweb/nibtree/wiki/Docker-Image).
 
