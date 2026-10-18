@@ -50,7 +50,7 @@ gitGraph
 | `stable-promote.yml` (Promote stable) | CI finishing on `develop` | opens the `develop` to `master` pull request |
 | `stable-publish.yml` (Publish stable) | CI finishing on `master` | publishes the stable release as the latest one |
 | `release.yml` (Release) | a call, a release published by hand, or a manual run | builds the macOS app and attaches it |
-| `browser.yml` (Browser version) | push to `develop` or `master`, any pull request, a call from `release.yml` | tests the browser version on six platforms; publishes it to npm for a release |
+| `browser.yml` (Browser version) | push to `develop` or `master`, any pull request, a call from `release.yml` | tests the browser version on six platforms and in Docker; publishes it to npm and Docker for a release |
 | `windows-installer.yml`, `macos-app.yml` | any pull request | build, check and keep the Windows and macOS apps |
 | `wiki.yml` (Wiki) | push to `master` that touches the docs, or a manual run | publishes `docs/wiki` to the GitHub wiki |
 
@@ -131,7 +131,7 @@ It checks that every file agrees on the version, that the tag is exactly `v` plu
 - Optionally protect `develop` and `master`: pull requests only, CI required.
 - Keep the repository public, so the in-app update check can see releases.
 - Open the Wiki tab and save any page once, so the wiki repository exists.
-- For npm: create the free `nibtree` organization on npmjs.com (it owns the `@nibtree` scope), then add the `NPM_TOKEN` secret ([Browser Version Packages](Browser-Version-Packages.md)).
+- For npm: the `nibtree` organization on npmjs.com and the `NPM_TOKEN` secret ([Browser Version Packages](Browser-Version-Packages.md)); for Docker Hub: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` ([Docker Image](Docker-Image.md)).
 
 ## Why it is built this way
 

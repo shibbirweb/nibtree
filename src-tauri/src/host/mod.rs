@@ -15,6 +15,7 @@ use serde_json::Value;
 use crate::error::{AppError, AppResult};
 use crate::state::AppState;
 
+#[cfg(feature = "desktop")]
 mod desktop;
 
 /// Which windows (desktop) or browser tabs an event goes to.

@@ -1,4 +1,5 @@
 use serde::Serialize;
+#[cfg(feature = "desktop")]
 use tauri::AppHandle;
 
 use crate::host::HostApp;

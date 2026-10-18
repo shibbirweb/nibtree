@@ -2,6 +2,7 @@
 
 use std::collections::HashMap;
 
+#[cfg(feature = "desktop")]
 use tauri::State;
 
 use super::blocking;

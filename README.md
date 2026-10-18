@@ -87,6 +87,20 @@ Nibtree runs on macOS and Windows with the same features; Linux is planned. Each
 
 The user guide covers each difference where it matters ([Getting Started](https://github.com/shibbirweb/nibtree/wiki/Getting-Started) has the install steps); how the code handles them is in [Windows Support](https://github.com/shibbirweb/nibtree/wiki/Windows-Support).
 
+## In your browser
+
+The whole app also runs in a browser tab, served from your own machine or a server, with its settings in
+`~/.nibtree-browser`:
+
+```sh
+npx nibtree                      # the current folder; npx nibtree@next for the newest beta
+docker run --rm -p 4410:4410 -v "$PWD:/workspace" -e NIBTREE_TOKEN=pick-a-secret ghcr.io/shibbirweb/nibtree
+```
+
+Every page needs the access token printed at start (or the one you set). See
+[Browser Version Packages](https://github.com/shibbirweb/nibtree/wiki/Browser-Version-Packages) and
+[Docker Image](https://github.com/shibbirweb/nibtree/wiki/Docker-Image).
+
 ## How it works
 
 ```
@@ -149,7 +163,7 @@ The [wiki](https://github.com/shibbirweb/nibtree/wiki) has a user guide with scr
 
 - **Branches**: work merges into `develop` (the beta line) by pull request; `master` is stable.
 - **CI** (`.github/workflows/ci.yml`) runs on every push to `develop` and `master` and every pull request, on macOS: `bun scripts/version.ts check`, `bun run check`, `bun run test`, `bun scripts/build-wiki.ts --check`, `cargo test` and `cargo clippy --all-targets -- -D warnings`.
-- **Browser version** (`.github/workflows/browser.yml`) builds `nibtree-browser` on macOS, Linux and Windows (x64 and Arm each), runs its tests and smoke tests its npm packages; every release publishes them to npm.
+- **Browser version** (`.github/workflows/browser.yml`) builds `nibtree-browser` on macOS, Linux and Windows (x64 and Arm each), runs its tests, smoke tests its npm packages and its Docker image (amd64 and arm64); every release publishes them to npm, ghcr.io and Docker Hub.
 - **Versions and notes**: the version lives in `src-tauri/Cargo.toml` and only the release workflows move it. Release notes come from `CHANGELOG.md`, so write each change under `## [Unreleased]` in the same pull request.
 - **Releases** are automated: the "Beta release" and "Stable release" workflows open a release pull request; once it is merged (and, for a stable release, the `develop` to `master` pull request too), the GitHub release is published and the macOS app is built. Builds are unsigned unless the `APPLE_*` secrets are set.
 

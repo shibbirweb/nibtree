@@ -7,6 +7,11 @@
 # needs the repository secret NPM_TOKEN (Settings, Secrets and variables, Actions): an npm granular access token
 # with read and write access to `nibtree` and the `@nibtree` scope. Without it the packages get a dry run and
 # nothing is published. A version already on npm is skipped, so rebuilding a release is safe.
+#
+# The Docker image (docker/Dockerfile) is built from the Linux packages and smoke tested in a container on amd64
+# and arm64 (`browser-smoke.ts --docker`). A release pushes it for both to ghcr.io/<owner>/nibtree with the
+# built-in token, and to Docker Hub as <DOCKERHUB_USERNAME>/nibtree when the DOCKERHUB_USERNAME and
+# DOCKERHUB_TOKEN secrets are set: the exact version, plus `next` for a beta or `latest` for a stable release.
 name: Browser version
 
 on:
@@ -26,6 +31,10 @@ on:
         default: false
     secrets:
       NPM_TOKEN:
+        required: false
+      DOCKERHUB_USERNAME:
+        required: false
+      DOCKERHUB_TOKEN:
         required: false
 
 permissions:
@@ -73,13 +82,13 @@ jobs:
           workspaces: src-tauri
           key: browser-${{ matrix.target }}-${{ inputs.publish && 'release' || 'debug' }}
 
-      # The app crate still links Tauri, which needs these to build and WebKitGTK to run on Linux.
+      # nibtree-browser builds the app crate without its `desktop` feature: no Tauri, so no WebKitGTK. OpenSSL is
+      # for HTTPS (the GitHub features and the AI usage readers).
       - name: Linux libraries
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev \
-            librsvg2-dev libssl-dev libxdo-dev pkg-config
+          sudo apt-get install -y libssl-dev pkg-config
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -99,7 +108,7 @@ jobs:
         working-directory: src-tauri
         run: |
           cargo test --locked -p nibtree-browser
-          cargo test --locked -p nibtree --lib -- browser:: commands::browse::
+          cargo test --locked -p nibtree --no-default-features --lib -- browser:: commands::browse::
 
       - name: Build nibtree-browser
         working-directory: src-tauri
@@ -116,8 +125,8 @@ jobs:
       - name: Smoke test with Node
         run: bun scripts/browser-smoke.ts --packages npm-packages --runtime node
 
-      - name: Keep the packages for publishing
-        if: ${{ inputs.publish }}
+      # For the Docker jobs (the Linux ones) and for publishing.
+      - name: Keep the packages
         uses: actions/upload-artifact@v4
         with:
           name: npm-${{ matrix.target }}
@@ -155,3 +164,96 @@ jobs:
           else
             bun scripts/npm-package.ts publish --dir npm-packages
           fi
+
+  docker:
+    name: Docker ${{ matrix.arch }}
+    needs: platform
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: amd64, runner: ubuntu-22.04, target: x86_64-unknown-linux-gnu }
+          - { arch: arm64, runner: ubuntu-22.04-arm, target: aarch64-unknown-linux-gnu }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-${{ matrix.target }}
+          path: npm-packages
+
+      - name: Build the image
+        run: |
+          bun scripts/docker-context.ts --packages npm-packages --out docker-context
+          docker build --build-arg VERSION="$(bun scripts/version.ts show)" --tag nibtree:smoke docker-context
+          docker image ls nibtree:smoke
+
+      - name: Smoke test in a container
+        run: bun scripts/browser-smoke.ts --docker nibtree:smoke
+
+  docker-publish:
+    name: Publish the Docker image
+    needs: docker
+    if: ${{ inputs.publish }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: npm-*-linux-gnu
+          path: npm-packages
+          merge-multiple: true
+
+      # Both architectures from one runner: QEMU only runs the image's apt-get, the programs are already built.
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker Hub sign-in
+        id: hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_TOKEN" ]; then
+            echo "::warning::No DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets: the image goes to ghcr.io only."
+            exit 0
+          fi
+          echo "$DOCKERHUB_TOKEN" | docker login docker.io --username "$DOCKERHUB_USERNAME" --password-stdin
+          echo "repository=docker.io/$DOCKERHUB_USERNAME/nibtree" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        env:
+          GHCR: ghcr.io/${{ github.repository_owner }}/nibtree
+          HUB: ${{ steps.hub.outputs.repository }}
+        run: |
+          version="$(bun scripts/version.ts show)"
+          bun scripts/docker-context.ts --packages npm-packages --out docker-context
+          tags=()
+          while read -r tag; do
+            tags+=(--tag "$tag")
+          done < <(bun scripts/docker-tags.ts tags "$version" "$GHCR" $HUB)
+          docker buildx build --platform "$(bun scripts/docker-tags.ts platforms)" \
+            --build-arg VERSION="$version" "${tags[@]}" --push docker-context

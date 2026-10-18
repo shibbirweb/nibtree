@@ -2560,6 +2560,7 @@ dependencies = [
  "tauri-plugin-single-instance",
  "tempfile",
  "thiserror 2.0.21",
+ "tokio",
  "trash",
  "ureq",
  "windows-sys 0.61.2",

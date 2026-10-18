@@ -18,7 +18,7 @@ pub struct Arg {
     pub ident: Ident,
     pub ty: Type,
     pub kind: Kind,
-    /// The message type of a `Channel<T>`.
+    /// The message type of a `Channel<T>`, or the state type of a `State<'_, T>`.
     message: Option<Type>,
 }
 
@@ -39,7 +39,7 @@ impl Arg {
             Some("Request") => Kind::Raw,
             _ => Kind::Data,
         };
-        let message = if kind == Kind::Channel { first_type_argument(&ty) } else { None };
+        let message = if matches!(kind, Kind::Channel | Kind::State) { first_type_argument(&ty) } else { None };
         Ok(Arg { ident: pattern.ident.clone(), ty, kind, message })
     }
 
@@ -48,7 +48,10 @@ impl Arg {
         let message = &self.message;
         let tokens = match self.kind {
             Kind::Data => return self.ty.clone(),
-            Kind::State => quote!(&crate::state::AppState),
+            Kind::State => match message {
+                Some(state) => quote!(&#state),
+                None => quote!(&crate::state::AppState),
+            },
             Kind::Window => quote!(crate::host::HostWindow),
             Kind::App => quote!(crate::host::HostApp),
             Kind::Channel => quote!(crate::host::HostChannel<#message>),

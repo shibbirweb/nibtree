@@ -2,6 +2,7 @@ use std::path::Path;
 use std::sync::atomic::Ordering;
 
 use serde::Deserialize;
+#[cfg(feature = "desktop")]
 use tauri::{AppHandle, State};
 
 use super::rebase::cleanup_rebase_files;

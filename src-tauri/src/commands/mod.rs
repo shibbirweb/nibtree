@@ -48,6 +48,7 @@ use std::path::{Component, Path, PathBuf};
 
 use serde::de::DeserializeOwned;
 use serde::Serialize;
+#[cfg(feature = "desktop")]
 use tauri::ipc::{InvokeBody, Request};
 
 use crate::error::{AppError, AppResult};
@@ -59,9 +60,30 @@ where
     T: Send + 'static,
     F: FnOnce() -> AppResult<T> + Send + 'static,
 {
-    tauri::async_runtime::spawn_blocking(work)
-        .await
-        .map_err(|err| AppError::invalid(format!("Background task failed: {err}")))?
+    #[cfg(feature = "desktop")]
+    let finished = tauri::async_runtime::spawn_blocking(work).await;
+    #[cfg(not(feature = "desktop"))]
+    let finished = tokio::task::spawn_blocking(work).await;
+    finished.map_err(|err| AppError::invalid(format!("Background task failed: {err}")))?
+}
+
+/// Runs an async command to completion on a thread outside the async runtime (the MCP server's).
+pub fn block_on<F: std::future::Future>(future: F) -> F::Output {
+    #[cfg(feature = "desktop")]
+    return tauri::async_runtime::block_on(future);
+    #[cfg(not(feature = "desktop"))]
+    {
+        static RUNTIME: std::sync::OnceLock<tokio::runtime::Runtime> = std::sync::OnceLock::new();
+        let runtime = RUNTIME.get_or_init(|| {
+            tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(1)
+                .thread_name("nibtree-block-on")
+                .enable_all()
+                .build()
+                .expect("a tokio runtime")
+        });
+        runtime.block_on(future)
+    }
 }
 
 /// Result of an operation that may stop on conflicts (merge, rebase, pull...).
@@ -128,6 +150,7 @@ pub fn with_paths<'a>(args: &[&'a str], paths: &'a [String]) -> Vec<&'a str> {
 }
 
 /// The body of a command invoked with raw bytes, copied out so blocking work can own it.
+#[cfg(feature = "desktop")]
 pub fn raw_body(request: &Request<'_>) -> AppResult<Vec<u8>> {
     match request.body() {
         InvokeBody::Raw(bytes) => Ok(bytes.clone()),

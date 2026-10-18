@@ -3,6 +3,7 @@
 //! and forgets it once the text is saved, reverted or discarded.
 
 use serde::Deserialize;
+#[cfg(feature = "desktop")]
 use tauri::ipc::Request;
 
 use super::{blocking, raw_parts};

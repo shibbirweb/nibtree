@@ -6,6 +6,7 @@ use std::path::Path;
 
 use git2::Repository;
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "desktop")]
 use tauri::ipc::Request;
 
 use super::{blocking, raw_parts};

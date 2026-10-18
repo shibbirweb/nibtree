@@ -86,6 +86,8 @@ jobs:
     if: needs.publish.outputs.tag != ''
     permissions:
       contents: write
+      # The browser version's Docker image is pushed to ghcr.io (release.yml, browser.yml).
+      packages: write
     uses: ./.github/workflows/release.yml
     secrets: inherit
     with:

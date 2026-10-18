@@ -50,7 +50,7 @@ fn call_with(app: &HostApp, command_name: &str, args: Value, channels: Channels)
         raw: None,
     };
     let reply = crate::browser_command(command_name, call).expect("a known command");
-    tauri::async_runtime::block_on(reply).map_err(|err| serde_json::to_value(err).unwrap())
+    crate::commands::block_on(reply).map_err(|err| serde_json::to_value(err).unwrap())
 }
 
 #[test]

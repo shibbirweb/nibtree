@@ -1,6 +1,7 @@
 //! What the MCP server needs from the running app, behind a trait so tests run without a window.
 
 use serde_json::Value;
+#[cfg(feature = "desktop")]
 use tauri::{AppHandle, Emitter, EventTarget, Manager};
 
 pub trait Host: Send + Sync {
@@ -22,16 +23,19 @@ pub trait Host: Send + Sync {
     }
 }
 
+#[cfg(feature = "desktop")]
 pub struct TauriHost {
     app: AppHandle,
 }
 
+#[cfg(feature = "desktop")]
 impl TauriHost {
     pub fn new(app: AppHandle) -> TauriHost {
         TauriHost { app }
     }
 }
 
+#[cfg(feature = "desktop")]
 impl Host for TauriHost {
     fn emit(&self, event: &str, payload: Value) {
         let _ = self.app.emit(event, payload);
@@ -55,7 +59,7 @@ impl Host for TauriHost {
 }
 
 /// The window to capture: the one asked for, else the main one, else any.
-#[cfg(any(target_os = "macos", windows))]
+#[cfg(all(feature = "desktop", any(target_os = "macos", windows)))]
 fn screenshot_window(app: &tauri::AppHandle, window_label: Option<&str>) -> Result<tauri::WebviewWindow, String> {
     use tauri::Manager;
     window_label
@@ -65,7 +69,7 @@ fn screenshot_window(app: &tauri::AppHandle, window_label: Option<&str>) -> Resu
         .ok_or_else(|| "The app window is not ready".to_string())
 }
 
-#[cfg(target_os = "macos")]
+#[cfg(all(feature = "desktop", target_os = "macos"))]
 mod screenshot {
     use std::sync::atomic::{AtomicU64, Ordering};
     use std::sync::mpsc;
@@ -129,7 +133,7 @@ mod screenshot {
 /// Windows: PrintWindow with PW_RENDERFULLCONTENT draws the window into a bitmap, WebView2 content
 /// included and even when other windows cover it. The picture is cropped to the frame DWM shows,
 /// which leaves out the invisible resize borders.
-#[cfg(windows)]
+#[cfg(all(feature = "desktop", windows))]
 mod screenshot {
     use std::ffi::c_void;
 
@@ -240,7 +244,7 @@ mod screenshot {
     }
 }
 
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(all(feature = "desktop", not(any(target_os = "macos", windows))))]
 mod screenshot {
     use tauri::AppHandle;
 

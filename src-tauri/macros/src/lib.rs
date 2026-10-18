@@ -6,6 +6,7 @@
 //! `State` (the app state), `Window`, `AppHandle`, `Channel<T>` and `Request` (a raw body). The rest
 //! are data and are read from the JSON arguments under their camelCase name, like Tauri does.
 //! `#[command(desktop)]` keeps a desktop-only body as it is; the browser answers it with an error.
+//! The Tauri side exists only with the app crate's `desktop` feature, so the browser server builds without Tauri.
 
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as Tokens;
@@ -57,6 +58,7 @@ fn expand(function: ItemFn, desktop_only: bool) -> syn::Result<Tokens> {
     if desktop_only {
         let message = format!("{name} is only available in the desktop app");
         return Ok(quote! {
+            #[cfg(feature = "desktop")]
             #[::tauri::command]
             #function
             #[doc(hidden)]
@@ -98,6 +100,7 @@ fn expand(function: ItemFn, desktop_only: bool) -> syn::Result<Tokens> {
         let attrs = &outer.attrs;
         let sig = &outer.sig;
         let desktop = quote! {
+            #[cfg(feature = "desktop")]
             #[::tauri::command]
             #(#attrs)*
             #vis #sig {
@@ -106,7 +109,7 @@ fn expand(function: ItemFn, desktop_only: bool) -> syn::Result<Tokens> {
         };
         (quote!(#[allow(non_snake_case)] #inner), desktop)
     } else {
-        (Tokens::new(), quote!(#[::tauri::command] #function))
+        (Tokens::new(), quote!(#[cfg_attr(feature = "desktop", ::tauri::command)] #function))
     };
 
     let target = if host_args { format_ident!("__shared__{}", name) } else { name.clone() };

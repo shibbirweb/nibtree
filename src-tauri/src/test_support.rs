@@ -87,7 +87,7 @@ impl UiText for Path {
 }
 
 pub fn block_on<F: Future>(future: F) -> F::Output {
-    tauri::async_runtime::block_on(future)
+    crate::commands::block_on(future)
 }
 
 pub fn canonical(path: &Path) -> PathBuf {

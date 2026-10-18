@@ -1,5 +1,6 @@
 //! The Git Console: the git commands the app ran (see git_console.rs).
 
+#[cfg(feature = "desktop")]
 use tauri::{AppHandle, State};
 
 use super::blocking;

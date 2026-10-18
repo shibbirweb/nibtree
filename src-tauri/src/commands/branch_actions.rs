@@ -6,6 +6,7 @@ use std::path::Path;
 
 use git2::{BranchType, DiffFindOptions, DiffOptions, Repository, Sort};
 use serde::Serialize;
+#[cfg(feature = "desktop")]
 use tauri::AppHandle;
 
 use super::remote::{default_remote, emitter};

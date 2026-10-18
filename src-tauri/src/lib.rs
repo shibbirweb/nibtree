@@ -1,3 +1,7 @@
+// The browser server builds this crate without `desktop`: what only the desktop app calls (window sessions, the
+// preview scheme, the old settings folder move) is unused there. The desktop build still reports dead code.
+#![cfg_attr(not(feature = "desktop"), allow(dead_code))]
+
 // First: `with_commands!` must be defined before the code that uses it.
 #[macro_use]
 mod command_list;
@@ -48,11 +52,12 @@ mod workspace_file;
 /// `#[crate::command]` on every command: see nibtree-macros and `host`.
 use nibtree_macros::command;
 
-use std::sync::atomic::Ordering;
-
-use tauri::{Manager, RunEvent};
-
-use state::{AppState, LaunchMode};
+#[cfg(feature = "desktop")]
+use {
+    state::{AppState, LaunchMode},
+    std::sync::atomic::Ordering,
+    tauri::{Manager, RunEvent},
+};
 
 /// The browser server's entry point for a command, or None when no command has that name.
 pub fn browser_command(command_name: &str, call: host::Call) -> Option<host::Reply> {
@@ -60,6 +65,8 @@ pub fn browser_command(command_name: &str, call: host::Call) -> Option<host::Rep
     handler(command_name, call)
 }
 
+/// The desktop app (src/main.rs).
+#[cfg(feature = "desktop")]
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Started by git or ssh as their askpass program: ask the running app, print the answer, exit.

@@ -2,6 +2,7 @@ use crate::paths::RealPath;
 use std::collections::HashMap;
 use std::path::PathBuf;
 
+#[cfg(feature = "desktop")]
 use tauri::State;
 
 use super::{blocking, safe_join};

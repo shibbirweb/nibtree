@@ -2,7 +2,8 @@
 
 The browser version runs the whole app in a browser tab, served by a small program on your machine
 (`nibtree-browser`, in `src-tauri/browser`). People install it from npm with `npx nibtree`. This page explains the
-packages, how CI tests them on every platform, and how each release publishes them.
+packages, how CI tests them on every platform, and how each release publishes them. The Docker image is built
+from the same packages: see [Docker Image](Docker-Image.md).
 
 ## Why we need it
 
@@ -75,6 +76,8 @@ granular access token that may publish `nibtree` and `@nibtree/*`, and save it a
 | `scripts/tarball.ts` | reads `.tgz` files without the `tar` program (tested) |
 | `scripts/browser-smoke.ts` | the smoke test |
 | `src-tauri/browser/src/assets.rs` | where the program finds its page |
+| `src-tauri/browser/build.rs` | links the C runtime on Windows |
+| `src-tauri/Cargo.toml` | the `desktop` feature |
 
 ## Design decisions
 
@@ -90,10 +93,23 @@ the tarball in TypeScript works the same everywhere.
 **The version everywhere.** `bun scripts/version.ts` writes the version into `npm/nibtree/package.json` and its
 pins, and `check` fails if they drift ([Versioning and Changelog](Versioning-and-Changelog.md)).
 
+**No Tauri in the program.** The app crate's `desktop` feature (on by default) holds everything Tauri: windows,
+menus, the preview scheme, the MCP window host and the Tauri side of every command (the `#[crate::command]` macro
+puts it behind `cfg(feature = "desktop")`). `nibtree-browser` depends on the app crate with
+`default-features = false`, so it links no WebView: Linux needs no WebKitGTK, and the program is smaller.
+
+## Bugs we fixed
+
+**Windows CI could not link `nibtree-browser`.** `cargo test --workspace` on Windows failed with `memcpy`,
+`malloc` and 100 more unresolved symbols, after `msvcrt.lib : warning LNK4003: invalid library format`. In a
+workspace build the app crate has `desktop` on, so tauri-build runs: it writes an empty `msvcrt.lib` to link the
+C runtime statically, and puts its folder on the library path of everything that links the app crate, but passes
+its matching link arguments to the app's own programs only. `src-tauri/browser/build.rs` now passes the same
+arguments, so `nibtree-browser` links the C runtime the way the desktop app does, with or without that file. As a
+bonus, it needs no Visual C++ redistributable.
+
 ## Limits for now
 
-- The Linux program still links Tauri, so it needs WebKitGTK (`libwebkit2gtk-4.1`) installed. A build without
-  Tauri is the next step.
 - Linux packages need glibc; Alpine and other musl systems are not supported yet.
 
 ## Keeping in sync

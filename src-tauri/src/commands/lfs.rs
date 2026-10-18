@@ -1,3 +1,4 @@
+#[cfg(feature = "desktop")]
 use tauri::AppHandle;
 
 use super::blocking;

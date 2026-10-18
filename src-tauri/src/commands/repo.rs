@@ -1,3 +1,4 @@
+#[cfg(feature = "desktop")]
 use tauri::State;
 
 use super::blocking;

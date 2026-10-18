@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 use git2::{Repository, Sort};
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "desktop")]
 use tauri::AppHandle;
 
 use crate::host::HostApp;

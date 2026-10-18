@@ -200,7 +200,7 @@ impl Args<'_> {
 
 /// Runs one of the app's async commands to completion on this (non-async) server thread.
 pub fn wait<T>(future: impl Future<Output = AppResult<T>>) -> Result<T, String> {
-    tauri::async_runtime::block_on(future).map_err(|err| err.to_string())
+    crate::commands::block_on(future).map_err(|err| err.to_string())
 }
 
 pub fn json_out(value: impl Serialize) -> ToolResult {

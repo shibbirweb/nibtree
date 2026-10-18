@@ -1,6 +1,7 @@
 use std::time::Instant;
 
 use serde::Serialize;
+#[cfg(feature = "desktop")]
 use tauri::{State, Window};
 
 use super::blocking;

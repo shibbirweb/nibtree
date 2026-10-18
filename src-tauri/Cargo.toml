@@ -17,14 +17,34 @@ members = ["cli", "macros", "browser"]
 name = "nibtree_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
+# The desktop app's binary; the browser server (browser/) uses the library without the `desktop` feature.
+[[bin]]
+name = "nibtree"
+path = "src/main.rs"
+required-features = ["desktop"]
+
+# `desktop` (on by default) is everything Tauri: windows, menus, the preview scheme, the MCP window host and the
+# Tauri side of every command. nibtree-browser turns it off, so it links no WebView and needs no WebKitGTK on Linux.
+[features]
+default = ["desktop"]
+desktop = [
+    "dep:tauri",
+    "dep:tauri-build",
+    "dep:tauri-plugin-dialog",
+    "dep:tauri-plugin-opener",
+    "dep:tauri-plugin-single-instance",
+]
+
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "2", features = [], optional = true }
 
 [dependencies]
 nibtree-cli = { path = "cli" }
 nibtree-macros = { path = "macros" }
-tauri = { version = "2", features = [] }
-tauri-plugin-dialog = "2"
+tauri = { version = "2", features = [], optional = true }
+tauri-plugin-dialog = { version = "2", optional = true }
+# Background work without Tauri (commands::blocking in the browser server); already in the tree through tauri.
+tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2.0.21"
@@ -32,7 +52,7 @@ imara-diff = "0.2.0"
 notify-debouncer-full = "0.7.0"
 # Reads only: network/auth features are unnecessary because writes go through the git CLI.
 git2 = { version = "0.21.0", default-features = false }
-tauri-plugin-opener = "2"
+tauri-plugin-opener = { version = "2", optional = true }
 portable-pty = "0.9.0"
 # Go to File: the ripgrep walker (respects .gitignore) and Helix's fuzzy matcher.
 ignore = "0.4.33"
@@ -74,7 +94,7 @@ objc2 = "0.6"
 [target.'cfg(windows)'.dependencies]
 keyring = { version = "3.6.3", features = ["windows-native"] }
 # Windows starts a new copy of the app for every launch; this hands its arguments to the running one.
-tauri-plugin-single-instance = "2"
+tauri-plugin-single-instance = { version = "2", optional = true }
 # Cancel stops git and everything it started through a Job Object (git/cancel.rs); already in the tree.
 # The MCP screenshot draws the window with PrintWindow and crops it to its DWM frame (mcp/host.rs);
 # the memory readout walks the WebView2 processes and reads their private working set (memory.rs).

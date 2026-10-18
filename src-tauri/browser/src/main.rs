@@ -67,7 +67,11 @@ async fn serve(options: Options) -> i32 {
     };
     let tabs = Arc::new(Tabs::default());
     let runtime = Runtime::start(options.folders.first().cloned(), tabs.clone().events());
-    let url = format!("http://{}:{port}{}?token={token}", options.url_host(), options.base_path);
+    let origin = match &options.public_url {
+        Some(public_url) => public_url.clone(),
+        None => format!("http://{}:{port}", options.url_host()),
+    };
+    let url = format!("{origin}{}?token={token}", options.base_path);
     let server = Arc::new(Server { runtime, tabs, token, options, port });
 
     println!("Nibtree is running at {url}");

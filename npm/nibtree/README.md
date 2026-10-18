@@ -21,9 +21,22 @@ press Ctrl+C to stop.
 --no-open            print the address without opening a browser
 --token <value>      a fixed access token (also NIBTREE_TOKEN); default: a new random one
 --base-path <path>   serve under a path, behind a reverse proxy (for example /nibtree/)
+--public-url <url>   the address to print when a proxy or Docker maps another one (http://host:port)
 --version            show the version
 --help               show this help
 ```
+
+`NIBTREE_HOST`, `NIBTREE_PORT`, `NIBTREE_TOKEN` and `NIBTREE_PUBLIC_URL` set the same defaults as their options,
+and `NIBTREE_NO_OPEN=1` is `--no-open`.
+
+## Docker
+
+```sh
+docker run --rm -p 4410:4410 -v "$PWD:/workspace" -e NIBTREE_TOKEN=pick-a-secret ghcr.io/shibbirweb/nibtree
+```
+
+The image has git, git-lfs, SSH and GnuPG, and listens on port 4410. Details:
+https://github.com/shibbirweb/nibtree/wiki/Docker-Image
 
 Every page needs the token, also on your own machine. With `--host 0.0.0.0`, anyone who can reach the address and
 has the token can read and change your files and run commands, so share it only on networks you trust.
@@ -35,8 +48,7 @@ desktop app's `~/.nibtree`.
 
 ## Platforms
 
-macOS (Apple silicon and Intel), Linux (x64 and Arm, glibc) and Windows (x64 and Arm). Git must be installed. On
-Linux the program needs WebKitGTK for now (`libwebkit2gtk-4.1`, already there on most desktops).
+macOS (Apple silicon and Intel), Linux (x64 and Arm, glibc) and Windows (x64 and Arm). Git must be installed.
 The program for your platform comes in an optional package, such as `@nibtree/darwin-arm64`, so do not install with
 `--omit=optional`.
 
