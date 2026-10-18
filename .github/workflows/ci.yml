@@ -86,7 +86,7 @@ jobs:
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
   swift-ui:
-    name: Swift UI library (build, test, parity)
+    name: Swift UI library (build, test)
     # The SwiftUI components (ui/swift) that the native app is built from; the tokens they use are checked fresh by
     # the frontend job's Vitest run.
     runs-on: macos-latest
@@ -113,18 +113,37 @@ jobs:
         working-directory: ui/swift
         run: swift run NibtreeShowcase --render "$RUNNER_TEMP/stories"
 
-      # Every component matches its ui/web twin to at least 99% in light and dark, and renders faster.
-      - name: Parity with ui/web (match and speed)
+  # Every component matches its ui/web twin to at least 99% in light and dark, and renders faster. Match and speed
+  # run as two jobs beside the build, so the gate takes the time of the slower one; the speed job also times on a
+  # runner that is not taking pictures at the same time.
+  swift-parity:
+    name: Swift UI parity (${{ matrix.check }})
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [match, speed]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Parity with ui/web (${{ matrix.check }})
         run: |
+          bun install --frozen-lockfile
           bunx --bun playwright install webkit
-          bun run ui:swift:parity
+          bun run ui:swift:parity --${{ matrix.check }}
 
       - name: Keep the parity pictures when it fails
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: swift-parity
+          name: swift-parity-${{ matrix.check }}
           path: ui/swift/.parity
+          # .parity starts with a dot, and upload-artifact skips hidden folders unless told.
+          include-hidden-files: true
 
   # Windows runs as two jobs, like macOS, so the frontend checks and the slower Rust build run side by side.
   windows-frontend:

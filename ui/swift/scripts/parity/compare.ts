@@ -89,24 +89,27 @@ export interface Verdict {
 }
 
 /** A scenario passes with at least MIN_MATCH in both appearances, near and at the same spot, and a Swift render
- *  faster than the web one. */
-export function verdict(id: string, matches: Match[], webMs: number, swiftMs: number): Verdict {
+ *  faster than the web one. A run of one check (`--match` or `--speed`) passes no pictures or no times, and the
+ *  other check is left out (its numbers are NaN). */
+export function verdict(id: string, matches: Match[], webMs?: number, swiftMs?: number): Verdict {
   const problems: string[] = [];
   if (matches.some((match) => !match.sameSize)) {
     problems.push("different size from the web component");
   }
-  const match = Math.min(...matches.map((one) => one.ratio));
+  const match = matches.length ? Math.min(...matches.map((one) => one.ratio)) : Number.NaN;
   if (match < MIN_MATCH) {
     problems.push(`matches ${(match * 100).toFixed(2)}%, needs ${MIN_MATCH * 100}%`);
   }
-  const strict = Math.min(...matches.map((one) => one.strict));
+  const strict = matches.length ? Math.min(...matches.map((one) => one.strict)) : Number.NaN;
   if (strict < MIN_MATCH) {
     problems.push(`matches ${(strict * 100).toFixed(2)}% at the same spot, needs ${MIN_MATCH * 100}%`);
   }
-  if (!(swiftMs < webMs)) {
-    problems.push(`Swift ${swiftMs.toFixed(1)} ms is not faster than web ${webMs.toFixed(1)} ms`);
+  const timed = webMs !== undefined || swiftMs !== undefined;
+  const [web, swift] = [webMs ?? Number.NaN, swiftMs ?? Number.NaN];
+  if (timed && !(swift < web)) {
+    problems.push(`Swift ${swift.toFixed(1)} ms is not faster than web ${web.toFixed(1)} ms`);
   }
-  return { id, match, strict, webMs, swiftMs, problems };
+  return { id, match, strict, webMs: web, swiftMs: swift, problems };
 }
 
 /** The fastest run: what the component costs once caches and the JIT are warm, without the machine's noise. */

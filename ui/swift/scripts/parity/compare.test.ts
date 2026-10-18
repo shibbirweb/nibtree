@@ -52,6 +52,13 @@ describe("verdict", () => {
     expect(verdict("a", [full], 10, 10).problems).toEqual(["Swift 10.0 ms is not faster than web 10.0 ms"]);
   });
 
+  it("checks only what a one-check run measured", () => {
+    expect(verdict("a", [full, full]).problems).toEqual([]);
+    expect(verdict("a", [], 10, 5).problems).toEqual([]);
+    expect(verdict("a", [], 10, 12).problems).toHaveLength(1);
+    expect(verdict("a", [], Number.NaN, 5).problems).toHaveLength(1);
+  });
+
   it("takes the fastest run", () => {
     expect(best([3, 1, 2])).toBe(1);
     expect(best([])).toBeNaN();

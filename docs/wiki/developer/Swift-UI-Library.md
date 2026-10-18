@@ -85,7 +85,7 @@ Every component must match its `ui/web` twin to at least 99% and render faster, 
 - `Tests/NibtreeUITests/StackTests.swift`: a scroll stack that fits has no scroll view, one that overflows has.
 - `Tests/NibtreeUITests/TextEngineTests.swift`: WebKit's line boxes, CSS weights, wrapping and truncation.
 - The parity tests: see [Swift UI Parity](Swift-UI-Parity.md).
-- CI (`swift-ui` in `ci.yml`): coverage check, a build with warnings as errors, the tests, every story rendered, and the parity gate.
+- CI (`swift-ui` in `ci.yml`): coverage check, a build with warnings as errors, the tests, every story rendered; beside it, `swift-parity` runs the parity gate as two jobs, match and speed.
 
 ## Keeping this page in sync
 

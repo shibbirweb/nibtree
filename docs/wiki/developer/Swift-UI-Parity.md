@@ -26,7 +26,7 @@ A scenario is a component tree with props and a width, in `parity/<Name>.json` (
 
 Pictures, side by side diffs (web, Swift, differences in magenta) and `report.json` go to `ui/swift/.parity/`; CI keeps them when it fails.
 
-A run takes about four minutes. `bun run ui:swift:parity text-body stack-scroll` runs only the scenarios named.
+`--match` or `--speed` runs one check; CI runs both side by side. `bun run ui:swift:parity text-body stack-scroll` runs only the scenarios named.
 
 ## Text: Core Text, like WebKit
 

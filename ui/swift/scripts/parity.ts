@@ -1,8 +1,8 @@
 // The native parity check (`bun run ui:swift:parity`): every scenario in ui/swift/parity is drawn by ui/web in WebKit
 // and by ui/swift with SwiftUI, in light and dark. A component passes when its pictures match at least 99% and its
 // Swift render is faster than the web one; any failure fails the run (and CI). Pictures, diffs and the report go to
-// ui/swift/.parity/ (not committed).
-//   bun run ui:swift:parity [scenario ids...]
+// ui/swift/.parity/ (not committed). `--match` or `--speed` runs one of the two checks, which CI runs side by side.
+//   bun run ui:swift:parity [--match | --speed] [scenario ids...]
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -26,6 +26,9 @@ const BENCH_COUNT = Number(process.env.NIBTREE_PARITY_COUNT ?? 200);
 const BENCH_WARMUP = 2;
 const BENCH_RUNS = 7;
 const THEMES = ["light", "dark"] as const;
+const flags = process.argv.slice(2);
+const checkMatch = !flags.includes("--speed");
+const checkSpeed = !flags.includes("--match");
 
 function loadScenarios(): Scenario[] {
   const known = new Set(swiftComponents());
@@ -56,10 +59,12 @@ const scenarios = loadScenarios();
 mkdirSync(join(outDir, "web"), { recursive: true });
 mkdirSync(join(outDir, "diff"), { recursive: true });
 const binary = swiftBinary(swiftRoot);
-execFileSync(binary, ["--parity", scenarioDir, join(outDir, "swift")], { stdio: "inherit" });
+if (checkMatch) {
+  execFileSync(binary, ["--parity", scenarioDir, join(outDir, "swift")], { stdio: "inherit" });
+}
 const swiftTimes = new Map<string, number>();
 // One process per scenario, like the web side's fresh page: a big scenario leaves a process slower for the rest.
-for (const scenario of scenarios) {
+for (const scenario of checkSpeed ? scenarios : []) {
   const args = ["--bench", scenarioDir, String(BENCH_COUNT), String(BENCH_WARMUP), String(BENCH_RUNS), scenario.id];
   const line = execFileSync(binary, args).toString().trim().split("\n")[0] ?? "{}";
   swiftTimes.set(scenario.id, (JSON.parse(line) as { ms?: number }).ms ?? Number.NaN);
@@ -77,7 +82,7 @@ const page = await browser.newPage({ viewport: { width: 1000, height: 800 }, dev
 const verdicts: Verdict[] = [];
 for (const scenario of scenarios) {
   const matches: Match[] = [];
-  for (const theme of THEMES) {
+  for (const theme of checkMatch ? THEMES : []) {
     await page.goto(`${base}native.html?scenario=${scenario.id}&theme=${theme}`);
     await page.waitForSelector("#frame[data-ready]");
     const webFile = join(outDir, "web", `${scenario.id}-${theme}.png`);
@@ -88,6 +93,10 @@ for (const scenario of scenarios) {
     matches.push(compare(decodePng(webBytes), decodePng(swiftBytes)));
     const diff = await sideBySidePng(page, webBytes.toString("base64"), swiftBytes.toString("base64"));
     writeFileSync(join(outDir, "diff", `${scenario.id}-${theme}.png`), Buffer.from(diff, "base64"));
+  }
+  if (!checkSpeed) {
+    verdicts.push(verdict(scenario.id, matches));
+    continue;
   }
   // Warmed up, then the best of BENCH_RUNS in the same page: the component's own cost, not the machine's noise.
   await page.goto(`${base}native.html?scenario=${scenario.id}&theme=light`);
@@ -110,9 +119,10 @@ await server.close();
 writeFileSync(join(outDir, "report.json"), JSON.stringify(verdicts, null, 2));
 for (const one of verdicts) {
   const mark = one.problems.length ? "FAIL" : "ok  ";
-  const speed = `${one.swiftMs.toFixed(1)} ms vs web ${one.webMs.toFixed(1)} ms`;
+  const speed = checkSpeed ? `  ${one.swiftMs.toFixed(1)} ms vs web ${one.webMs.toFixed(1)} ms` : "";
   const strict = `(same spot ${(one.strict * 100).toFixed(2)}%)`;
-  console.log(`${mark} ${one.id.padEnd(28)} ${(one.match * 100).toFixed(2).padStart(6)}% ${strict}  ${speed}`);
+  const match = checkMatch ? ` ${(one.match * 100).toFixed(2).padStart(6)}% ${strict}` : "";
+  console.log(`${mark} ${one.id.padEnd(28)}${match}${speed}`);
   for (const problem of one.problems) {
     console.log(`       ${problem}`);
   }
