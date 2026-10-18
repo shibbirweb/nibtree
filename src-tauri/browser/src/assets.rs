@@ -2,7 +2,7 @@
 //! index.html, as SvelteKit's SPA fallback expects, and index.html tells the page it runs here.
 
 use std::path::{Component, Path, PathBuf};
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 
 use axum::extract::State;
 use axum::http::{header, StatusCode, Uri};
@@ -12,18 +12,18 @@ use nibtree_lib::browser;
 
 use crate::Server;
 
-
 /// SvelteKit puts a content hash in every file name under _app/immutable.
 const IMMUTABLE: &str = "public, max-age=31536000, immutable";
 
 pub async fn serve(State(server): State<Arc<Server>>, uri: Uri) -> Response {
-    let root = assets_root(server.options.assets.as_deref());
+    static ROOT: OnceLock<PathBuf> = OnceLock::new();
+    let root = ROOT.get_or_init(|| assets_root(server.options.assets.as_deref()));
     let Some(relative) = safe_relative(uri.path()) else {
         return StatusCode::NOT_FOUND.into_response();
     };
     let file = root.join(&relative);
     if relative.as_os_str().is_empty() || !file.is_file() {
-        return index(&root, &server.options.base_path).await;
+        return index(root, &server.options.base_path).await;
     }
     match tokio::fs::read(&file).await {
         Ok(bytes) => {
@@ -51,11 +51,16 @@ async fn index(root: &Path, base_path: &str) -> Response {
     }
 }
 
-/// Until the page is embedded in the binary (the npm stage): `--assets`, else this checkout's build.
+/// `--assets`, else the `page` folder next to the program (how the npm packages ship it, scripts/npm-package.ts),
+/// else this checkout's build.
 fn assets_root(assets: Option<&Path>) -> PathBuf {
-    match assets {
-        Some(folder) => folder.to_path_buf(),
-        None => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../build"),
+    if let Some(folder) = assets {
+        return folder.to_path_buf();
+    }
+    let beside = std::env::current_exe().ok().and_then(|program| Some(program.parent()?.join("page")));
+    match beside {
+        Some(folder) if folder.join("index.html").is_file() => folder,
+        _ => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../build"),
     }
 }
 

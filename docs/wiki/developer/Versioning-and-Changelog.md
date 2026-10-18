@@ -2,10 +2,11 @@
 
 Nibtree has one version number and one changelog. Both are moved by tools, not by hand, so they can never disagree. This page explains where they live, every command of `scripts/version.ts`, and the rules for writing the changelog.
 
-## One version, three files
+## One version, four files
 
 - **`src-tauri/Cargo.toml` is the source of truth.** Tauri builds the app with this version (`tauri.conf.json` has none of its own), the About screen shows it, and the update check compares against it.
 - **`package.json`** and the crate's entry in **`src-tauri/Cargo.lock`** carry the same number, so nothing drifts.
+- **`npm/nibtree/package.json`**, the browser version's npm launcher, has it too, and pins each platform package to it ([Browser Version Packages](Browser-Version-Packages.md)).
 
 Never edit these by hand. Use `bun scripts/version.ts set x.y.z`, or better, let the release workflows move the version (see [Releases and CI](Releases-and-CI.md)). CI runs `bun scripts/version.ts check` on every push and pull request.
 
@@ -18,8 +19,8 @@ All of them run from the repository root with `bun scripts/version.ts <command>`
 | Command | What it does |
 | --- | --- |
 | `show` | prints the version from `Cargo.toml` |
-| `check` | lists the version in all three files, marks any that disagree, exits 1 if one does |
-| `set x.y.z` | writes the version into all three files, then runs `check` |
+| `check` | lists the version in all four files, marks any that disagree, exits 1 if one does |
+| `set x.y.z` | writes the version into all four files, then runs `check` |
 | `notes [x.y.z]` | prints a changelog section: Unreleased by default, or the given version |
 | `pending` | says whether a release is due and what it would be |
 | `bump <level>` | moves to the next version: `beta`, `release`, `patch`, `minor`, `major` or an exact `x.y.z` |
@@ -33,9 +34,10 @@ $ bun scripts/version.ts show
 0.1.0-beta.2
 
 $ bun scripts/version.ts check
-  src-tauri/Cargo.toml  0.1.0-beta.2
-  src-tauri/Cargo.lock  0.1.0-beta.2
-  package.json          0.1.0-beta.2
+  src-tauri/Cargo.toml      0.1.0-beta.2
+  src-tauri/Cargo.lock      0.1.0-beta.2
+  package.json              0.1.0-beta.2
+  npm/nibtree/package.json  0.1.0-beta.2
 
 all files agree on 0.1.0-beta.2
 

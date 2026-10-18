@@ -16,7 +16,8 @@ Options:
   --no-open            print the address without opening a browser
   --token <value>      a fixed access token (also NIBTREE_TOKEN); default: a new random one
   --base-path <path>   serve under a path, behind a reverse proxy (for example /nibtree/)
-  --assets <folder>    serve the page from this folder (development)
+  --assets <folder>    serve the page from this folder (default: the page next to this program)
+  --version            show the version
   --help               show this help";
 
 pub const DEFAULT_PORT: u16 = 4300;
@@ -41,6 +42,7 @@ pub struct Options {
     pub base_path: String,
     pub assets: Option<PathBuf>,
     pub help: bool,
+    pub version: bool,
 }
 
 impl Options {
@@ -55,6 +57,7 @@ impl Options {
             base_path: "/".to_string(),
             assets: None,
             help: false,
+            version: false,
         };
         let mut args = args.peekable();
         while let Some(arg) = args.next() {
@@ -74,6 +77,7 @@ impl Options {
                 "--base-path" => options.base_path = base_path(&value("--base-path")?),
                 "--assets" => options.assets = Some(PathBuf::from(value("--assets")?)),
                 "--help" | "-h" => options.help = true,
+                "--version" | "-V" => options.version = true,
                 flag if flag.starts_with('-') => return Err(format!("Unknown option: {flag}")),
                 folder => options.folders.push(absolute(folder)?),
             }
@@ -174,6 +178,7 @@ mod tests {
         assert_eq!(options.url_host(), "127.0.0.1");
         assert!(!options.open_browser);
         assert_eq!(options.base_path, "/x/");
+        assert!(parse(&["--version"]).version && parse(&["-V"]).version && !options.version);
     }
 
     #[test]

@@ -50,6 +50,7 @@ gitGraph
 | `stable-promote.yml` (Promote stable) | CI finishing on `develop` | opens the `develop` to `master` pull request |
 | `stable-publish.yml` (Publish stable) | CI finishing on `master` | publishes the stable release as the latest one |
 | `release.yml` (Release) | a call, a release published by hand, or a manual run | builds the macOS app and attaches it |
+| `browser.yml` (Browser version) | push to `develop` or `master`, any pull request, a call from `release.yml` | tests the browser version on six platforms; publishes it to npm for a release |
 | `windows-installer.yml`, `macos-app.yml` | any pull request | build, check and keep the Windows and macOS apps |
 | `wiki.yml` (Wiki) | push to `master` that touches the docs, or a manual run | publishes `docs/wiki` to the GitHub wiki |
 
@@ -117,18 +118,11 @@ sequenceDiagram
 
 ## Building: `release.yml`
 
-It checks that every file agrees on the version, that the tag is exactly `v` plus the version in `src-tauri/Cargo.toml`, and that the pre-release flag matches (betas must be pre-releases, stable versions must not). Empty or GitHub-generated notes are replaced with the changelog section. Unless the caller says CI already passed, it runs `ci.yml` first. Then `tauri-action` builds a universal app (Apple Silicon and Intel) and attaches the `.dmg` and zipped `.app`. When the repository variable `WINDOWS_RELEASES` is `true`, `build-windows` also attaches the Windows installer. Run workflow with a tag rebuilds an existing release. Signing is optional: add the `APPLE_*` secrets named at the top of the file and uncomment the matching lines.
+It checks that every file agrees on the version, that the tag is exactly `v` plus the version in `src-tauri/Cargo.toml`, and that the pre-release flag matches (betas must be pre-releases, stable versions must not). Empty or GitHub-generated notes are replaced with the changelog section. Unless the caller says CI already passed, it runs `ci.yml` first. Then `tauri-action` builds a universal app (Apple Silicon and Intel) and attaches the `.dmg` and zipped `.app`. When the repository variable `WINDOWS_RELEASES` is `true`, `build-windows` also attaches the Windows installer. The `npm` job calls `browser.yml`, which builds the browser version for six platforms and publishes it to npm ([Browser Version Packages](Browser-Version-Packages.md)). Run workflow with a tag rebuilds an existing release. Signing is optional: add the `APPLE_*` secrets named at the top of the file and uncomment the matching lines.
 
 ## Publishing the wiki: `wiki.yml`
 
-A GitHub wiki is its own git repository (`<repo>.wiki.git`), so merging `docs/wiki` does not update it. `wiki.yml` runs on a push to `master` that touches `docs/wiki/**`, `scripts/build-wiki.ts`, `scripts/wiki.ts`, `src/lib/update/releases.ts` (it names the repository) or the workflow itself, and on Run workflow from any branch (for example `develop`, to seed the wiki). It:
-
-1. builds the pages with `bun scripts/build-wiki.ts "$RUNNER_TEMP/wiki-pages"`, which checks everything first;
-2. clones the wiki, and fails with a hint if it does not exist yet;
-3. mirrors the files, so a page deleted from `docs/wiki` disappears from the wiki too;
-4. commits as `github-actions[bot]` and pushes, or stops when nothing changed.
-
-The build turns our folders into the flat wiki GitHub expects: the `# Title` line is dropped (the wiki prints the page name), links between pages become page names, images go to `images/`, links to other repository files become GitHub URLs on `develop`, and `Home`, `_Sidebar` and `_Footer` are generated from `features.json`. Every page starts with a comment saying it is generated, so nobody edits it in the wiki. See [Docs and Screenshots](Docs-and-Screenshots.md).
+`wiki.yml` copies `docs/wiki` to the GitHub wiki when `master` changes. See [Publishing the Wiki](Publishing-the-Wiki.md).
 
 ## One-time repository setup
 
@@ -137,6 +131,7 @@ The build turns our folders into the flat wiki GitHub expects: the `# Title` lin
 - Optionally protect `develop` and `master`: pull requests only, CI required.
 - Keep the repository public, so the in-app update check can see releases.
 - Open the Wiki tab and save any page once, so the wiki repository exists.
+- For npm: create the free `nibtree` organization on npmjs.com (it owns the `@nibtree` scope), then add the `NPM_TOKEN` secret ([Browser Version Packages](Browser-Version-Packages.md)).
 
 ## Why it is built this way
 

@@ -41,6 +41,10 @@ fn main() {
         println!("{}", options::USAGE);
         return;
     }
+    if options.version {
+        println!("nibtree {}", browser::app_version());
+        return;
+    }
     let runtime = tokio::runtime::Runtime::new().expect("a tokio runtime");
     std::process::exit(runtime.block_on(serve(options)));
 }

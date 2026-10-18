@@ -4,8 +4,9 @@
  *
  * `src-tauri/Cargo.toml` is the source of truth: Tauri builds the app with it
  * (tauri.conf.json has no version of its own), the About/Settings screen shows
- * it, and the update check compares against it. `package.json` and the crate's
- * entry in `Cargo.lock` carry the same number so nothing drifts.
+ * it, and the update check compares against it. `package.json`, the npm
+ * launcher (`npm/nibtree/package.json`, with its platform packages' pins) and
+ * the crate's entry in `Cargo.lock` carry the same number so nothing drifts.
  *
  *     bun scripts/version.ts show               print the version
  *     bun scripts/version.ts check              verify every file agrees (CI runs this)
@@ -39,11 +40,13 @@ import {
   suggestLevel,
   untriedSubjects,
 } from "./versioning";
+import { type Manifest, manifestProblems, withVersion } from "./npmPackages";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const CARGO_TOML = join(ROOT, "src-tauri", "Cargo.toml");
 const CARGO_LOCK = join(ROOT, "src-tauri", "Cargo.lock");
 const PACKAGE_JSON = join(ROOT, "package.json");
+const NPM_LAUNCHER = join(ROOT, "npm", "nibtree", "package.json");
 const CHANGELOG = join(ROOT, "CHANGELOG.md");
 const CRATE = "nibtree";
 /** The ticket key release commits use, like `chore:[GM-12] release 0.2.0`. */
@@ -73,7 +76,15 @@ function collect(): [string, string | null][] {
     ["src-tauri/Cargo.toml", cargoTomlVersion(read(CARGO_TOML))],
     ["src-tauri/Cargo.lock", cargoLockVersion(read(CARGO_LOCK), CRATE)],
     ["package.json", (JSON.parse(read(PACKAGE_JSON)).version as string | undefined) ?? null],
+    ["npm/nibtree/package.json", launcherVersion()],
   ];
+}
+
+/** The npm launcher's version, with what disagrees inside it (its platform packages' pins). */
+function launcherVersion(): string | null {
+  const manifest = JSON.parse(read(NPM_LAUNCHER)) as Manifest;
+  const problems = manifestProblems(manifest, manifest.version);
+  return problems.length > 0 ? `${manifest.version} (${problems[0]})` : (manifest.version ?? null);
 }
 
 function check(): number {
@@ -114,6 +125,10 @@ function set(version: string): number {
   manifest.version = version;
   writeFileSync(PACKAGE_JSON, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
   console.log(`package.json          ${previous} -> ${version}`);
+
+  const launcher = JSON.parse(read(NPM_LAUNCHER)) as Manifest;
+  writeFileSync(NPM_LAUNCHER, `${JSON.stringify(withVersion(launcher, version), null, 2)}\n`, "utf8");
+  console.log(`npm/nibtree/package.json  ${launcher.version} -> ${version}`);
 
   const lock = read(CARGO_LOCK);
   const lockPrevious = cargoLockVersion(lock, CRATE);
