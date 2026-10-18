@@ -15,7 +15,7 @@ import { decodePng } from "./parity/png";
 import { componentDocs } from "../../web/src/lib/docs";
 import { propProblems, stateProblems, swiftProps } from "./parity/props";
 import { scenarioProblems, type Scenario } from "./parity/scenario";
-import { swiftBinary } from "./parity/swiftBinary";
+import { harnessSource, swiftBinary } from "./parity/swiftBinary";
 import { swiftComponents } from "./coverage";
 
 const swiftRoot = fileURLToPath(new URL("..", import.meta.url));
@@ -37,7 +37,7 @@ function loadScenarios(): Scenario[] {
     problems.push(...scenarioProblems(file, content, known, seen));
     all.push(...(content as Scenario[]));
   }
-  const harness = readFileSync(join(swiftRoot, "Sources/NibtreeShowcase/Parity/ScenarioView.swift"), "utf8");
+  const harness = harnessSource(swiftRoot);
   for (const component of known) {
     const source = readFileSync(join(swiftRoot, `Sources/NibtreeUI/Components/N${component}.swift`), "utf8");
     problems.push(...propProblems(component, swiftProps(source, component), all, harness));
@@ -58,18 +58,11 @@ mkdirSync(join(outDir, "diff"), { recursive: true });
 const binary = swiftBinary(swiftRoot);
 execFileSync(binary, ["--parity", scenarioDir, join(outDir, "swift")], { stdio: "inherit" });
 const swiftTimes = new Map<string, number>();
-for (const line of execFileSync(binary, [
-  "--bench",
-  scenarioDir,
-  String(BENCH_COUNT),
-  String(BENCH_WARMUP),
-  String(BENCH_RUNS),
-])
-  .toString()
-  .split("\n")
-  .filter(Boolean)) {
-  const result = JSON.parse(line) as { id: string; ms: number };
-  swiftTimes.set(result.id, result.ms);
+// One process per scenario, like the web side's fresh page: a big scenario leaves a process slower for the rest.
+for (const scenario of scenarios) {
+  const args = ["--bench", scenarioDir, String(BENCH_COUNT), String(BENCH_WARMUP), String(BENCH_RUNS), scenario.id];
+  const line = execFileSync(binary, args).toString().trim().split("\n")[0] ?? "{}";
+  swiftTimes.set(scenario.id, (JSON.parse(line) as { ms?: number }).ms ?? Number.NaN);
 }
 
 const server = await createServer({

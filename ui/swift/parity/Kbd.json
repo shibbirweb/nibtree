@@ -1,0 +1,52 @@
+[
+  {
+    "id": "kbd-row",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Kbd", "props": { "keys": "⌘P" } },
+        { "component": "Kbd", "props": { "keys": "⇧⌘F" } },
+        { "component": "Kbd", "props": { "keys": "Esc" } },
+        { "component": "Text", "text": "Quick open", "props": { "tone": "dim" } }
+      ]
+    }
+  },
+  {
+    "id": "kbd-column-stretched",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Kbd", "props": { "keys": "⌘K ⌘S" } },
+        { "component": "Kbd", "props": { "keys": "Ctrl+Shift+P" } }
+      ]
+    }
+  },
+  {
+    "id": "kbd-column-start",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "align": "start", "padding": "md" },
+      "children": [
+        { "component": "Kbd", "props": { "keys": "K" } },
+        { "component": "Kbd", "props": { "keys": "Ctrl+Shift+P" } }
+      ]
+    }
+  },
+  {
+    "id": "kbd-row-stretched",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Title", "props": { "variant": "display" } },
+        { "component": "Kbd", "props": { "keys": "⌥⌘[" } }
+      ]
+    }
+  }
+]

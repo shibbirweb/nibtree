@@ -72,7 +72,7 @@ describe("props", () => {
     expect(propProblems("Box", swiftProps(source), scenarios, harness)).toEqual([
       "Box: no scenario sets side to right",
       "Box: no scenario sets tone to default",
-      "Box: the Swift harness (ScenarioView.swift) does not read open",
+      "Box: the Swift harness (Parity/Groups) does not read open",
       "Box: no scenario sets open",
     ]);
   });

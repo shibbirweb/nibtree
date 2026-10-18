@@ -107,7 +107,7 @@ export function propProblems(component: string, props: SwiftProp[], scenarios: S
   const mapping = harnessCase(component, harness);
   for (const prop of props) {
     if (!mapping.includes(`"${prop.name}"`)) {
-      problems.push(`${component}: the Swift harness (ScenarioView.swift) does not read ${prop.name}`);
+      problems.push(`${component}: the Swift harness (Parity/Groups) does not read ${prop.name}`);
     }
     const values = tried.get(prop.name);
     if (!values) {

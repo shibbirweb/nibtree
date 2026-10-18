@@ -67,7 +67,7 @@ Every component must match its `ui/web` twin to at least 99% and render faster, 
 
 1. Read its `ui/web` doc (`ui/web/docs/components/<Name>.md`) and source.
 2. Add `Sources/NibtreeUI/Components/N<Name>.swift` with the same props as presets, sizes from its `GM<Name>Tokens` and colors from the palette.
-3. Add its story to `Stories.swift`, its parity scenarios to `parity/<Name>.json` (every prop, every value of its own enums), its props to `ScenarioView.swift`, and a test for anything that is not just drawing.
+3. Add its story to its group's `Stories<Group>.swift` (such as `StoriesFeedback.swift`), its parity scenarios to `parity/<Name>.json` (every prop, every value of its own enums), its case to its group's file in `Sources/NibtreeShowcase/Parity/Groups/` (which reads the scenario's props), and a test for anything that is not just drawing.
 4. Run `bun run ui:swift:parity` until it passes, then `bun run ui:swift:coverage`.
 
 ## Design decisions

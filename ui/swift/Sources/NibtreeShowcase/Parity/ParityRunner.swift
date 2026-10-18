@@ -4,8 +4,10 @@ import SwiftUI
 
 /// The Swift half of the parity check (scripts/parity.ts):
 /// - `--parity <scenarios> <out>` draws every scenario in light and dark to `<out>/<id>-<light|dark>.png`.
-/// - `--bench <scenarios> <count> <warmup> <runs>` prints one JSON line per scenario: the fastest of `runs` timings
-///   (after `warmup` unmeasured ones) to lay out and draw `count` copies, like the web side's `nativeBench`.
+/// - `--bench <scenarios> <count> <warmup> <runs> [id ...]` prints one JSON line per scenario (only the ids given, if
+///   any): the fastest of `runs` timings (after `warmup` unmeasured ones) to lay out and draw `count` copies, like the
+///   web side's `nativeBench`. parity.ts benches each scenario in its own process: a big scenario leaves the process
+///   slower for every one after it (icon-every-name made the rest about 1.7 times slower).
 @MainActor
 enum ParityRunner {
     /// Handles the parity arguments if present; returns whether it did.
@@ -18,7 +20,9 @@ enum ParityRunner {
                 return true
             }
             if let index = arguments.firstIndex(of: "--bench"), index + 4 < arguments.count {
+                let ids = Set(arguments[(index + 5)...])
                 let scenarios = try Scenario.load(from: URL(fileURLWithPath: arguments[index + 1]))
+                    .filter { ids.isEmpty || ids.contains($0.id) }
                 bench(
                     scenarios, count: Int(arguments[index + 2]) ?? 100, warmup: Int(arguments[index + 3]) ?? 2,
                     runs: Int(arguments[index + 4]) ?? 7)
@@ -79,25 +83,33 @@ enum ParityRunner {
             let resolved = ResolvedNode(scenario.node)
             var times: [Double] = []
             for run in 0..<(warmup + runs) {
-                let start = DispatchTime.now().uptimeNanoseconds
-                // Like the web side: every copy is laid out, but only a 1000 by 800 point viewport is drawn.
-                let list = ParityFrame(width: scenario.width) {
-                    VStack(spacing: 0) {
-                        ForEach(0..<count, id: \.self) { _ in ScenarioView(node: resolved).sized(scenario.height) }
-                    }
-                }
-                .frame(width: 1000, height: 800, alignment: .topLeading)
-                .clipped()
-                .nibtreeTheme()
-                let renderer = ImageRenderer(content: list)
-                renderer.scale = 2
-                _ = renderer.cgImage
+                // Each run's renderer leaves autoreleased drawings behind: drained per run, or every scenario after a
+                // big one (icon-every-name) runs in a bloated process and times slower than it is.
+                let ms = autoreleasepool { time(resolved, scenario, count: count) }
                 if run >= warmup {
-                    times.append(Double(DispatchTime.now().uptimeNanoseconds - start) / 1_000_000)
+                    times.append(ms)
                 }
             }
             print("{\"id\": \"\(scenario.id)\", \"ms\": \(times.min() ?? -1)}")
         }
+    }
+
+    /// Lays out `count` copies of the scenario and draws them; returns the milliseconds it took.
+    private static func time(_ resolved: ResolvedNode, _ scenario: Scenario, count: Int) -> Double {
+        let start = DispatchTime.now().uptimeNanoseconds
+        // Like the web side: every copy is laid out, but only a 1000 by 800 point viewport is drawn.
+        let list = ParityFrame(width: scenario.width) {
+            VStack(spacing: 0) {
+                ForEach(0..<count, id: \.self) { _ in ScenarioView(node: resolved).sized(scenario.height) }
+            }
+        }
+        .frame(width: 1000, height: 800, alignment: .topLeading)
+        .clipped()
+        .nibtreeTheme()
+        let renderer = ImageRenderer(content: list)
+        renderer.scale = 2
+        _ = renderer.cgImage
+        return Double(DispatchTime.now().uptimeNanoseconds - start) / 1_000_000
     }
 }
 

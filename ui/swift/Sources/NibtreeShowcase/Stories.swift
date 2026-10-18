@@ -21,7 +21,7 @@ struct Story: Identifiable, Sendable {
 /// Sources/NibtreeUI/Components.
 @MainActor
 enum Stories {
-    static let all: [Story] = basics + layout
+    static let all: [Story] = basics + layout + feedback
 
     static let basics: [Story] = [
         Story("Stack", group: "Layout") {

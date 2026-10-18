@@ -2,7 +2,6 @@
 // side with the same props, how much they match (the parity gate's numbers) and which draws faster. Edit the props,
 // see both again, and save the case as a parity scenario. A native window shows the same scenario live in SwiftUI.
 // Open http://localhost:1433/compare.html.
-import { readFileSync } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,6 +10,7 @@ import { swiftComponents } from "./coverage";
 import { CompareSession } from "./parity/compareSession";
 import { harnessProps } from "./parity/props";
 import type { Scenario } from "./parity/scenario";
+import { harnessSource } from "./parity/swiftBinary";
 
 const PORT = 1433;
 const swiftRoot = fileURLToPath(new URL("..", import.meta.url));
@@ -21,7 +21,7 @@ const session = new CompareSession(swiftRoot, base);
 /** The props the Swift side draws for each component (what the harness reads), so the page can mark the web
  *  props its twin does not have yet. */
 function swiftPropNames(): Record<string, string[]> {
-  const harness = readFileSync(join(swiftRoot, "Sources/NibtreeShowcase/Parity/ScenarioView.swift"), "utf8");
+  const harness = harnessSource(swiftRoot);
   const names: Record<string, string[]> = {};
   for (const component of swiftComponents()) {
     names[component] = harnessProps(component, harness);

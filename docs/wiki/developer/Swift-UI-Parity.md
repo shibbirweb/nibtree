@@ -22,11 +22,11 @@ A scenario is a component tree with props and a width, in `parity/<Name>.json` (
 
 - **Match:** the share of pixels within 24 of 255 per channel, at least 99% twice: at the same spot, and at the same spot or one device pixel away (half a point). A different size fails outright.
 - **Speed:** the time to build, lay out and draw 200 copies (`NIBTREE_PARITY_COUNT` changes it), best of 7 runs after 2 warm-ups, on both sides. Swift must be faster.
-- **Every prop:** each prop of the component's `init` appears in a scenario, every value of its own enums too (a flag needs `true`), and `ScenarioView.swift` reads it. Shared presets such as `NSpacing` need the prop only; the token tests check their steps. `scripts/parity/props.ts` reads the props from the Swift source, so a new prop without a scenario fails.
+- **Every prop:** each prop of the component's `init` appears in a scenario, every value of its own enums too (a flag needs `true`), and the Swift harness reads it (`ScenarioView.swift` or its group's file in `Parity/Groups`). Shared presets such as `NSpacing` need the prop only; the token tests check their steps. `scripts/parity/props.ts` reads the props from the Swift source, so a new prop without a scenario fails.
 
 Pictures, side by side diffs (web, Swift, differences in magenta) and `report.json` go to `ui/swift/.parity/`; CI keeps them when it fails.
 
-A run takes about a minute and a half. `bun run ui:swift:parity text-body stack-scroll` runs only the scenarios named.
+A run takes about four minutes. `bun run ui:swift:parity text-body stack-scroll` runs only the scenarios named.
 
 ## Text: Core Text, like WebKit
 
@@ -48,11 +48,10 @@ Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 - **Align self.** A child's `NStackAlignSelf` overrides the stack's `align`, like CSS `align-self` (`NDivider`).
 - **Whole points.** The picture's height is rounded up to whole points, like Playwright's screenshot, which also keeps `ImageRenderer`'s coordinates (measured from the picture's center) on whole device pixels, as a window's are. Without that, text could draw a pixel lower than in a window.
 
-## Speed: fewer views
+## Speed
 
-SwiftUI's cost is mostly the number of views in its graph, so components keep it small: one `Layout` per stack that also does the padding, one canvas per text, colors cached per theme, no environment reads in `NText`, and a scroll view only when the content overflows. The harness counts too: SwiftUI makes one nested view type of all of a `switch`'s cases, so `ScenarioView` keeps Stack and Text in a short switch and hands every other component to `ComponentNode` (three more cases there made every stack 60% slower).
-
-The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles, with no stacks or `GeometryReader`s (a `GeometryReader` rebuilds its content on every layout and cost three times the web's time). Handles draw nothing until pointed at, so a frame or split makes them the first time the pointer enters it and keeps them, or at once when VoiceOver is on. On macOS a split view's divider is not in the Tab order, so the handles are adjusted with VoiceOver's increment and decrement instead of the web's arrow keys.
+How the components stay faster than the web, and how the gate times both sides fairly, is in
+[Swift UI speed](Swift-UI-Speed.md).
 
 ## Where the code lives
 
@@ -63,7 +62,7 @@ The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeS
 | `ui/swift/scripts/parity/compare.ts` | The match and the verdict |
 | `ui/swift/scripts/parity/props.ts` | Reads props from the Swift source and checks they are all tried |
 | `ui/web/native.html`, `ui/web/src/native/` | The web side: scenarios and the timing list |
-| `ui/swift/Sources/NibtreeShowcase/Parity/` | The Swift side: `--parity`, `--bench`, `ScenarioView` |
+| `ui/swift/Sources/NibtreeShowcase/Parity/` | The Swift side: `--parity`, `--bench`, `ScenarioView`, one file per library group in `Groups/` |
 | `ui/swift/Sources/NibtreeUI/Theme/NTextEngine.swift` | Core Text layout and drawing |
 
 ## Design decisions
