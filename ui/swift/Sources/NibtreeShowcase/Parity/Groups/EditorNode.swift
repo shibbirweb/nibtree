@@ -32,11 +32,11 @@ enum EditorNode: Sendable {
     }
 }
 
-struct EditorView: View {
-    let node: EditorNode
-
-    var body: some View {
-        switch node {
+extension EditorNode {
+    /// The component, drawn straight into `ScenarioView`'s switch: a view of its own would cost every child a node.
+    @MainActor @ViewBuilder
+    var view: some View {
+        switch self {
         case .mergeStackFrame(let props, let resultEnd):
             NMergeStackFrame(
                 label: props.label, labels: props.labels, fileName: props.fileName,

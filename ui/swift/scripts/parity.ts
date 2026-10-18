@@ -81,7 +81,8 @@ for (const scenario of scenarios) {
     await page.goto(`${base}native.html?scenario=${scenario.id}&theme=${theme}`);
     await page.waitForSelector("#frame[data-ready]");
     const webFile = join(outDir, "web", `${scenario.id}-${theme}.png`);
-    await page.locator("#frame").screenshot({ path: webFile });
+    // Animations at rest, like the Swift side's `nibtreeStill`: endless ones at their start, others at their end.
+    await page.locator("#frame").screenshot({ path: webFile, animations: "disabled" });
     const swiftFile = join(outDir, "swift", `${scenario.id}-${theme}.png`);
     const [webBytes, swiftBytes] = [readFileSync(webFile), readFileSync(swiftFile)];
     matches.push(compare(decodePng(webBytes), decodePng(swiftBytes)));

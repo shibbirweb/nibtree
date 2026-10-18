@@ -46,6 +46,7 @@ Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 - **Grow.** Children marked `NStackGrows` share the free length (`flex: 1 1 0`).
 - **States.** A component's doc lists the interaction states it draws (`states`); the gate asks for a scenario forcing each one (`"state": "hover"`), drawn with `forcedState.ts` and `nibtreeForcedState`.
 - **Align self.** A child's `NStackAlignSelf` overrides the stack's `align`, like CSS `align-self` (`NDivider`).
+- **Animations at rest.** Playwright takes the web picture with `animations: "disabled"`, which shows an endless animation (a spinner's turn) at its start and one that ends (a fade in) at its end. The Swift picture sets `nibtreeStill`, which components with an animation read to draw the same frame.
 - **Whole points.** The picture's height is rounded up to whole points, like Playwright's screenshot, which also keeps `ImageRenderer`'s coordinates (measured from the picture's center) on whole device pixels, as a window's are. Without that, text could draw a pixel lower than in a window.
 
 ## Speed

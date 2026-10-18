@@ -28,6 +28,10 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
   text.
 - Colors cached per theme, and no environment reads in `NText` (a canvas reads the palette while drawing).
 - A scroll view only when the content overflows.
+- No `if` in a component's body for an option most uses leave off: each one cost a row of six `NStatusDot`s 3 to
+  5 ms. Animations are the exception, as they need it (a pulsing dot has its own modifier with its state).
+- No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
+  is one: an empty `.help` cost as much as a whole `NMark`, and choosing inside the component cost almost as much.
 
 The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title
 strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles. There are no
@@ -43,7 +47,8 @@ The harness turns a scenario's JSON into views (`ScenarioView` and one file per 
 
 - **Short switches.** SwiftUI makes one nested view type of all a `switch`'s cases, and every node pays for its
   depth. `ScenarioView` has one case per library group, and each group's view switches over its own components,
-  so adding a component never makes the others slower.
+  so adding a component never makes the others slower. The group's switch is drawn straight into `ScenarioView`'s
+  (`inner.view`), not through a view of its own: that extra view cost 3 to 5 ms in a row of six dots.
 - **Children written out.** A `ForEach` gives every child its own subgraph. `ScenarioChildren` writes up to eight
   children out like a static stack's (a row of eight Spacers drew in 100 ms through `ForEach`, 85 ms written out).
 

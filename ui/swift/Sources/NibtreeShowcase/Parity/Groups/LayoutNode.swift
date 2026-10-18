@@ -9,6 +9,12 @@ enum LayoutNode: Sendable {
     case splitPane(SplitPaneProps, first: [ResolvedNode], second: [ResolvedNode]?)
     case divider(NDividerDirection, strong: Bool)
     case spacer
+    case card(CardProps, children: [ResolvedNode])
+
+    struct CardProps: Sendable {
+        let label: String?
+        let padded, selected, dim: Bool
+    }
 
     struct SplitHandleProps: Sendable {
         let ratio, gutter, resetRatio: Double
@@ -66,17 +72,23 @@ enum LayoutNode: Sendable {
                 strong: node.flag("strong", default: true))
         case "Spacer":
             self = .spacer
+        case "Card":
+            self = .card(
+                CardProps(
+                    label: node.string("label"), padded: node.flag("padded"), selected: node.flag("selected"),
+                    dim: node.flag("dim")),
+                children: ResolvedNode.list(node.children))
         default:
             return nil
         }
     }
 }
 
-struct LayoutView: View {
-    let node: LayoutNode
-
-    var body: some View {
-        switch node {
+extension LayoutNode {
+    /// The component, drawn straight into `ScenarioView`'s switch: a view of its own would cost every child a node.
+    @MainActor @ViewBuilder
+    var view: some View {
+        switch self {
         case .splitHandle(let props):
             NSplitHandle(
                 ratio: .constant(props.ratio), gutter: props.gutter, resetRatio: props.resetRatio, label: props.label)
@@ -107,6 +119,10 @@ struct LayoutView: View {
             NDivider(direction: direction, strong: strong)
         case .spacer:
             NSpacer()
+        case .card(let props, let children):
+            NCard(label: props.label, padded: props.padded, selected: props.selected, dim: props.dim) {
+                ScenarioChildren(nodes: children)
+            }
         }
     }
 }

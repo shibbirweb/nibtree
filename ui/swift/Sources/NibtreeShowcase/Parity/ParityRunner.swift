@@ -40,6 +40,7 @@ enum ParityRunner {
         return ParityFrame(width: scenario.width) { ScenarioView(node: resolved).sized(scenario.height) }
             .nibtreeTheme()
             .environment(\.colorScheme, scheme)
+            .environment(\.nibtreeStill, true)
     }
 
     private static func shoot(_ scenarios: [Scenario], to folder: URL) throws {

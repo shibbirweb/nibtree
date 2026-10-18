@@ -121,13 +121,13 @@ struct ScenarioView: View {
                 mono: props.mono, truncate: props.truncate, selectable: props.selectable, tabular: props.tabular,
                 strike: props.strike)
         case .layout(let inner):
-            LayoutView(node: inner)
+            inner.view
         case .actions(let inner):
-            ActionsView(node: inner)
+            inner.view
         case .feedback(let inner):
-            FeedbackView(node: inner)
+            inner.view
         case .editor(let inner):
-            EditorView(node: inner)
+            inner.view
         case .stated(let state, let inner):
             ScenarioView(node: inner).environment(\.nibtreeForcedState, state)
         case .unknown:

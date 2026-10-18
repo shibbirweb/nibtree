@@ -1,0 +1,94 @@
+[
+  {
+    "id": "card-column",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "Card",
+          "props": { "label": "main worktree", "padded": false, "selected": false, "dim": false },
+          "children": [
+            {
+              "component": "Stack",
+              "props": { "paddingX": "lg", "paddingY": "xs" },
+              "children": [{ "component": "Text", "text": "main" }]
+            },
+            {
+              "component": "Stack",
+              "props": { "paddingX": "lg", "paddingY": "xs" },
+              "children": [{ "component": "Text", "text": "~/code/nibtree", "props": { "tone": "dim" } }]
+            }
+          ]
+        },
+        {
+          "component": "Card",
+          "props": { "padded": true, "selected": true },
+          "children": [
+            {
+              "component": "Stack",
+              "props": { "gap": "xs" },
+              "children": [
+                { "component": "Text", "text": "feature/login", "props": { "variant": "label" } },
+                { "component": "Text", "text": "2 changes", "props": { "tone": "dim" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "card-dim",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md", "align": "start" },
+      "children": [
+        {
+          "component": "Card",
+          "props": { "dim": true, "padded": true },
+          "children": [{ "component": "Text", "text": "feature/gone" }]
+        },
+        {
+          "component": "Card",
+          "props": { "selected": true, "dim": true },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "card-row",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md", "align": "center" },
+      "children": [
+        { "component": "Text", "text": "Title", "props": { "variant": "display" } },
+        {
+          "component": "Card",
+          "props": { "padded": true },
+          "children": [
+            {
+              "component": "Stack",
+              "props": { "direction": "row", "gap": "xs" },
+              "children": [
+                { "component": "Text", "text": "A" },
+                { "component": "Text", "text": "B", "props": { "tone": "dim" } }
+              ]
+            }
+          ]
+        },
+        {
+          "component": "Card",
+          "props": { "selected": true },
+          "children": [
+            { "component": "Stack", "props": { "paddingX": "md" }, "children": [{ "component": "Text", "text": "C" }] }
+          ]
+        }
+      ]
+    }
+  }
+]

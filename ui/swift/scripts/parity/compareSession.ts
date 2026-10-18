@@ -146,7 +146,7 @@ export class CompareSession {
         for (const theme of THEMES) {
           try {
             await this.openWeb(scenario, theme);
-            const web = await this.webPage.locator("#frame").screenshot();
+            const web = await this.webPage.locator("#frame").screenshot({ animations: "disabled" });
             const swift = readFileSync(join(out, `${scenario.id}-${theme}.png`));
             const match = compare(decodePng(web), decodePng(swift));
             const sideBySide = await sideBySidePng(this.webPage, web.toString("base64"), swift.toString("base64"));

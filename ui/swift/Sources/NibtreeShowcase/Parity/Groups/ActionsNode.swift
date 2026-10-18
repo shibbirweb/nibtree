@@ -22,11 +22,11 @@ enum ActionsNode: Sendable {
     }
 }
 
-struct ActionsView: View {
-    let node: ActionsNode
-
-    var body: some View {
-        switch node {
+extension ActionsNode {
+    /// The component, drawn straight into `ScenarioView`'s switch: a view of its own would cost every child a node.
+    @MainActor @ViewBuilder
+    var view: some View {
+        switch self {
         case .icon(let name, let size, let stroke, let tone):
             NIcon(name, size: size, stroke: stroke, tone: tone)
         }

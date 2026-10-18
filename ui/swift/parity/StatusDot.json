@@ -1,0 +1,32 @@
+[
+  {
+    "id": "status-dot-tones",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "padding": "md", "align": "center" },
+      "children": [
+        { "component": "StatusDot", "props": { "tone": "neutral" } },
+        { "component": "StatusDot", "props": { "tone": "success" } },
+        { "component": "StatusDot", "props": { "tone": "danger" } },
+        { "component": "StatusDot", "props": { "tone": "warning" } },
+        { "component": "StatusDot", "props": { "tone": "accent", "label": "Running" } },
+        { "component": "Text", "text": "Server" }
+      ]
+    }
+  },
+  {
+    "id": "status-dot-small",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "padding": "md", "align": "center" },
+      "children": [
+        { "component": "StatusDot", "props": { "size": "small" } },
+        { "component": "StatusDot", "props": { "size": "small", "tone": "success" } },
+        { "component": "StatusDot", "props": { "size": "normal", "pulse": true } },
+        { "component": "StatusDot", "props": { "size": "small", "tone": "danger", "pulse": false } }
+      ]
+    }
+  }
+]

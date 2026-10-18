@@ -30,7 +30,7 @@ The package has three targets:
 
 ### Props become presets
 
-A web prop with named values becomes a Swift enum with the same names: `gap: "md"` is `gap: .md`, and `NSpacing.md.points` is 8 because the space token says so. No component takes a free number for a size or a color, the same rule as `ui/web`. Props that only make sense in HTML (`element`, `role`, `hideAt`) are left out, and each component's doc comment says which ones.
+A web prop with named values becomes a Swift enum with the same names: `gap: "md"` is `gap: .md`, and `NSpacing.md.points` is 8 because the space token says so. No component takes a free number for a size or a color, the same rule as `ui/web`. Props that only make sense in HTML (`element`, `role`, `hideAt`) are left out, and each component's doc comment says which ones. A tooltip (`title` on the web) is SwiftUI's own `.help("...")` on the component, so only views that have one pay for it.
 
 `NStack` lays out its children with `NStackLayout`, a small SwiftUI `Layout` that does the flexbox subset `Stack` uses: a gap, cross-axis alignment with stretch, `justify: between`, `grow` (children marked with `NStackGrows` share the free length, like `flex: 1 1 0`), and the padding, so a stack is one SwiftUI view. A surface and a line are one canvas behind it. A `scroll` stack only becomes a scroll view when its content does not fit, like `overflow: auto`: a scroll view is an AppKit view and costs many times a stack. The catch is that its children are made again when it switches, so they lose their own state at that moment.
 

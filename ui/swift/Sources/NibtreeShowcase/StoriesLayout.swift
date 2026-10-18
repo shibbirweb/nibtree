@@ -8,6 +8,19 @@ extension Stories {
         Story("ResizeHandle", group: "Layout") { SplitPaneStory(direction: .column) },
         Story("SplitPane", group: "Layout") { SplitPaneStory(direction: .row) },
         Story("MergeStackFrame", group: "Editor") { MergeStackStory() },
+        Story("Card", group: "Layout") {
+            NStack(gap: .sm) {
+                NCard(label: "main worktree", padded: true, selected: true) {
+                    NStack(gap: .xs) {
+                        NText("main", variant: .label)
+                        NText("~/code/nibtree", tone: .dim)
+                    }
+                }
+                NCard(label: "old worktree", dim: true) {
+                    NStack(paddingX: .lg, paddingY: .xs) { NText("feature/gone") }
+                }
+            }
+        },
     ]
 }
 
