@@ -78,3 +78,11 @@ on the faster debug builds.
 
 **Check from the outside.** The verify jobs use `npx` and `docker pull` like everyone else, so they also catch a
 package that was published but cannot be installed.
+
+## Bugs we fixed
+
+**The first rehearsal on `develop` failed at Publish to npm.** `bun publish --dry-run` stopped with "missing
+authentication", though a dry run sends nothing. The rehearsal has no `NPM_TOKEN` on purpose, so it cannot upload
+by mistake. `scripts/npm-package.ts` now gives a dry run a placeholder token when there is no real one: bun is
+happy, and a placeholder could not publish even if the dry-run flag were lost. A real publish still needs the
+secret and fails loudly without it.

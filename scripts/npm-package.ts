@@ -107,6 +107,15 @@ async function isPublished(manifest: Manifest): Promise<boolean> {
   return manifest.version in (document.versions ?? {});
 }
 
+// `bun publish --dry-run` still refuses to run without a token, though it sends nothing. The release rehearsal
+// has no NPM_TOKEN on purpose, so a dry run gets a placeholder.
+function publishEnv(dryRun: boolean): NodeJS.ProcessEnv {
+  if (!dryRun || process.env.NPM_CONFIG_TOKEN) {
+    return process.env;
+  }
+  return { ...process.env, NPM_CONFIG_TOKEN: "dry-run" };
+}
+
 async function publish(args: string[]): Promise<number> {
   const folder = pathOption(args, "--dir");
   const dryRun = args.includes("--dry-run");
@@ -128,7 +137,11 @@ async function publish(args: string[]): Promise<number> {
     const flags = ["--access", "public", "--tag", distTag(manifest.version), ...(dryRun ? ["--dry-run"] : [])];
     console.log(`${dryRun ? "Would publish" : "Publishing"} ${name}@${manifest.version} (${flags.join(" ")})`);
     // From the launcher's folder: bun checks the launcher's `bin` entry against the current folder.
-    execFileSync(process.execPath, ["publish", file, ...flags], { cwd: LAUNCHER, stdio: "inherit" });
+    execFileSync(process.execPath, ["publish", file, ...flags], {
+      cwd: LAUNCHER,
+      stdio: "inherit",
+      env: publishEnv(dryRun),
+    });
   }
   return 0;
 }
