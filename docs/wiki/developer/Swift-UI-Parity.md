@@ -18,7 +18,7 @@ flowchart LR
   C --> R["ui/swift/.parity: pictures, diffs, report.json"]
 ```
 
-A scenario is a component tree with props and a width, in `parity/<Name>.json` (a long list splits into `<Name>.<part>.json`, such as `Text.values.json`). `scripts/parity.ts` draws each one in WebKit and with SwiftUI (`ImageRenderer`), in light and dark at 2x, and times both sides. A scenario passes only when all of these hold:
+A scenario is a component tree with props and a width, in `parity/<Name>.json` (a long list splits into `<Name>.<part>.json`, such as `Text.values.json`). A component that fills its parent (a frame, a split) gets a `height`, and one that takes snippets gets `slots` (SplitPane's `first` and `second`), which a small adapter in `ui/web/src/native/adapters/` passes on the web side. `scripts/parity.ts` draws each one in WebKit and with SwiftUI (`ImageRenderer`), in light and dark at 2x, and times both sides. A scenario passes only when all of these hold:
 
 - **Match:** the share of pixels within 24 of 255 per channel, at least 99% twice: at the same spot, and at the same spot or one device pixel away (half a point). A different size fails outright.
 - **Speed:** the time to build, lay out and draw 200 copies (`NIBTREE_PARITY_COUNT` changes it), best of 7 runs after 2 warm-ups, on both sides. Swift must be faster.
@@ -49,6 +49,8 @@ Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 ## Speed: fewer views
 
 SwiftUI's cost is mostly the number of views in its graph, so components keep it small: one `Layout` per stack that also does the padding, one canvas per text, colors cached per theme, no environment reads in `NText`, and a scroll view only when the content overflows.
+
+The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles, with no stacks or `GeometryReader`s (a `GeometryReader` rebuilds its content on every layout and cost three times the web's time). Handles draw nothing until pointed at, so a frame or split makes them the first time the pointer enters it and keeps them, or at once when VoiceOver is on. On macOS a split view's divider is not in the Tab order, so the handles are adjusted with VoiceOver's increment and decrement instead of the web's arrow keys.
 
 ## Where the code lives
 

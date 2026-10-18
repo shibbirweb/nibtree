@@ -1,0 +1,11 @@
+[
+  {
+    "id": "split-handle-rest",
+    "width": 320,
+    "height": 60,
+    "node": {
+      "component": "SplitHandle",
+      "props": { "ratio": 0.4, "gutter": 0, "resetRatio": 0.5, "label": "Resize the two sides" }
+    }
+  }
+]

@@ -2,7 +2,7 @@
 // prop at least once, every value of the component's own enums, and `true` for each flag. Values of shared presets
 // (NSpacing and the like) need the prop only; the token tests cover their steps.
 
-import type { PropValue, Scenario, ScenarioNode } from "./scenario";
+import { nestedNodes, type PropValue, type Scenario, type ScenarioNode } from "./scenario";
 
 export interface SwiftProp {
   name: string;
@@ -42,9 +42,13 @@ export function enumCases(source: string, name: string): string[] | null {
     .filter((value) => /^\w+$/.test(value));
 }
 
-/** The labelled props of the first `public init(` in a component's source; the unlabelled text and builders skip. */
-export function swiftProps(source: string): SwiftProp[] {
-  const start = source.indexOf("public init(");
+/**
+ * The labelled props of the component's first `public init(` (after `struct N<component>` when it is named, so helper
+ * types above it, such as a labels struct, are not read); the unlabelled text and builders skip.
+ */
+export function swiftProps(source: string, component = ""): SwiftProp[] {
+  const own = component ? source.search(new RegExp(`struct N${component}\\b`)) : -1;
+  const start = source.indexOf("public init(", Math.max(own, 0));
   if (start < 0) {
     return [];
   }
@@ -74,7 +78,7 @@ export function triedValues(scenarios: Scenario[], component: string): Map<strin
         tried.set(name, (tried.get(name) ?? new Set()).add(String(value)));
       }
     }
-    (node.children ?? []).forEach(visit);
+    nestedNodes(node).forEach(visit);
   };
   scenarios.forEach((scenario) => visit(scenario.node));
   return tried;

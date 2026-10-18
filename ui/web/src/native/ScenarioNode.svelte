@@ -9,10 +9,20 @@
   const modules = import.meta.glob<{ default: Component<Record<string, unknown>> }>("../lib/components/*.svelte", {
     eager: true,
   });
+  // A component that takes snippets has an adapter here that passes the node's slots as them.
+  const adapters = import.meta.glob<{ default: Component<{ node: ScenarioNode; Render: typeof Self }> }>(
+    "./adapters/*.svelte",
+    {
+      eager: true,
+    },
+  );
   const Found = $derived(modules[`../lib/components/${node.component}.svelte`]?.default);
+  const Adapter = $derived(adapters[`./adapters/${node.component}.svelte`]?.default);
 </script>
 
-{#if Found}
+{#if Adapter}
+  <Adapter {node} Render={Self} />
+{:else if Found}
   <Found {...node.props ?? {}}>
     {#if node.text !== undefined}{node.text}{:else}{#each node.children ?? [] as child, index (index)}<Self
           node={child}

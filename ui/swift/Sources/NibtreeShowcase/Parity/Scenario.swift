@@ -4,6 +4,8 @@ import Foundation
 struct Scenario: Decodable, Sendable {
     let id: String
     let width: Double
+    /// Set for components that fill their parent (frames, split panes); otherwise the content's height.
+    let height: Double?
     let node: ScenarioNode
 
     /// Every scenario of every file in `folder`.
@@ -20,9 +22,25 @@ struct ScenarioNode: Decodable, Sendable {
     let props: [String: PropValue]?
     let text: String?
     let children: [ScenarioNode]?
+    /// Named content for components that take it as slots (SplitPane's first and second).
+    let slots: [String: [ScenarioNode]]?
+
+    func number(_ name: String) -> Double? {
+        if case .number(let value) = props?[name] {
+            return value
+        }
+        return nil
+    }
 
     func string(_ name: String) -> String? {
         if case .string(let value) = props?[name] {
+            return value
+        }
+        return nil
+    }
+
+    func object(_ name: String) -> [String: String]? {
+        if case .object(let value) = props?[name] {
             return value
         }
         return nil
@@ -41,6 +59,7 @@ enum PropValue: Decodable, Sendable {
     case string(String)
     case number(Double)
     case bool(Bool)
+    case object([String: String])
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -48,6 +67,8 @@ enum PropValue: Decodable, Sendable {
             self = .bool(value)
         } else if let value = try? container.decode(Double.self) {
             self = .number(value)
+        } else if let value = try? container.decode([String: String].self) {
+            self = .object(value)
         } else {
             self = .string(try container.decode(String.self))
         }

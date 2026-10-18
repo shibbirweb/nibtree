@@ -16,10 +16,13 @@ struct Story: Identifiable, Sendable {
     }
 }
 
-/// Every story, in ui/web's groups. Add a component's story here with its file in Sources/NibtreeUI/Components.
+/// Every story, in ui/web's groups. Add a component's story here (or in a Stories<Group>.swift file) with its file in
+/// Sources/NibtreeUI/Components.
 @MainActor
 enum Stories {
-    static let all: [Story] = [
+    static let all: [Story] = basics + layout
+
+    static let basics: [Story] = [
         Story("Stack", group: "Layout") {
             NStack(gap: .lg) {
                 NText("row, gap md", variant: .sectionLabel)

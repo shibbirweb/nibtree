@@ -1,0 +1,55 @@
+[
+  {
+    "id": "split-pane-row",
+    "width": 320,
+    "height": 80,
+    "node": {
+      "component": "SplitPane",
+      "props": {
+        "direction": "row",
+        "size": 120,
+        "sized": "first",
+        "preset": "pane",
+        "max": 400,
+        "label": "Resize",
+        "inPanel": false
+      },
+      "slots": {
+        "first": [{ "component": "Text", "text": "Left pane" }],
+        "second": [{ "component": "Text", "props": { "tone": "dim" }, "text": "Right takes the rest" }]
+      }
+    }
+  },
+  {
+    "id": "split-pane-column-second",
+    "width": 320,
+    "height": 120,
+    "node": {
+      "component": "SplitPane",
+      "props": {
+        "direction": "column",
+        "size": 40,
+        "sized": "second",
+        "preset": "bottom",
+        "max": 100,
+        "label": "Resize the bottom",
+        "extent": 0,
+        "inPanel": true
+      },
+      "slots": {
+        "first": [{ "component": "Text", "text": "Top takes the rest" }],
+        "second": [{ "component": "Text", "text": "Bottom, 40 points" }]
+      }
+    }
+  },
+  {
+    "id": "split-pane-alone",
+    "width": 320,
+    "height": 60,
+    "node": {
+      "component": "SplitPane",
+      "props": { "size": 100, "preset": "list", "label": "Resize" },
+      "slots": { "first": [{ "component": "Text", "text": "Only the first pane" }] }
+    }
+  }
+]

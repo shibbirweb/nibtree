@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 const uiRoot = fileURLToPath(new URL("../..", import.meta.url));
 const WEB_COMPONENTS = join(uiRoot, "web/src/lib/components");
 const SWIFT_COMPONENTS = join(uiRoot, "swift/Sources/NibtreeUI/Components");
-const STORIES = join(uiRoot, "swift/Sources/NibtreeShowcase/Stories.swift");
+const SHOWCASE = join(uiRoot, "swift/Sources/NibtreeShowcase");
 const SCENARIOS = join(uiRoot, "swift/parity");
 
 export interface Coverage {
@@ -42,7 +42,15 @@ export function swiftComponents(dir = SWIFT_COMPONENTS): string[] {
 }
 
 /** Story names in Stories.swift: `Story("Stack", group: ...)`. */
-export function storyNames(source = readFileSync(STORIES, "utf8")): string[] {
+/** Every showcase file with stories: Stories.swift and Stories<Group>.swift. */
+function storySources(): string {
+  return readdirSync(SHOWCASE)
+    .filter((name) => /^Stories\w*\.swift$/.test(name))
+    .map((name) => readFileSync(join(SHOWCASE, name), "utf8"))
+    .join("\n");
+}
+
+export function storyNames(source = storySources()): string[] {
   return [...source.matchAll(/Story\("([A-Za-z0-9]+)"/g)].map((match) => match[1]);
 }
 

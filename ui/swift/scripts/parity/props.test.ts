@@ -55,6 +55,12 @@ describe("props", () => {
     ]);
   });
 
+  it("reads the named component's init, not a helper type's above it", () => {
+    const withHelper = `public struct NBoxLabels {\n    public init(title: String) {\n    }\n}\n${source}`;
+    expect(swiftProps(withHelper, "Box").map((prop) => prop.name)).toEqual(["side", "tone", "gap", "open"]);
+    expect(swiftProps(withHelper)[0].name).toBe("title");
+  });
+
   it("collects the values tried, nested nodes included", () => {
     const tried = triedValues([scenario("a", { side: "left", open: true })], "Box");
     expect([...(tried.get("side") ?? [])]).toEqual(["left"]);

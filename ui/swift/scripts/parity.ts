@@ -36,7 +36,7 @@ function loadScenarios(): Scenario[] {
   const harness = readFileSync(join(swiftRoot, "Sources/NibtreeShowcase/Parity/ScenarioView.swift"), "utf8");
   for (const component of known) {
     const source = readFileSync(join(swiftRoot, `Sources/NibtreeUI/Components/N${component}.swift`), "utf8");
-    problems.push(...propProblems(component, swiftProps(source), all, harness));
+    problems.push(...propProblems(component, swiftProps(source, component), all, harness));
   }
   if (problems.length > 0) {
     console.error(problems.join("\n"));

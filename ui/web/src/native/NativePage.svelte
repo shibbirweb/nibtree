@@ -13,7 +13,13 @@
 </script>
 
 {#if scenario}
-  <div id="frame" class="frame" style:width="{scenario.width}px" data-ready={ready || undefined}>
+  <div
+    id="frame"
+    class="frame"
+    style:width="{scenario.width}px"
+    style:height={scenario.height ? `${scenario.height}px` : null}
+    data-ready={ready || undefined}
+  >
     <ScenarioNode node={scenario.node} />
   </div>
 {:else}

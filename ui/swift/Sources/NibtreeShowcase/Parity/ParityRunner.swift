@@ -33,7 +33,7 @@ enum ParityRunner {
 
     private static func frame(_ scenario: Scenario, scheme: ColorScheme) -> some View {
         let resolved = ResolvedNode(scenario.node)
-        return ParityFrame(width: scenario.width) { ScenarioView(node: resolved) }
+        return ParityFrame(width: scenario.width) { ScenarioView(node: resolved).sized(scenario.height) }
             .nibtreeTheme()
             .environment(\.colorScheme, scheme)
     }
@@ -83,7 +83,7 @@ enum ParityRunner {
                 // Like the web side: every copy is laid out, but only a 1000 by 800 point viewport is drawn.
                 let list = ParityFrame(width: scenario.width) {
                     VStack(spacing: 0) {
-                        ForEach(0..<count, id: \.self) { _ in ScenarioView(node: resolved) }
+                        ForEach(0..<count, id: \.self) { _ in ScenarioView(node: resolved).sized(scenario.height) }
                     }
                 }
                 .frame(width: 1000, height: 800, alignment: .topLeading)
@@ -127,5 +127,17 @@ private struct WholePoints: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let offer = ProposedViewSize(width: bounds.width, height: nil)
         subviews.first?.place(at: bounds.origin, anchor: .topLeading, proposal: offer)
+    }
+}
+
+extension View {
+    /// A scenario's set height, for components that fill their parent; none leaves the content's height.
+    @ViewBuilder
+    func sized(_ height: Double?) -> some View {
+        if let height {
+            frame(height: height, alignment: .top)
+        } else {
+            self
+        }
     }
 }

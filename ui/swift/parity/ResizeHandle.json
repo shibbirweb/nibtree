@@ -1,0 +1,36 @@
+[
+  {
+    "id": "resize-handle-left",
+    "width": 320,
+    "height": 60,
+    "node": {
+      "component": "ResizeHandle",
+      "props": {
+        "size": 200,
+        "side": "left",
+        "preset": "sidebar",
+        "max": 600,
+        "min": 120,
+        "defaultSize": 260,
+        "label": "Resize the sidebar",
+        "inPanel": false
+      }
+    }
+  },
+  {
+    "id": "resize-handle-bottom",
+    "width": 320,
+    "height": 60,
+    "node": {
+      "component": "ResizeHandle",
+      "props": {
+        "size": 160,
+        "side": "bottom",
+        "preset": "bottom",
+        "max": 400,
+        "label": "Resize the terminal",
+        "inPanel": true
+      }
+    }
+  }
+]

@@ -21,7 +21,10 @@ async function bench(count: number): Promise<number> {
   const target = document.createElement("div");
   document.body.append(target);
   const start = performance.now();
-  const list = mount(BenchList, { target, props: { node: scenario.node, width: scenario.width, count } });
+  const list = mount(BenchList, {
+    target,
+    props: { node: scenario.node, width: scenario.width, height: scenario.height, count },
+  });
   await tick();
   target.getBoundingClientRect();
   await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));

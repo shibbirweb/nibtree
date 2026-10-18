@@ -11,6 +11,8 @@ export interface ScenarioNode {
   /** The text inside (Text and other text components). */
   text?: string;
   children?: ScenarioNode[];
+  /** Named content, for components that take it as snippets (SplitPane's first and second). */
+  slots?: Record<string, ScenarioNode[]>;
 }
 
 export interface Scenario {
@@ -18,12 +20,19 @@ export interface Scenario {
   id: string;
   /** Points (CSS pixels) wide; the height is the content's. */
   width: number;
+  /** Points high, for components that fill their parent (frames, split panes); left out, the content's. */
+  height?: number;
   node: ScenarioNode;
+}
+
+/** A node's nested nodes: its children and every slot's content. */
+export function nestedNodes(node: ScenarioNode): ScenarioNode[] {
+  return [...(node.children ?? []), ...Object.values(node.slots ?? {}).flat()];
 }
 
 /** Every component a scenario uses, nested ones included. */
 export function componentsOf(node: ScenarioNode): string[] {
-  return [node.component, ...(node.children ?? []).flatMap(componentsOf)];
+  return [node.component, ...nestedNodes(node).flatMap(componentsOf)];
 }
 
 /** Problems with a scenario file's content: missing fields, duplicate ids, unknown components. */
