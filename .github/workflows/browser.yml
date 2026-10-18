@@ -2,31 +2,39 @@
 # browser version's tests, packs its npm packages (scripts/npm-package.ts) and smoke tests them the way npm
 # installs them (scripts/browser-smoke.ts), with Bun and with Node, which is what `npx nibtree` runs on.
 #
-# release.yml calls this for every beta and stable release with `publish: true`: the programs are then built in
-# release mode and published to npm, betas under the `next` tag and stable versions under `latest`. Publishing
-# needs the repository secret NPM_TOKEN (Settings, Secrets and variables, Actions): an npm granular access token
-# with read and write access to `nibtree` and the `@nibtree` scope. Without it the packages get a dry run and
-# nothing is published. A version already on npm is skipped, so rebuilding a release is safe.
-#
 # The Docker image (docker/Dockerfile) is built from the Linux packages and smoke tested in a container on amd64
-# and arm64 (`browser-smoke.ts --docker`). A release pushes it for both to ghcr.io/<owner>/nibtree with the
-# built-in token, and to Docker Hub as <DOCKERHUB_USERNAME>/nibtree when the DOCKERHUB_USERNAME and
-# DOCKERHUB_TOKEN secrets are set: the exact version, plus `next` for a beta or `latest` for a stable release.
+# and arm64 (`browser-smoke.ts --docker`).
+#
+# release.yml calls this for every beta and stable release with `publish: true`: the programs are built in release
+# mode, published to npm (betas under `next`, stable versions under `latest`) and the image is pushed for both
+# architectures to ghcr.io/<owner>/nibtree (the built-in token) and Docker Hub as <DOCKERHUB_USERNAME>/nibtree,
+# as the exact version plus the same moving tag; release.yml then runs browser-verify.yml, which installs and runs
+# what was published. A release fails when NPM_TOKEN, DOCKERHUB_USERNAME or DOCKERHUB_TOKEN is
+# missing. Versions npm already has are skipped and pushing the same tags again is harmless, so "Re-run failed
+# jobs" finishes a release that broke halfway.
+#
+# browser-rehearsal.yml calls it with `publish: true` and `dry_run: true` on every push to develop: the whole
+# release path, with `bun publish --dry-run` and a Docker build that is not pushed.
 name: Browser version
 
 on:
+  # develop gets browser-rehearsal.yml instead, which also builds and smoke tests everything.
   push:
-    branches: [develop, master]
+    branches: [master]
   pull_request:
   workflow_dispatch:
   workflow_call:
     inputs:
       tag:
-        description: The release tag to build, like v0.2.0-beta.1
+        description: The release tag (like v0.2.0-beta.1) or commit to build
         type: string
         required: true
       publish:
-        description: Build in release mode and publish the packages to npm
+        description: Build in release mode and publish to npm, ghcr.io and Docker Hub
+        type: boolean
+        default: false
+      dry_run:
+        description: With publish, do everything but upload (the rehearsal)
         type: boolean
         default: false
     secrets:
@@ -157,10 +165,13 @@ jobs:
       - name: Publish
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [ -z "$NPM_CONFIG_TOKEN" ]; then
-            echo "::warning::There is no NPM_TOKEN secret, so the packages only got a dry run. See browser.yml."
+          if [ "$DRY_RUN" = "true" ]; then
             bun scripts/npm-package.ts publish --dir npm-packages --dry-run
+          elif [ -z "$NPM_CONFIG_TOKEN" ]; then
+            echo "::error::There is no NPM_TOKEN secret, so nothing can be published to npm. See browser.yml."
+            exit 1
           else
             bun scripts/npm-package.ts publish --dir npm-packages
           fi
@@ -226,6 +237,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - uses: docker/login-action@v3
+        if: ${{ !inputs.dry_run }}
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -236,10 +248,15 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_TOKEN" ]; then
-            echo "::warning::No DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets: the image goes to ghcr.io only."
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "repository=docker.io/${DOCKERHUB_USERNAME:-rehearsal}/nibtree" >> "$GITHUB_OUTPUT"
             exit 0
+          fi
+          if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_TOKEN" ]; then
+            echo "::error::DOCKERHUB_USERNAME and DOCKERHUB_TOKEN are needed to push the image. See browser.yml."
+            exit 1
           fi
           echo "$DOCKERHUB_TOKEN" | docker login docker.io --username "$DOCKERHUB_USERNAME" --password-stdin
           echo "repository=docker.io/$DOCKERHUB_USERNAME/nibtree" >> "$GITHUB_OUTPUT"
@@ -248,6 +265,8 @@ jobs:
         env:
           GHCR: ghcr.io/${{ github.repository_owner }}/nibtree
           HUB: ${{ steps.hub.outputs.repository }}
+          # The rehearsal builds both architectures but keeps them.
+          PUSH: ${{ !inputs.dry_run && '--push' || '' }}
         run: |
           version="$(bun scripts/version.ts show)"
           bun scripts/docker-context.ts --packages npm-packages --out docker-context
@@ -256,4 +275,4 @@ jobs:
             tags+=(--tag "$tag")
           done < <(bun scripts/docker-tags.ts tags "$version" "$GHCR" $HUB)
           docker buildx build --platform "$(bun scripts/docker-tags.ts platforms)" \
-            --build-arg VERSION="$version" "${tags[@]}" --push docker-context
+            --build-arg VERSION="$version" "${tags[@]}" $PUSH docker-context

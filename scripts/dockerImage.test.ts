@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dockerArch, dockerPlatforms, dockerTags } from "./dockerImage";
+import { dockerArch, dockerPlatforms, dockerTags, imagePlatforms } from "./dockerImage";
 
 describe("docker image", () => {
   it("builds from the Linux packages only, with Docker's names", () => {
@@ -21,5 +21,18 @@ describe("docker image", () => {
       "shibbirweb/nibtree:0.2.0",
       "shibbirweb/nibtree:latest",
     ]);
+  });
+
+  it("reads the platforms of an image index, without buildx's attestations", () => {
+    const index = {
+      manifests: [
+        { platform: { os: "linux", architecture: "amd64" } },
+        { platform: { os: "linux", architecture: "arm64" } },
+        { platform: { os: "unknown", architecture: "unknown" } },
+        {},
+      ],
+    };
+    expect(imagePlatforms(JSON.stringify(index))).toEqual(["linux/amd64", "linux/arm64"]);
+    expect(imagePlatforms("{}")).toEqual([]);
   });
 });

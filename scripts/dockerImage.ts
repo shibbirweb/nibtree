@@ -28,3 +28,14 @@ export function dockerPlatforms(): string {
 export function dockerTags(version: string, repositories: string[]): string[] {
   return repositories.flatMap((repository) => [`${repository}:${version}`, `${repository}:${distTag(version)}`]);
 }
+
+/**
+ * The platforms in an image index (`docker buildx imagetools inspect --raw`), such as `linux/amd64`. Buildx also
+ * lists its attestations there, as `unknown/unknown`: those are left out.
+ */
+export function imagePlatforms(rawIndex: string): string[] {
+  const index = JSON.parse(rawIndex) as { manifests?: { platform?: { os?: string; architecture?: string } }[] };
+  return (index.manifests ?? [])
+    .map((manifest) => `${manifest.platform?.os ?? "unknown"}/${manifest.platform?.architecture ?? "unknown"}`)
+    .filter((platform) => !platform.includes("unknown"));
+}

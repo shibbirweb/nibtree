@@ -226,3 +226,17 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  browser-verify:
+    name: Check the published browser version
+    needs: [version, browser]
+    # Also after a half-failed publish: whatever did reach npm or Docker gets checked.
+    if: ${{ !cancelled() && needs.version.result == 'success' && needs.browser.result != 'skipped' }}
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/browser-verify.yml
+    with:
+      tag: ${{ needs.version.outputs.tag }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

@@ -4,7 +4,7 @@ A native desktop Git client with a 3-way merge tool, multi-folder workspaces, ta
 
 ![Nibtree: Changes, the editor with blame, and the Files panel](docs/wiki/images/window-overview.png)
 
-**[Download the latest release](https://github.com/shibbirweb/nibtree/releases)** (macOS for Apple Silicon and Intel, Windows 10 and 11) · **[User guide and developer docs](https://github.com/shibbirweb/nibtree/wiki)** · **[Report a bug or request a feature](https://github.com/shibbirweb/nibtree/issues/new/choose)**
+**[Download the latest release](https://github.com/shibbirweb/nibtree/releases)** (macOS for Apple Silicon and Intel, Windows 10 and 11) · in your browser with `npx nibtree` or [Docker](#in-docker) · **[User guide and developer docs](https://github.com/shibbirweb/nibtree/wiki)** · **[Report a bug or request a feature](https://github.com/shibbirweb/nibtree/issues/new/choose)**
 
 ## Screenshots
 
@@ -87,19 +87,68 @@ Nibtree runs on macOS and Windows with the same features; Linux is planned. Each
 
 The user guide covers each difference where it matters ([Getting Started](https://github.com/shibbirweb/nibtree/wiki/Getting-Started) has the install steps); how the code handles them is in [Windows Support](https://github.com/shibbirweb/nibtree/wiki/Windows-Support).
 
-## In your browser
+## Three ways to run it
 
-The whole app also runs in a browser tab, served from your own machine or a server, with its settings in
-`~/.nibtree-browser`:
+The same app comes as a desktop app, as an npm package that opens it in your browser, and as a Docker image. The
+browser versions keep their settings in `~/.nibtree-browser`, apart from the desktop app's `~/.nibtree`. Until
+the first stable release is out, use the `next` lines below: they give the newest beta.
+
+### Desktop app
+
+Download it from [Releases](https://github.com/shibbirweb/nibtree/releases): the `.dmg` for macOS (Apple Silicon and Intel) or `-setup.exe` for Windows 10 and 11. Betas are marked as pre-releases; the app tells you about updates on your channel (Settings).
+
+### In your browser with npm
+
+Needs git and [Node.js](https://nodejs.org) 18 or newer (with [Bun](https://bun.sh), use `bunx nibtree`). Run it in the folder you want to open:
 
 ```sh
-npx nibtree                      # the current folder; npx nibtree@next for the newest beta
-docker run --rm -p 4410:4410 -v "$PWD:/workspace" -e NIBTREE_TOKEN=pick-a-secret ghcr.io/shibbirweb/nibtree
+npx nibtree                    # the newest stable release, opening the current folder
+npx nibtree ~/code/app         # another folder (or several)
+npx nibtree@next               # the newest beta
+npx nibtree@0.1.0-beta.13      # exactly that version
+npm install -g nibtree         # install it once, then run `nibtree`
 ```
 
-Every page needs the access token printed at start (or the one you set). See
-[Browser Version Packages](https://github.com/shibbirweb/nibtree/wiki/Browser-Version-Packages) and
-[Docker Image](https://github.com/shibbirweb/nibtree/wiki/Docker-Image).
+It starts a small server on this machine, prints an address with an access token and opens it in your browser. Keep the terminal open while you work; Ctrl+C stops it.
+
+| Option | What it does |
+| --- | --- |
+| `--port <n>` | Port to listen on (default 4300; a busy port moves on to the next free one, `0` lets the system pick) |
+| `--strict-port` | Stop instead of moving on when the port is busy |
+| `--host <address>` | Where to listen (default `127.0.0.1`; `0.0.0.0` lets other machines in) |
+| `--token <value>` | A fixed access token instead of a new random one (also `NIBTREE_TOKEN`) |
+| `--no-open` | Print the address without opening a browser |
+| `--base-path <path>` | Serve under a path, behind a reverse proxy (for example `/nibtree/`) |
+| `--public-url <url>` | The address to print when a proxy maps another one |
+
+Every page needs the token, also on your own machine. With `--host 0.0.0.0`, anyone who can reach the address and has the token can read and change your files and run commands, so use it only on networks you trust. Details: [Browser Version Packages](https://github.com/shibbirweb/nibtree/wiki/Browser-Version-Packages).
+
+### In Docker
+
+The image has git, git-lfs, SSH and GnuPG inside and listens on port 4410. It is on GitHub's registry and Docker Hub:
+
+```sh
+docker run --rm -p 4410:4410 \
+  -v "$PWD:/workspace" \
+  -v nibtree-home:/home/nibtree \
+  -e NIBTREE_TOKEN=pick-a-secret \
+  ghcr.io/shibbirweb/nibtree:next        # or shibbirweb/nibtree:next from Docker Hub
+```
+
+Then open `http://localhost:4410/?token=pick-a-secret`.
+
+| Tag | Gets |
+| --- | --- |
+| `latest` | the newest stable release |
+| `next` | the newest beta |
+| `0.1.0-beta.13` | exactly that version |
+
+- `/workspace` is the folder it opens; the `nibtree-home` volume keeps settings between runs.
+- Add `-v ~/.gitconfig:/home/nibtree/.gitconfig:ro -v ~/.ssh:/home/nibtree/.ssh:ro` for your git identity and SSH keys.
+- On Linux add `--user "$(id -u):$(id -g)"`, so files it writes belong to you.
+- Another outside port, such as `-p 9000:4410`, needs `-e NIBTREE_PUBLIC_URL=http://localhost:9000` so the printed address is right.
+
+Details: [Docker Image](https://github.com/shibbirweb/nibtree/wiki/Docker-Image).
 
 ## How it works
 

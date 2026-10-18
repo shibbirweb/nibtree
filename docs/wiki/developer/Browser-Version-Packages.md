@@ -37,7 +37,7 @@ platform package works on its own, without the launcher.
 
 ## CI on every platform: `browser.yml`
 
-`.github/workflows/browser.yml` runs on every push to `develop` and `master` and every pull request, on six runners:
+`.github/workflows/browser.yml` runs on every pull request and every push to `master`, on six runners:
 `macos-latest` (Apple silicon), `macos-15-intel`, `ubuntu-22.04`, `ubuntu-22.04-arm`, `windows-latest` and
 `windows-11-arm`. Each one:
 
@@ -53,14 +53,17 @@ from a desktop-only command, and that settings land in `~/.nibtree-browser` and 
 
 ## Publishing with each release
 
-`release.yml` has an `npm` job that calls `browser.yml` with `publish: true` for every beta and stable release. The
+`release.yml` has a `browser` job that calls `browser.yml` with `publish: true` for every beta and stable release. The
 programs are then built in release mode, smoke tested, and kept as artifacts. A last job publishes them with
 `bun scripts/npm-package.ts publish`:
 
 - platform packages first, the launcher last, so the launcher never points at a missing package;
 - betas under the `next` tag (`npx nibtree@next`), stable versions under `latest` (`npx nibtree`);
 - a version that is already on npm is skipped, so rerunning a release is safe;
-- without the `NPM_TOKEN` secret it does a dry run and prints a warning, so releases never fail on it.
+- without the `NPM_TOKEN` secret the release fails, instead of quietly publishing nothing.
+
+Every push to `develop` rehearses all of this without uploading, and after a release `verify-npm` installs what
+npm serves on Linux, macOS and Windows. See [Browser Release Checks](Browser-Release-Checks.md).
 
 Setup, once: create the free `nibtree` organization on npmjs.com (it owns the `@nibtree` scope), make an npm
 granular access token that may publish `nibtree` and `@nibtree/*`, and save it as the repository secret `NPM_TOKEN`.

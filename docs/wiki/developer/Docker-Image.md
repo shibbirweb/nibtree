@@ -75,7 +75,10 @@ on npm.
   `packages: write` (`release.yml`, `beta-publish.yml` and `stable-publish.yml` do). The first push creates
   the package as private: open it under the account's Packages, Package settings, and make it public once.
 - **Docker Hub** needs the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` (an access token with read and
-  write). Without them the job prints a warning and pushes to ghcr.io only.
+  write). Without them the release fails, so the image never quietly skips a registry.
+
+After the push, `verify-docker` pulls the version and its moving tag from both registries, checks both
+architectures are there and runs `--version`. See [Browser Release Checks](Browser-Release-Checks.md).
 
 ## Where the code lives
 
