@@ -7,19 +7,19 @@ use crate::git::workspace::{self, WorkspaceInfo};
 use crate::state::AppState;
 use crate::watcher;
 
-#[tauri::command]
+#[crate::command]
 pub async fn open_workspace(folder_path: String) -> AppResult<WorkspaceInfo> {
     blocking(move || workspace::open(&folder_path)).await
 }
 
 /// Rescans one workspace folder for repositories. The frontend calls it for
 /// Scan for Repositories and when the watcher reports a new repository.
-#[tauri::command]
+#[crate::command]
 pub async fn discover_repositories(workspace_root: String) -> AppResult<Vec<RepoInfo>> {
     blocking(move || workspace::discover_repositories(&workspace_root)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn init_repository(folder_path: String) -> AppResult<RepoInfo> {
     blocking(move || workspace::init(&folder_path)).await
 }
@@ -31,7 +31,7 @@ pub async fn init_repository(folder_path: String) -> AppResult<RepoInfo> {
 ///
 /// Async on purpose: a command without `async` runs on the main thread, and
 /// starting a watcher on a big folder there froze the window.
-#[tauri::command]
+#[crate::command]
 pub async fn watch_workspace(
     app: AppHandle,
     window: Window,
@@ -52,7 +52,7 @@ pub async fn watch_workspace(
     Ok(())
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn unwatch_workspace(window: Window, state: State<'_, AppState>, workspace_root: String) -> AppResult<()> {
     let previous = state
         .watchers
@@ -65,7 +65,7 @@ pub async fn unwatch_workspace(window: Window, state: State<'_, AppState>, works
 
 /// The files open in the asking window's tabs: the watcher reports a change to one of them
 /// even when git ignores it, so an open log file follows what another app writes.
-#[tauri::command]
+#[crate::command]
 pub fn watch_open_files(window: Window, state: State<'_, AppState>, file_paths: Vec<String>) {
     state.open_files.set(window.label(), &file_paths);
 }
@@ -89,13 +89,13 @@ async fn stop_watcher(previous: Option<crate::state::RepoWatcher>) {
 }
 
 /// Reads a `.nibtree-workspace` or `.code-workspace` file.
-#[tauri::command]
+#[crate::command]
 pub async fn read_workspace_file(file_path: String) -> AppResult<crate::workspace_file::WorkspaceFile> {
     blocking(move || crate::workspace_file::read(std::path::Path::new(&file_path))).await
 }
 
 /// Saves the workspace folders into `file_path`, keeping its other settings.
-#[tauri::command]
+#[crate::command]
 pub async fn write_workspace_file(file_path: String, folders: Vec<String>) -> AppResult<()> {
     blocking(move || crate::workspace_file::write(std::path::Path::new(&file_path), &folders)).await
 }

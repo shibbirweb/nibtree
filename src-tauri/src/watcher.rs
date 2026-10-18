@@ -17,11 +17,11 @@ use git2::Repository;
 use notify_debouncer_full::notify::event::{EventKind, ModifyKind};
 use notify_debouncer_full::{new_debouncer_opt, notify, notify::RecursiveMode, DebounceEventResult, NoCache};
 use serde::Serialize;
-use tauri::{AppHandle, Emitter, EventTarget, Manager};
+use crate::host::HostApp;
 
 use crate::error::{AppError, AppResult};
 use crate::git::workspace::{deepest_repo_index, SKIPPED_DIRS};
-use crate::state::{AppState, RepoWatcher};
+use crate::state::RepoWatcher;
 use crate::symbols::language_for;
 
 /// What changed in one repository during a batch.
@@ -527,9 +527,9 @@ fn watch_error(err: impl std::fmt::Display) -> AppError {
 /// any repository outside it (a repository enclosing the workspace) and the
 /// git dir of a linked work tree whose main repository is elsewhere. Its events
 /// go only to the window that watches (`window_label`).
-pub fn watch(app: AppHandle, window_label: &str, workspace_root: &str, repo_roots: &[String]) -> AppResult<RepoWatcher> {
+pub fn watch(app: HostApp, window_label: &str, workspace_root: &str, repo_roots: &[String]) -> AppResult<RepoWatcher> {
     let app_for_emit = app.clone();
-    let target = EventTarget::webview_window(window_label);
+    let target = window_label.to_string();
     let search_label = window_label.to_string();
     let root = canonical_or_given(workspace_root);
     let canonical_roots: Vec<PathBuf> = repo_roots.iter().map(|repo_root| canonical_or_given(repo_root)).collect();
@@ -553,7 +553,7 @@ pub fn watch(app: AppHandle, window_label: &str, workspace_root: &str, repo_root
     let emit = move |attribution: Attribution| {
         for (index, change) in &attribution.repos {
             let _ = app_for_emit.emit_to(
-                target.clone(),
+                &target,
                 "repo-changed",
                 RepoChanged {
                     repo_path: repo_paths[*index].clone(),
@@ -563,7 +563,7 @@ pub fn watch(app: AppHandle, window_label: &str, workspace_root: &str, repo_root
         }
         if attribution.workspace_changed() {
             let _ = app_for_emit.emit_to(
-                target.clone(),
+                &target,
                 "workspace-changed",
                 WorkspaceChanged {
                     workspace_root: workspace_root_owned.clone(),
@@ -575,7 +575,7 @@ pub fn watch(app: AppHandle, window_label: &str, workspace_root: &str, repo_root
         }
         if !attribution.open_files.is_empty() {
             let _ = app_for_emit.emit_to(
-                target.clone(),
+                &target,
                 "open-files-changed",
                 OpenFilesChanged {
                     file_paths: attribution.open_files,
@@ -592,7 +592,7 @@ pub fn watch(app: AppHandle, window_label: &str, workspace_root: &str, repo_root
         };
         let changes = || events.iter().map(|event| (&event.kind, event.paths.as_slice()));
         // Only this window's search indexes this folder.
-        let search = app.state::<AppState>().file_search.existing(&search_label);
+        let search = app.state().file_search.existing(&search_label);
         if let Some(search) = search {
             if adds_or_removes_files(&watched_root, changes()) {
                 search.mark_stale();
@@ -610,7 +610,7 @@ pub fn watch(app: AppHandle, window_label: &str, workspace_root: &str, repo_root
         let path_count = relinked.iter().map(|(_, paths)| paths.len()).sum();
         // Opened lazily for this batch only.
         let mut repos: HashMap<usize, Option<IgnoreCheck>> = HashMap::new();
-        let open_files = app.state::<AppState>().open_files.get(&search_label);
+        let open_files = app.state().open_files.get(&search_label);
         let mut attribution = attribute(
             &roots,
             relinked.iter().map(|(kind, paths)| (kind, paths.as_slice())),

@@ -10,7 +10,7 @@ fn stash_ref(stash_index: usize) -> String {
     format!("stash@{{{stash_index}}}")
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn get_stashes(repo_path: String) -> AppResult<Vec<StashEntry>> {
     blocking(move || stash::list(&mut git_repo::open(&repo_path)?)).await
 }
@@ -33,7 +33,7 @@ fn has_untracked(repo_path: &str) -> bool {
 /// `git stash push` exits 0 with "No local changes to save" when there is
 /// nothing to stash. That text is translated, so compare the stash ref instead
 /// and report it as an error, which keeps the UI from announcing a stash.
-#[tauri::command]
+#[crate::command]
 pub async fn stash_push(repo_path: String, message: String, include_untracked: bool) -> AppResult<()> {
     blocking(move || {
         let mut args = vec!["stash", "push"];
@@ -58,7 +58,7 @@ pub async fn stash_push(repo_path: String, message: String, include_untracked: b
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn stash_apply(repo_path: String, stash_index: usize, pop: bool) -> AppResult<OpOutcome> {
     blocking(move || {
         let reference = stash_ref(stash_index);
@@ -68,7 +68,7 @@ pub async fn stash_apply(repo_path: String, stash_index: usize, pop: bool) -> Ap
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn stash_drop(repo_path: String, stash_index: usize) -> AppResult<()> {
     blocking(move || {
         cli::run(Path::new(&repo_path), &["stash", "drop", &stash_ref(stash_index)])?;
@@ -78,7 +78,7 @@ pub async fn stash_drop(repo_path: String, stash_index: usize) -> AppResult<()> 
 }
 
 /// Drops every stash (`git stash clear`); the UI confirms first.
-#[tauri::command]
+#[crate::command]
 pub async fn stash_clear(repo_path: String) -> AppResult<()> {
     blocking(move || {
         cli::run(Path::new(&repo_path), &["stash", "clear"])?;

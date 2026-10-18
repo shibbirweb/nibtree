@@ -8,8 +8,10 @@
   import { memoryLog } from "$lib/debug/memoryLog.svelte";
   import { WheelZoom } from "$lib/editor/wheelZoom";
   import { followEditorSettings } from "$lib/editorSettingsSync.svelte";
+  import { isBrowserHost } from "$lib/browser/host";
   import { usesDefaultKeys } from "$lib/commands/commandRuntime";
   import { appMenu } from "$lib/menu/appMenu.svelte";
+  import { pageMenuHost } from "$lib/menu/pageMenuHost.svelte";
   import { startMcpBridge } from "$lib/mcp/bridge";
   import { keepAwake } from "$lib/ai/keepAwakeStore.svelte";
   import { localHistory } from "$lib/localHistory/localHistory.svelte";
@@ -32,6 +34,10 @@
   import { MAIN_WINDOW, parseWindowStart, startStep, windowTitle } from "$lib/windows/windowSession";
 
   let launch = $state<LaunchMode | null>(null);
+  // A browser tab has no native menu bar, so each screen shows the page's own at its top.
+  $effect(() => {
+    pageMenuHost.mode = isBrowserHost() && launch ? (launch.mode === "mergeTool" ? "mergeTool" : "app") : null;
+  });
   /** Font size badge shown briefly while zooming with the mouse wheel. */
   let zoomBadge = $state<number | null>(null);
   let zoomBadgeTimer: ReturnType<typeof setTimeout> | undefined;

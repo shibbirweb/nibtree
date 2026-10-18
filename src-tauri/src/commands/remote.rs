@@ -3,8 +3,9 @@ use std::path::{Path, PathBuf};
 
 use git2::{Repository, Sort};
 use serde::{Deserialize, Serialize};
-use tauri::ipc::Channel;
 use tauri::AppHandle;
+
+use crate::host::HostApp;
 
 use super::{blocking, outcome, reject_option, OpOutcome};
 use crate::error::{AppError, AppResult};
@@ -24,7 +25,7 @@ struct Progress<'a> {
 pub(crate) type OnProgress<'a> = &'a mut dyn FnMut(&str);
 
 /// Progress lines go to the windows showing the repository (every window when none does).
-pub(super) fn emitter(app: &AppHandle, repo_path: &str) -> impl FnMut(&str) {
+pub(super) fn emitter(app: &HostApp, repo_path: &str) -> impl FnMut(&str) {
     let app = app.clone();
     let repo_path = repo_path.to_string();
     let canonical = crate::windows::canonical(&repo_path);
@@ -491,7 +492,7 @@ pub fn clone_quietly(url: &str, parent_dir: &str, folder_name: &str) -> AppResul
 pub const CLONE_CANCELLED: &str = "Clone cancelled";
 
 /// The Pull dialog: pulls the upstream, or `branch_name` from `remote_name`, as a merge, rebase or fast-forward.
-#[tauri::command]
+#[crate::command]
 pub async fn pull_with_options(
     app: AppHandle,
     repo_path: String,
@@ -514,7 +515,7 @@ pub async fn pull_with_options(
 }
 
 /// The Push dialog: pushes the current branch to `remote_name`/`remote_branch`, tracking it on first push.
-#[tauri::command]
+#[crate::command]
 pub async fn push_with_options(
     app: AppHandle,
     repo_path: String,
@@ -536,22 +537,22 @@ pub async fn push_with_options(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn outgoing_commits(repo_path: String, remote_name: String, remote_branch: String) -> AppResult<OutgoingCommits> {
     blocking(move || outgoing(&git_repo::open(&repo_path)?, remote_name.trim(), remote_branch.trim())).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn list_remotes(repo_path: String) -> AppResult<Vec<RemoteInfo>> {
     blocking(move || read_remotes(&git_repo::open(&repo_path)?)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn add_remote(repo_path: String, remote_name: String, fetch_url: String, push_url: Option<String>) -> AppResult<()> {
     blocking(move || run_add_remote(&repo_path, &remote_name, &fetch_url, push_url.as_deref())).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn edit_remote(
     repo_path: String,
     remote_name: String,
@@ -562,14 +563,14 @@ pub async fn edit_remote(
     blocking(move || run_edit_remote(&repo_path, &remote_name, &new_name, &fetch_url, push_url.as_deref())).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn remove_remote(repo_path: String, remote_name: String) -> AppResult<()> {
     blocking(move || run_remove_remote(&repo_path, &remote_name)).await
 }
 
 /// `git clone --progress` into `parent_dir`/`folder_name`, sending progress lines on `progress`.
 /// With a `cancel_id`, `cancel_git_command` stops it and it fails with "Clone cancelled".
-#[tauri::command]
+#[crate::command]
 pub async fn clone_repository(
     url: String,
     parent_dir: String,
@@ -587,36 +588,36 @@ pub async fn clone_repository(
 }
 
 /// Stops a command started with `cancel_id` (the Clone dialog's Cancel); false when none runs.
-#[tauri::command]
+#[crate::command]
 pub async fn cancel_git_command(cancel_id: String) -> AppResult<bool> {
     blocking(move || Ok(cancel::cancel(&cancel_id))).await
 }
 
 /// Fetches every remote and prunes deleted branches (the Git menu's Fetch All Remotes).
-#[tauri::command]
+#[crate::command]
 pub async fn fetch_all(app: AppHandle, repo_path: String) -> AppResult<OpOutcome> {
     blocking(move || run_fetch(&repo_path, true, true, &mut emitter(&app, &repo_path))).await
 }
 
 /// Fetches the default remote, optionally pruning branches deleted there.
-#[tauri::command]
+#[crate::command]
 pub async fn fetch(app: AppHandle, repo_path: String, prune: bool) -> AppResult<OpOutcome> {
     blocking(move || run_fetch(&repo_path, false, prune, &mut emitter(&app, &repo_path))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn pull(app: AppHandle, repo_path: String, rebase: bool) -> AppResult<OpOutcome> {
     blocking(move || run_pull(&repo_path, rebase, &mut emitter(&app, &repo_path))).await
 }
 
 /// Pushes the current branch, setting its upstream on first push.
-#[tauri::command]
+#[crate::command]
 pub async fn push(app: AppHandle, repo_path: String, force: bool) -> AppResult<OpOutcome> {
     blocking(move || run_push(&repo_path, force, &mut emitter(&app, &repo_path))).await
 }
 
 /// Pushes every local tag to the branch's remote (or the default one).
-#[tauri::command]
+#[crate::command]
 pub async fn push_tags(app: AppHandle, repo_path: String) -> AppResult<OpOutcome> {
     blocking(move || run_push_tags(&repo_path, &mut emitter(&app, &repo_path))).await
 }

@@ -1,6 +1,8 @@
 use serde::Serialize;
 use tauri::AppHandle;
 
+use crate::host::HostApp;
+
 use super::blocking;
 use crate::error::AppResult;
 use crate::git::submodule::{self, SubmoduleInfo};
@@ -13,7 +15,7 @@ struct Progress<'a> {
 }
 
 /// Progress lines go out as "git-progress", like fetch and pull.
-pub fn progress_emitter(app: AppHandle, repo_path: String) -> impl FnMut(&str) {
+pub fn progress_emitter(app: HostApp, repo_path: String) -> impl FnMut(&str) {
     let canonical = crate::windows::canonical(&repo_path);
     move |line| {
         super::window::emit_for_path(
@@ -28,19 +30,19 @@ pub fn progress_emitter(app: AppHandle, repo_path: String) -> impl FnMut(&str) {
     }
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn list_submodules(repo_path: String) -> AppResult<Vec<SubmoduleInfo>> {
     blocking(move || submodule::list(&repo_path)).await
 }
 
 /// `git submodule init` for `submodule_paths`, or every submodule when empty.
-#[tauri::command]
+#[crate::command]
 pub async fn init_submodules(repo_path: String, submodule_paths: Vec<String>) -> AppResult<String> {
     blocking(move || submodule::init(&repo_path, &submodule_paths, &[])).await
 }
 
 /// `git submodule update --init --recursive`, with `--remote` when `remote`.
-#[tauri::command]
+#[crate::command]
 pub async fn update_submodules(
     app: AppHandle,
     repo_path: String,
@@ -54,12 +56,12 @@ pub async fn update_submodules(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn sync_submodules(repo_path: String) -> AppResult<String> {
     blocking(move || submodule::sync(&repo_path, &[])).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn add_submodule(
     repo_path: String,
     url: String,
@@ -69,7 +71,7 @@ pub async fn add_submodule(
     blocking(move || submodule::add(&repo_path, &url, &submodule_path, branch_name.as_deref(), &[])).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn remove_submodule(repo_path: String, submodule_path: String) -> AppResult<()> {
     blocking(move || submodule::remove(&repo_path, &submodule_path, &[])).await
 }

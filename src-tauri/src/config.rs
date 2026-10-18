@@ -15,7 +15,6 @@ use serde_json::{Map, Value};
 
 use crate::error::{AppError, AppResult};
 
-pub use nibtree_cli::home::DIR_NAME;
 
 /// Config files the frontend may read and write, by logical name.
 const FILES: [(&str, &str); 2] = [("settings", "settings.json"), ("state", "state.json")];
@@ -25,7 +24,7 @@ pub fn home_dir() -> AppResult<PathBuf> {
 }
 
 pub fn config_dir_in(home: &Path) -> PathBuf {
-    home.join(DIR_NAME)
+    nibtree_cli::home::config_dir_in(home)
 }
 
 fn file_name(config_name: &str) -> AppResult<&'static str> {

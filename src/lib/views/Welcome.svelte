@@ -17,6 +17,8 @@
   import WelcomeCustomize from "./welcome/WelcomeCustomize.svelte";
   import WelcomeLearn from "./welcome/WelcomeLearn.svelte";
   import WelcomeProjects from "./welcome/WelcomeProjects.svelte";
+  import PageMenuBar from "$lib/menu/PageMenuBar.svelte";
+  import { pageMenuHost } from "$lib/menu/pageMenuHost.svelte";
 
   type Section = "projects" | "customize" | "learn";
 
@@ -45,6 +47,9 @@
 </script>
 
 <Stack gap="none" height="window" surface="panel">
+  {#if pageMenuHost.mode}
+    <PageMenuBar />
+  {/if}
   {#if windowChrome.controlsInBar}
     <!-- The window's own buttons sit here (macOS), and the strip moves the window. -->
     <AppHeader look="rounded" windowControls>

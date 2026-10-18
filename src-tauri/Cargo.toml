@@ -10,7 +10,7 @@ edition = "2021"
 
 # The command line tool is its own crate (cli/), so Windows can ship it as a console program.
 [workspace]
-members = ["cli"]
+members = ["cli", "macros", "browser"]
 
 [lib]
 # The `_lib` suffix keeps the lib name distinct from the bin name (cargo#8519).
@@ -22,6 +22,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 nibtree-cli = { path = "cli" }
+nibtree-macros = { path = "macros" }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 serde = { version = "1", features = ["derive"] }

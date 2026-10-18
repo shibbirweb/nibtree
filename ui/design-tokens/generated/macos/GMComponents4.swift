@@ -8,7 +8,6 @@ public enum GMAppHeaderTokens {
     public static let sideGap: CGFloat = 4
     public static let dividerLength: CGFloat = 18
     public static let busyMaxWidth: CGFloat = 280
-    public static let tintWidth: CGFloat = 520
     public static let controlsInset: CGFloat = 80
 }
 

@@ -248,7 +248,7 @@ pub fn run_restore_lines(repo_path: &str, patch: &str, reverse: bool) -> AppResu
     })
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn apply_selected_lines(
     repo_path: String,
     file_path: String,
@@ -270,7 +270,7 @@ pub async fn apply_selected_lines(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn restore_discarded_lines(repo_path: String, patch: String, reverse: Option<bool>) -> AppResult<()> {
     blocking(move || run_restore_lines(&repo_path, &patch, reverse.unwrap_or_default())).await
 }

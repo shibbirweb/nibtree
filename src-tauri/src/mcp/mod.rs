@@ -13,7 +13,7 @@ mod install;
 pub(crate) mod paths;
 mod protocol;
 mod registry;
-mod token;
+pub(crate) mod token;
 mod tools;
 
 #[cfg(test)]

@@ -20,13 +20,13 @@ fn run_get_reflog(repo_path: &str, ref_name: &str, offset: usize, limit: usize) 
 }
 
 /// One page of the reflog of HEAD ("" or "HEAD") or of a local branch, newest first.
-#[tauri::command]
+#[crate::command]
 pub async fn get_reflog(repo_path: String, ref_name: Option<String>, offset: usize, limit: usize) -> AppResult<ReflogPage> {
     blocking(move || run_get_reflog(&repo_path, ref_name.as_deref().unwrap_or("HEAD"), offset, limit)).await
 }
 
 /// The latest HEAD movement, for Undo Last Action.
-#[tauri::command]
+#[crate::command]
 pub async fn last_action(repo_path: String) -> AppResult<LastAction> {
     blocking(move || reflog::last_action(&git_repo::open(&repo_path)?)).await
 }
@@ -76,7 +76,7 @@ pub(crate) fn run_move_head_back(repo_path: &str, head_id: &str, commit_id: &str
     }
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn move_head_back(repo_path: String, head_id: String, commit_id: String, mode: String) -> AppResult<String> {
     blocking(move || run_move_head_back(&repo_path, &head_id, &commit_id, &mode)).await
 }

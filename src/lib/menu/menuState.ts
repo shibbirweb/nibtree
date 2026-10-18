@@ -120,6 +120,11 @@ export interface ItemState {
 
 export type MenuState = Partial<Record<MenuAction, ItemState>>;
 
+/** An entry shown while any of `dependsOn` is visible (null: always), in the native menu and the page's. */
+export function isShown(dependsOn: MenuAction[] | null, state: MenuState): boolean {
+  return dependsOn === null || dependsOn.some((action) => state[action]?.visible ?? true);
+}
+
 const FIND_ACTIONS = [
   "edit.find",
   "edit.replace",

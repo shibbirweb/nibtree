@@ -8,6 +8,8 @@ export interface MenuCommand {
   danger?: boolean;
   /** Dim text on the right, such as a shortcut from commandKeys(id). */
   hint?: string;
+  /** A check item: true shows a check mark, false leaves its place empty. */
+  checked?: boolean;
 }
 
 export interface MenuSubmenu {
@@ -28,6 +30,11 @@ export function isSeparator(item: MenuItem): item is MenuSeparator {
 
 export function isSubmenu(item: MenuItem): item is MenuSubmenu {
   return "submenu" in item;
+}
+
+/** Whether a menu has check items, so every item leaves room for the mark and the labels line up. */
+export function hasChecks(items: MenuItem[]): boolean {
+  return items.some((item) => "checked" in item && item.checked !== undefined);
 }
 
 export function canHighlight(item: MenuItem): boolean {

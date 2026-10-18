@@ -200,41 +200,41 @@ fn compare_worktree(repo: &Repository, revision: &str) -> AppResult<WorktreeComp
 }
 
 /// Branch popup's Update: fetches and fast-forwards a branch that is not checked out.
-#[tauri::command]
+#[crate::command]
 pub async fn update_branch(app: AppHandle, repo_path: String, branch_name: String) -> AppResult<OpOutcome> {
     blocking(move || run_update_branch(&repo_path, &branch_name, &mut emitter(&app, &repo_path))).await
 }
 
 /// Branch popup's Push: pushes a local branch to its upstream, or publishes and tracks it.
-#[tauri::command]
+#[crate::command]
 pub async fn push_branch(app: AppHandle, repo_path: String, branch_name: String) -> AppResult<OpOutcome> {
     blocking(move || run_push_branch(&repo_path, &branch_name, &mut emitter(&app, &repo_path))).await
 }
 
 /// `git branch --set-upstream-to=<upstream> <branch>`.
-#[tauri::command]
+#[crate::command]
 pub async fn set_branch_upstream(repo_path: String, branch_name: String, upstream: String) -> AppResult<()> {
     blocking(move || run_set_upstream(&repo_path, &branch_name, &upstream)).await
 }
 
 /// `git branch --unset-upstream <branch>`.
-#[tauri::command]
+#[crate::command]
 pub async fn unset_branch_upstream(repo_path: String, branch_name: String) -> AppResult<()> {
     blocking(move || run_unset_upstream(&repo_path, &branch_name)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn compare_branches(repo_path: String, branch_name: String, base_name: String) -> AppResult<BranchComparison> {
     blocking(move || compare(&git_repo::open(&repo_path)?, &branch_name, &base_name)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn compare_with_worktree(repo_path: String, revision: String) -> AppResult<WorktreeComparison> {
     blocking(move || compare_worktree(&git_repo::open(&repo_path)?, &revision)).await
 }
 
 /// One file between two revisions (`from_revision` left, `to_revision` right).
-#[tauri::command]
+#[crate::command]
 pub async fn revisions_file_diff(
     repo_path: String,
     from_revision: String,

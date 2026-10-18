@@ -7,7 +7,7 @@ use crate::git::log;
 use crate::git::refs::{self, Refs};
 use crate::git::repo as git_repo;
 
-#[tauri::command]
+#[crate::command]
 pub async fn get_refs(repo_path: String) -> AppResult<Refs> {
     blocking(move || refs::read(&git_repo::open(&repo_path)?)).await
 }
@@ -25,7 +25,7 @@ pub struct RefsSnapshot {
 
 /// The branches of `repo_path` for a refresh: with the fingerprint the caller
 /// holds, unchanged refs are not read again (ahead/behind walks every branch).
-#[tauri::command]
+#[crate::command]
 pub async fn get_refs_snapshot(repo_path: String, known_fingerprint: Option<String>) -> AppResult<RefsSnapshot> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;
@@ -39,7 +39,7 @@ pub async fn get_refs_snapshot(repo_path: String, known_fingerprint: Option<Stri
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn checkout_branch(repo_path: String, branch_name: String) -> AppResult<()> {
     blocking(move || {
         cli::run(Path::new(&repo_path), &["switch", &branch_name])?;
@@ -50,7 +50,7 @@ pub async fn checkout_branch(repo_path: String, branch_name: String) -> AppResul
 
 /// Checks out a remote branch as a new tracking branch, or switches to the
 /// existing local branch of the same name.
-#[tauri::command]
+#[crate::command]
 pub async fn checkout_remote_branch(repo_path: String, remote_branch: String, local_name: String) -> AppResult<()> {
     blocking(move || {
         let root = Path::new(&repo_path);
@@ -65,7 +65,7 @@ pub async fn checkout_remote_branch(repo_path: String, remote_branch: String, lo
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn create_branch(
     repo_path: String,
     branch_name: String,
@@ -88,7 +88,7 @@ pub async fn create_branch(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn rename_branch(repo_path: String, branch_name: String, new_name: String) -> AppResult<()> {
     blocking(move || {
         cli::run(Path::new(&repo_path), &["branch", "-m", &branch_name, &new_name])?;
@@ -109,17 +109,17 @@ pub(crate) fn run_delete_branch(repo_path: &str, branch_name: &str, force: bool)
     Ok(tip)
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn delete_branch(repo_path: String, branch_name: String, force: bool) -> AppResult<String> {
     blocking(move || run_delete_branch(&repo_path, &branch_name, force)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn merge_branch(repo_path: String, branch_name: String) -> AppResult<OpOutcome> {
     blocking(move || run_op(&repo_path, &["merge", "--no-edit", &branch_name])).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn rebase_onto(repo_path: String, branch_name: String) -> AppResult<OpOutcome> {
     blocking(move || run_op(&repo_path, &["rebase", &branch_name])).await
 }

@@ -382,18 +382,18 @@ fn run_interactive_rebase(
     finished
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn rebase_plan(repo_path: String, from_commit: String) -> AppResult<RebasePlan> {
     blocking(move || plan(&repo_path, &from_commit)).await
 }
 
 /// The Rebase dialog's --interactive: the commits of `upstream`..HEAD.
-#[tauri::command]
+#[crate::command]
 pub async fn rebase_plan_onto(repo_path: String, upstream: String) -> AppResult<RebasePlan> {
     blocking(move || plan_onto(&repo_path, &upstream)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn interactive_rebase(
     repo_path: String,
     base: Option<String>,

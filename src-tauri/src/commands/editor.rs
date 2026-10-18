@@ -8,7 +8,7 @@ use git2::Repository;
 use serde::{Deserialize, Serialize};
 use tauri::ipc::Request;
 
-use super::{blocking, raw_body, raw_parts};
+use super::{blocking, raw_parts};
 use crate::error::{AppError, AppResult};
 use crate::git::blame::{self, BlameRuns};
 use crate::git::diff::{self, HeadFile, HeadVersion};
@@ -60,9 +60,9 @@ pub fn marks_for(repo: &Repository, file_path: &str, orig_path: Option<&str>, do
 }
 
 /// Raw body: `{ repoPath, filePath, origPath }` as one JSON line, then the editor's text.
-#[tauri::command]
+#[crate::command]
 pub async fn line_change_marks(request: Request<'_>) -> AppResult<LineMarks> {
-    let body = raw_body(&request)?;
+    let body = request.into_bytes();
     blocking(move || {
         let (args, doc) = raw_parts::<MarksArgs>(&body)?;
         let repo = git_repo::open(&args.repo_path)?;
@@ -73,9 +73,9 @@ pub async fn line_change_marks(request: Request<'_>) -> AppResult<LineMarks> {
 
 /// Blames the editor's text (`--contents -`), unsaved edits included. Raw body:
 /// `{ repoPath, filePath, eol }` as one JSON line, then the LF-normalized text.
-#[tauri::command]
+#[crate::command]
 pub async fn blame_contents(request: Request<'_>) -> AppResult<BlameRuns> {
-    let body = raw_body(&request)?;
+    let body = request.into_bytes();
     blocking(move || {
         let (args, text) = raw_parts::<BlameArgs>(&body)?;
         let root = Path::new(&args.repo_path);
@@ -91,7 +91,7 @@ pub async fn blame_contents(request: Request<'_>) -> AppResult<BlameRuns> {
 
 /// Which HEAD commit and committed file the editor's marks and blame belong to, so a refresh
 /// can tell whether they need to run again.
-#[tauri::command]
+#[crate::command]
 pub async fn head_file_version(repo_path: String, file_path: String, orig_path: Option<String>) -> AppResult<HeadVersion> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;
@@ -101,7 +101,7 @@ pub async fn head_file_version(repo_path: String, file_path: String, orig_path: 
 }
 
 /// The file as of HEAD (empty when HEAD does not have it), e.g. to number lines as git does.
-#[tauri::command]
+#[crate::command]
 pub async fn read_head_file(repo_path: String, file_path: String, orig_path: Option<String>) -> AppResult<HeadFile> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;

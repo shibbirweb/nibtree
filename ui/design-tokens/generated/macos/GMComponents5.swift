@@ -64,6 +64,15 @@ public enum GMScrollbarTokens {
     public static let thumbInset: CGFloat = 2
 }
 
+public enum GMMenuBarTokens {
+    public static let height: CGFloat = 30
+    public static let paddingX: CGFloat = 4
+    public static let gap: CGFloat = 0
+    public static let itemPaddingX: CGFloat = 8
+    public static let itemHeight: CGFloat = 24
+    public static let itemRadius: CGFloat = 4
+}
+
 public enum GMEditorFoldTokens {
     public static let gutterWidth: CGFloat = 14
     public static let icon: CGFloat = 10

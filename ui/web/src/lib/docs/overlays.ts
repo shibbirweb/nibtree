@@ -137,6 +137,7 @@ export const overlayDocs: ComponentDoc[] = [
       prop("onclose", "(restoreFocus: boolean) => void", "Close it; restoreFocus is true after Esc or a command.", {
         required: true,
       }),
+      prop("onstep", "(step: 1 | -1) => void", "Left and Right go here instead of closing (MenuBar's next menu)."),
     ],
     examples: [
       {
@@ -149,7 +150,38 @@ export const overlayDocs: ComponentDoc[] = [
     ],
     logic: ["menuModel.ts"],
     replaces: ["contextMenu.open(event, items) and ContextMenuHost.svelte"],
-    rules: ["Shortcut hints come from commandKeys(id), never typed by hand."],
+    rules: [
+      "Shortcut hints come from commandKeys(id), never typed by hand.",
+      "A command with `checked` is a check item; the menu then lines up every label after the mark's room.",
+    ],
+  },
+  {
+    name: "MenuBar",
+    group: "Overlays",
+    summary: "A bar of menus under their names, like a window's File, Edit and View.",
+    usage:
+      "Use where the system has no menu bar for the app, such as the app in a browser tab. Each menu holds Menu " +
+      "items. Pointing at another name while a menu is open opens that one; Left and Right move along the bar.",
+    aliases: ["Menubar", "Application menu", "Main menu"],
+    props: [
+      prop("menus", "MenuBarMenu[] ({ label, items }, from logic/menuBarModel.ts)", "The menus, left to right.", {
+        required: true,
+      }),
+      prop("label", "string", "Accessible name.", { default: '"Menu bar"' }),
+      prop("surface", '"panel" | "none"', "Its own panel background with a line under it, or none inside " +
+        "AppHeader's menuBar row, where the header's background and glow show through.", { default: '"panel"' }),
+    ],
+    examples: [
+      {
+        title: "File and Edit",
+        code:
+          '<MenuBar menus={[\n  { label: "File", items: [{ label: "Open...", action: openFolder }] },\n' +
+          '  { label: "Edit", items: [{ label: "Word Wrap", action: toggleWrap, checked: wrap }] },\n]} />',
+      },
+    ],
+    logic: ["menuBarModel.ts", "menuModel.ts"],
+    replaces: ["the native menu bar in the browser app (src/lib/menu/PageMenuBar.svelte)"],
+    rules: ["Shortcut hints come from commandKeys(id) or localKeys(accelerator), never typed by hand."],
   },
   {
     name: "MenuButton",

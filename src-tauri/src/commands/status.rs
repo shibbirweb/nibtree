@@ -21,7 +21,7 @@ pub struct StatusSnapshot {
 
 /// The status of `repo_path`; with the hash of the status the caller holds,
 /// an unchanged one is not sent again (50k untracked files are 7 MB of JSON).
-#[tauri::command]
+#[crate::command]
 pub async fn get_status(repo_path: String, known_hash: Option<String>) -> AppResult<StatusSnapshot> {
     blocking(move || {
         let status = status::read(&git_repo::open(&repo_path)?)?;
@@ -36,7 +36,7 @@ pub async fn get_status(repo_path: String, known_hash: Option<String>) -> AppRes
 
 /// One file's staged or unstaged diff. With the `known_version` of a diff already on screen,
 /// None means it is still the same, so the texts are not read or sent again.
-#[tauri::command]
+#[crate::command]
 pub async fn get_file_diff(
     repo_path: String,
     file_path: String,
@@ -51,7 +51,7 @@ pub async fn get_file_diff(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn stage_files(repo_path: String, file_paths: Vec<String>) -> AppResult<()> {
     blocking(move || {
         let pathspecs = status::pathspecs_for(&git_repo::open(&repo_path)?, &file_paths)?;
@@ -61,7 +61,7 @@ pub async fn stage_files(repo_path: String, file_paths: Vec<String>) -> AppResul
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn unstage_files(repo_path: String, file_paths: Vec<String>) -> AppResult<()> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;
@@ -80,7 +80,7 @@ pub async fn unstage_files(repo_path: String, file_paths: Vec<String>) -> AppRes
 
 /// Discards unstaged changes: tracked files are restored from the index,
 /// untracked files are deleted.
-#[tauri::command]
+#[crate::command]
 pub async fn discard_files(repo_path: String, tracked_paths: Vec<String>, untracked_paths: Vec<String>) -> AppResult<()> {
     blocking(move || {
         let pathspecs = status::pathspecs_for(&git_repo::open(&repo_path)?, &tracked_paths)?;
@@ -105,7 +105,7 @@ pub async fn discard_files(repo_path: String, tracked_paths: Vec<String>, untrac
 }
 
 /// Writes `content` straight into the index for `file_path` (hunk staging).
-#[tauri::command]
+#[crate::command]
 pub async fn stage_content(repo_path: String, file_path: String, content: String, eol: Eol) -> AppResult<()> {
     blocking(move || {
         safe_join(&repo_path, &file_path)?;
@@ -129,7 +129,7 @@ pub async fn stage_content(repo_path: String, file_path: String, content: String
 
 /// Overwrites a work tree file (the editor's Save). Returns the file's new version, so the
 /// editor's next refresh knows the text on disk is the one it wrote.
-#[tauri::command]
+#[crate::command]
 pub async fn write_worktree_file(repo_path: String, file_path: String, content: String, eol: Eol) -> AppResult<String> {
     blocking(move || {
         let full = safe_join(&repo_path, &file_path)?;
@@ -164,7 +164,7 @@ fn run_commit(repo_path: &str, message: &str, amend: bool, all: bool, options: &
     }
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn commit(
     repo_path: String,
     message: String,
@@ -175,7 +175,7 @@ pub async fn commit(
 }
 
 /// Commit All: stages every tracked change, then commits. Untracked files stay out.
-#[tauri::command]
+#[crate::command]
 pub async fn commit_all(
     repo_path: String,
     message: String,
@@ -187,7 +187,7 @@ pub async fn commit_all(
 
 /// Undoes the last commit with `git reset --soft HEAD~1`, keeping its changes
 /// staged, and returns its message so the commit box can offer it again.
-#[tauri::command]
+#[crate::command]
 pub async fn undo_last_commit(repo_path: String) -> AppResult<String> {
     blocking(move || {
         let message = {
@@ -244,7 +244,7 @@ fn run_commit_files(
     }
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn commit_files(
     repo_path: String,
     file_paths: Vec<String>,
@@ -296,12 +296,12 @@ fn run_rollback(repo_path: &str, file_paths: &[String], delete_added: bool) -> A
     Ok(())
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn rollback_files(repo_path: String, file_paths: Vec<String>, delete_added: bool) -> AppResult<()> {
     blocking(move || run_rollback(&repo_path, &file_paths, delete_added)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn get_head_message(repo_path: String) -> AppResult<String> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;

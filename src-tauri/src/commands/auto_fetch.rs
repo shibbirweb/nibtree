@@ -181,7 +181,7 @@ pub(crate) fn run_auto_fetch(repo_path: &str) -> AppResult<AutoFetchResult> {
 }
 
 /// One quiet background fetch of every remote of `repo_path`.
-#[tauri::command]
+#[crate::command]
 pub async fn auto_fetch(repo_path: String) -> AppResult<AutoFetchResult> {
     blocking(move || run_auto_fetch(&repo_path)).await
 }

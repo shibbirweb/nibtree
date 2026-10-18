@@ -1,0 +1,17 @@
+[package]
+# `#[command]` and `browser_handler!`: one command list for the desktop app and the browser server.
+# Its version stays 0.0.0: the app's version lives in ../Cargo.toml (scripts/version.ts).
+name = "nibtree-macros"
+version = "0.0.0"
+description = "Command macros shared by the Nibtree desktop app and browser server"
+license = "MIT"
+edition = "2021"
+publish = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "2", features = ["full"] }

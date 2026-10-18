@@ -197,7 +197,7 @@ fn run_untrack_files(repo_path: &str, file_paths: &[String]) -> AppResult<()> {
 
 /// Appends `patterns` to the root .gitignore or to .git/info/exclude. `file_paths` are the
 /// files or folders the patterns were made for, to find which of them are tracked.
-#[tauri::command]
+#[crate::command]
 pub async fn add_to_ignore(
     repo_path: String,
     patterns: Vec<String>,
@@ -208,12 +208,12 @@ pub async fn add_to_ignore(
 }
 
 /// Edit .gitignore: the file's absolute path, created empty when missing.
-#[tauri::command]
+#[crate::command]
 pub async fn ensure_ignore_file(repo_path: String, target: IgnoreTarget) -> AppResult<String> {
     blocking(move || run_ensure_ignore_file(&repo_path, target)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn untrack_files(repo_path: String, file_paths: Vec<String>) -> AppResult<()> {
     blocking(move || run_untrack_files(&repo_path, &file_paths)).await
 }

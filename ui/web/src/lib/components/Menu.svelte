@@ -1,10 +1,11 @@
 <!-- A context or drop-down menu at a point: commands with hints, separators and submenus. Arrow keys move, Enter
      runs, Right opens a submenu, Left and Esc close. Open it from oncontextmenu (x, y of the event) or use
-     MenuButton for a button that opens one. -->
+     MenuButton for a button that opens one. In a MenuBar, `onstep` gets Left and Right instead (the next menu). -->
 <script lang="ts">
   import { onMount, tick } from "svelte";
   import {
     canHighlight,
+    hasChecks,
     isSeparator,
     isSubmenu,
     matchHighlight,
@@ -23,9 +24,12 @@
     keyboard?: boolean;
     label?: string;
     onclose: (restoreFocus: boolean) => void;
+    onstep?: (step: 1 | -1) => void;
   }
 
-  let { items, x, y, alignEnd = false, keyboard = false, label = "Menu", onclose }: Props = $props();
+  let { items, x, y, alignEnd = false, keyboard = false, label = "Menu", onclose, onstep }: Props = $props();
+
+  const checks = $derived(hasChecks(items));
 
   let menuEl = $state<HTMLDivElement | null>(null);
   let highlighted = $state(-1);
@@ -67,8 +71,14 @@
       ArrowUp: () => (highlighted = stepHighlight(items, highlighted, -1)),
       Home: () => (highlighted = stepHighlight(items, -1, 1)),
       End: () => (highlighted = stepHighlight(items, 0, -1)),
-      ArrowRight: () => isSubmenu(items[highlighted] ?? { separator: true }) && (openSub = highlighted),
-      ArrowLeft: () => onclose(true),
+      ArrowRight: () => {
+        if (isSubmenu(items[highlighted] ?? { separator: true })) {
+          openSub = highlighted;
+        } else {
+          onstep?.(1);
+        }
+      },
+      ArrowLeft: () => (onstep ? onstep(-1) : onclose(true)),
       Escape: () => onclose(true),
       Enter: () => run(highlighted),
       " ": () => run(highlighted),
@@ -122,7 +132,8 @@
         class="item"
         class:highlighted={index === highlighted}
         class:danger={"danger" in item && item.danger}
-        role="menuitem"
+        role={"checked" in item && item.checked !== undefined ? "menuitemcheckbox" : "menuitem"}
+        aria-checked={"checked" in item && item.checked !== undefined ? item.checked : undefined}
         aria-haspopup={isSubmenu(item) ? "menu" : undefined}
         disabled={item.disabled}
         data-index={index}
@@ -132,7 +143,14 @@
         }}
         onclick={() => run(index)}
       >
-        <span class="label">{item.label}</span>
+        <span class="lead">
+          {#if checks}
+            <span class="check">
+              {#if "checked" in item && item.checked}<Icon name="check" size="normal" />{/if}
+            </span>
+          {/if}
+          <span class="label">{item.label}</span>
+        </span>
         {#if isSubmenu(item)}
           <span class="chevron"><Icon name="chevron-right" size="normal" /></span>
         {:else if item.hint}
@@ -193,8 +211,21 @@
     cursor: pointer;
   }
 
+  .lead {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
   .label {
     white-space: nowrap;
+  }
+
+  /* Check items leave the mark's room on every row, so the labels line up. */
+  .check {
+    display: inline-flex;
+    flex: none;
+    width: var(--menu-check-width);
   }
 
   .item.highlighted:not(:disabled) {

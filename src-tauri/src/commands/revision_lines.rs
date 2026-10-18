@@ -88,7 +88,7 @@ pub fn run_apply_revision_lines(
     })
 }
 
-#[tauri::command]
+#[crate::command]
 #[allow(clippy::too_many_arguments)]
 pub async fn apply_revision_lines(
     repo_path: String,

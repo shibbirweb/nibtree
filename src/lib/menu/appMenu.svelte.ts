@@ -25,6 +25,7 @@ import {
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { untrack } from "svelte";
 import { errorMessage } from "$lib/api";
+import { isBrowserHost } from "$lib/browser/host";
 import { menuAccelerators } from "$lib/commands/registry";
 import { usableOverrides } from "$lib/commands/shortcutSettings";
 import { diffLines } from "$lib/diff/diffLines.svelte";
@@ -42,7 +43,7 @@ import { openRecent } from "$lib/views/repoPicker";
 import { editorFocus } from "./editorFocus.svelte";
 import { runMenuAction } from "./menuActions";
 import type { MenuAction, MenuMode, MenuPlatform } from "./menuIds";
-import { changedState, type ItemState, type MenuInputs, menuState, type MenuState } from "./menuState";
+import { changedState, isShown, type ItemState, type MenuInputs, menuState, type MenuState } from "./menuState";
 import { actionEntries, type MenuEntry, menuSpec, platformFromUserAgent, type TopMenu } from "./menuSpec";
 
 /** Waits this long after the last change before updating the menu. */
@@ -84,10 +85,6 @@ function entryDependencies(entry: MenuEntry): MenuAction[] | null {
     return entry.visibleWith ?? null;
   }
   return null;
-}
-
-function isShown(dependsOn: MenuAction[] | null, state: MenuState): boolean {
-  return dependsOn === null || dependsOn.some((action) => state[action]?.visible ?? true);
 }
 
 /** A list needs tracking when an entry in it can be hidden. */
@@ -192,6 +189,10 @@ class AppMenu {
     this.installed = true;
     this.mode = mode;
     this.platform = platformFromUserAgent(navigator.userAgent);
+    // A browser tab has no native menu bar; the page's own menu bar is still to come.
+    if (isBrowserHost()) {
+      return;
+    }
     try {
       const spec = menuSpec(this.platform, mode);
       this.spec = spec;

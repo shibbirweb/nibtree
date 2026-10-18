@@ -121,7 +121,7 @@ fn run_apply_patch(repo_path: &str, patch_path: Option<&str>, patch_text: Option
     })
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn create_patch(
     repo_path: String,
     source: PatchSource,
@@ -131,12 +131,12 @@ pub async fn create_patch(
     blocking(move || run_create_patch(&repo_path, source, &file_paths, &patch_path)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn create_commit_patch(repo_path: String, commit_id: String, patch_path: String) -> AppResult<()> {
     blocking(move || run_create_commit_patch(&repo_path, &commit_id, &patch_path)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn apply_patch(repo_path: String, patch_path: Option<String>, patch_text: Option<String>) -> AppResult<OpOutcome> {
     blocking(move || run_apply_patch(&repo_path, patch_path.as_deref(), patch_text.as_deref())).await
 }
@@ -176,7 +176,7 @@ fn read_clipboard() -> AppResult<String> {
 }
 
 /// The clipboard's text, read natively: the web view only allows that after a click in the page.
-#[tauri::command]
+#[crate::command]
 pub async fn read_clipboard_text() -> AppResult<String> {
     blocking(read_clipboard).await
 }

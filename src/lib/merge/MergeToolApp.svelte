@@ -16,6 +16,8 @@
   import Text from "@nibtree/ui/components/Text.svelte";
   import { toast } from "$lib/ui/toast.svelte";
   import MergeEditor from "./MergeEditor.svelte";
+  import PageMenuBar from "$lib/menu/PageMenuBar.svelte";
+  import { pageMenuHost } from "$lib/menu/pageMenuHost.svelte";
 
   let doc = $state.raw<MergeDocument | null>(null);
   let loadError = $state<string | null>(null);
@@ -84,9 +86,13 @@
   }
 </script>
 
+{#snippet menuRow()}
+  <PageMenuBar surface="none" />
+{/snippet}
+
 <Stack gap="none" height="window" surface="panel">
   <!-- The window's top bar: on macOS the window's own buttons sit at its left and it moves the window. -->
-  <AppHeader windowControls={windowChrome.controlsInBar}>
+  <AppHeader windowControls={windowChrome.controlsInBar} menuBar={pageMenuHost.mode ? menuRow : undefined}>
     {#snippet start()}
       <Icon name="merge" size="regular" tone="dim" />
       <Text weight="semibold">Merge Revisions for</Text>

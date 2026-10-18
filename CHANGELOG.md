@@ -148,6 +148,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Changed
 
+- With rounded panels off, the project color in the top bar glows the same way as with rounded panels on: from the window's top left corner, easing out to the right, instead of a narrow band along the bar.
 - A folded run of unchanged lines in a diff always shows its buttons, at the left of the fold in every layout, instead of only under the pointer. They read **10 more from the top** and **10 more from the bottom**, with arrows pointing the way the lines open.
 - Every diff and the merge tool (side by side diffs, the staging view, merge commits, a commit next to your working tree) color each change through its line numbers, so it runs as one band from pane to pane. Each side's line numbers face the middle, the Apply, Ignore and Revert buttons sit beside them without covering any number, and the gaps between panes are narrower. The panes scroll together with one scrollbar at the right edge.
 - Git Manager is now **Nibtree**: the app (`Nibtree.app`), its identifier (`io.github.shibbirweb.nibtree`), the command line tool (`nibtree`), the settings folder (`~/.nibtree`, moved from `~/.gitmanager` on first start), saved workspaces (`.nibtree-workspace`; old `.gitmanager-workspace` files still open) and the repository (`shibbirweb/nibtree`). Install the command again from Settings, set up `git mergetool` again with the new lines, and sign in to GitHub again.

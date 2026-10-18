@@ -8,13 +8,14 @@ use std::sync::atomic::Ordering;
 use serde::Serialize;
 use serde_json::Value;
 use tauri::{
-    AppHandle, Emitter, EventTarget, LogicalPosition, LogicalSize, Manager, PhysicalPosition, PhysicalSize, State,
+    AppHandle, LogicalPosition, LogicalSize, Manager, PhysicalPosition, PhysicalSize, State,
     WebviewUrl, WebviewWindow, WebviewWindowBuilder, Window, WindowEvent,
 };
 
 use super::blocking;
 use crate::config::{self, ConfigPatch, PatchSet};
 use crate::error::{AppError, AppResult};
+use crate::host::HostApp;
 use crate::mcp::McpWindow;
 use crate::state::AppState;
 use crate::windows::{self, Bounds, SessionEntry, Shown, WindowOpen, WindowStart};
@@ -40,14 +41,14 @@ pub struct WindowOpened {
 }
 
 /// What the asking window should open when its page starts or reloads.
-#[tauri::command]
+#[crate::command]
 pub fn window_startup(window: Window, state: State<'_, AppState>) -> WindowStart {
     state.window_book().start(window.label())
 }
 
 /// A window's page shows a new workspace (or none): it becomes the window's title, the
 /// folders its previews and the MCP tools reach, its events and the saved session.
-#[tauri::command]
+#[crate::command(desktop)]
 pub async fn window_set_workspace(
     app: AppHandle,
     window: Window,
@@ -80,7 +81,7 @@ pub async fn window_set_workspace(
 
 /// Before a window replaces its workspace: focuses the other window that already shows it
 /// and returns its label, or None to go on opening here.
-#[tauri::command]
+#[crate::command(desktop)]
 pub async fn window_focus_owner(
     app: AppHandle,
     window: Window,
@@ -101,7 +102,7 @@ pub async fn window_focus_owner(
 
 /// File > New Window (no folders) or Open Folder in New Window. A workspace another window
 /// shows already is focused instead of opened twice.
-#[tauri::command]
+#[crate::command(desktop)]
 pub async fn window_open(
     app: AppHandle,
     window: Window,
@@ -162,7 +163,7 @@ pub fn on_second_launch(app: &AppHandle, args: &[String], cwd: &str) {
 
 /// Window > Close Window, or the close button after the page checked for unsaved edits.
 /// Closing the last window quits the app, and it comes back at the next start.
-#[tauri::command]
+#[crate::command(desktop)]
 pub async fn window_close(window: Window) -> AppResult<()> {
     window
         .destroy()
@@ -171,14 +172,14 @@ pub async fn window_close(window: Window) -> AppResult<()> {
 
 /// Emits to the windows a path concerns (the ones showing a folder that holds it, or a folder
 /// inside it), or to every window when none does (a clone into a new folder, say).
-pub fn emit_for_path<S: Serialize + Clone>(app: &AppHandle, path: &Path, event: &str, payload: S) {
-    let labels = app.state::<AppState>().window_book().windows_for_path(path);
+pub fn emit_for_path<S: Serialize + Clone>(app: &HostApp, path: &Path, event: &str, payload: S) {
+    let labels = app.state().window_book().windows_for_path(path);
     if labels.is_empty() {
         let _ = app.emit(event, payload);
         return;
     }
     for label in labels {
-        let _ = app.emit_to(EventTarget::webview_window(&label), event, payload.clone());
+        let _ = app.emit_to(&label, event, payload.clone());
     }
 }
 

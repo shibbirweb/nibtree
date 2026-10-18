@@ -6,7 +6,7 @@ use crate::git::cli;
 
 /// Creates a tag at `commit_id` (HEAD when None): annotated when a message is
 /// given, lightweight otherwise. The tag list comes with the refs (`get_refs`).
-#[tauri::command]
+#[crate::command]
 pub async fn create_tag(
     repo_path: String,
     tag_name: String,
@@ -40,7 +40,7 @@ pub async fn create_tag(
 }
 
 /// Deletes a local tag (the remote keeps it until pushed with --delete).
-#[tauri::command]
+#[crate::command]
 pub async fn delete_tag(repo_path: String, tag_name: String) -> AppResult<()> {
     blocking(move || {
         cli::run(Path::new(&repo_path), &["tag", "-d", "--", &tag_name])?;

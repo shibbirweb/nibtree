@@ -1,4 +1,3 @@
-use tauri::ipc::Channel;
 use tauri::{State, Window};
 
 use super::blocking;
@@ -12,7 +11,7 @@ use crate::text_search::{TextSearchBatch, TextSearchOptions};
 
 /// Go to File opened: starts (or reuses) the index of the workspace folders
 /// and returns right away; `progress` hears about it until the popup closes.
-#[tauri::command]
+#[crate::command]
 pub async fn file_search_open(
     window: Window,
     state: State<'_, AppState>,
@@ -32,7 +31,7 @@ pub async fn file_search_open(
 }
 
 /// Matches against whatever is indexed so far; never waits for indexing.
-#[tauri::command]
+#[crate::command]
 pub async fn file_search_query(
     window: Window,
     state: State<'_, AppState>,
@@ -45,7 +44,7 @@ pub async fn file_search_query(
 }
 
 /// The popup closed; the index stays a short while so reopening is instant.
-#[tauri::command]
+#[crate::command]
 pub async fn file_search_close(window: Window, state: State<'_, AppState>) -> AppResult<()> {
     let search = state.file_search.window(window.label());
     blocking(move || {
@@ -57,7 +56,7 @@ pub async fn file_search_close(window: Window, state: State<'_, AppState>) -> Ap
 
 /// A Classes or Symbols tab showed: starts (or reuses) the symbol index and
 /// returns right away; `progress` hears about it until the popup closes.
-#[tauri::command]
+#[crate::command]
 pub async fn symbol_search_open(
     window: Window,
     state: State<'_, AppState>,
@@ -77,7 +76,7 @@ pub async fn symbol_search_open(
 }
 
 /// Matches against whatever symbols are indexed so far; never waits for indexing.
-#[tauri::command]
+#[crate::command]
 pub async fn symbol_search_query(
     window: Window,
     state: State<'_, AppState>,
@@ -100,7 +99,7 @@ pub async fn symbol_search_query(
 
 /// Find in Files: streams batches to `results` and resolves when the search
 /// ends; a newer `search_id` (or a cancel) stops it within a file.
-#[tauri::command]
+#[crate::command]
 pub async fn text_search(
     window: Window,
     state: State<'_, AppState>,
@@ -120,7 +119,7 @@ pub async fn text_search(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn text_search_cancel(window: Window, state: State<'_, AppState>, search_id: u64) -> AppResult<()> {
     let search = state.file_search.window(window.label());
     blocking(move || {
@@ -134,7 +133,7 @@ pub async fn text_search_cancel(window: Window, state: State<'_, AppState>, sear
 /// Text tab's query matches, or only counts with `request.preview`. Files in
 /// `request.skipPaths` (unsaved edits) are never written. A newer
 /// `replace_id` or a cancel stops it between files.
-#[tauri::command]
+#[crate::command]
 pub async fn replace_in_files(
     window: Window,
     state: State<'_, AppState>,
@@ -146,7 +145,7 @@ pub async fn replace_in_files(
     blocking(move || Ok(search.replace_text(&workspace_roots, replace_id, &request))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn replace_in_files_cancel(window: Window, state: State<'_, AppState>, replace_id: u64) -> AppResult<()> {
     let search = state.file_search.window(window.label());
     blocking(move || {
@@ -158,7 +157,7 @@ pub async fn replace_in_files_cancel(window: Window, state: State<'_, AppState>,
 
 /// Quick Open's "@" mode: the symbols of the editor's text (unsaved edits
 /// included), read as the language of `file_path`. Nothing is cached.
-#[tauri::command]
+#[crate::command]
 pub async fn document_symbols(file_path: String, text: String) -> AppResult<OutlineResult> {
     blocking(move || Ok(outline(&file_path, &text))).await
 }

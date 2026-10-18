@@ -21,18 +21,18 @@ pub enum Side {
     Theirs,
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn list_conflicts(repo_path: String) -> AppResult<ConflictSummary> {
     blocking(move || conflicts::list(&git_repo::open(&repo_path)?)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn load_conflict(repo_path: String, conflict_path: String, ignore_whitespace: bool) -> AppResult<MergeDocument> {
     blocking(move || conflicts::load(&git_repo::open(&repo_path)?, &conflict_path, ignore_whitespace)).await
 }
 
 /// Writes the merged result and stages it, which marks the conflict resolved.
-#[tauri::command]
+#[crate::command]
 pub async fn save_resolution(repo_path: String, conflict_path: String, content: String, eol: Eol) -> AppResult<()> {
     blocking(move || {
         let full = safe_join(&repo_path, &conflict_path)?;
@@ -48,7 +48,7 @@ pub async fn save_resolution(repo_path: String, conflict_path: String, content: 
 
 /// Resolves whole files by taking one side. A side that deleted the file
 /// resolves to a deletion.
-#[tauri::command]
+#[crate::command]
 pub async fn accept_side(repo_path: String, conflict_paths: Vec<String>, side: Side) -> AppResult<()> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;
@@ -97,7 +97,7 @@ fn operation_subcommand(repo_path: &str) -> AppResult<&'static str> {
         .ok_or_else(|| AppError::invalid("No merge, rebase, cherry-pick or revert is in progress"))
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn continue_operation(repo_path: String) -> AppResult<OpOutcome> {
     blocking(move || {
         let subcommand = operation_subcommand(&repo_path)?;
@@ -108,7 +108,7 @@ pub async fn continue_operation(repo_path: String) -> AppResult<OpOutcome> {
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn abort_operation(repo_path: String) -> AppResult<OpOutcome> {
     blocking(move || {
         let subcommand = operation_subcommand(&repo_path)?;
@@ -119,7 +119,7 @@ pub async fn abort_operation(repo_path: String) -> AppResult<OpOutcome> {
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn skip_rebase_commit(repo_path: String) -> AppResult<OpOutcome> {
     blocking(move || {
         let finished = run_op(&repo_path, &["rebase", "--skip"]);
@@ -129,7 +129,7 @@ pub async fn skip_rebase_commit(repo_path: String) -> AppResult<OpOutcome> {
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn load_mergetool(state: State<'_, AppState>, ignore_whitespace: bool) -> AppResult<MergeDocument> {
     let LaunchMode::MergeTool { base, local, remote, merged } = state.launch.clone() else {
         return Err(AppError::invalid("Not running as a mergetool"));
@@ -138,7 +138,7 @@ pub async fn load_mergetool(state: State<'_, AppState>, ignore_whitespace: bool)
 }
 
 /// Saves MERGED and exits with status 0 so `git mergetool` marks the file resolved.
-#[tauri::command]
+#[crate::command]
 pub fn save_mergetool(app: AppHandle, state: State<'_, AppState>, content: String, eol: Eol) -> AppResult<()> {
     let LaunchMode::MergeTool { merged, .. } = &state.launch else {
         return Err(AppError::invalid("Not running as a mergetool"));
@@ -149,7 +149,7 @@ pub fn save_mergetool(app: AppHandle, state: State<'_, AppState>, content: Strin
     Ok(())
 }
 
-#[tauri::command]
+#[crate::command]
 pub fn cancel_mergetool(app: AppHandle, state: State<'_, AppState>) {
     state.mergetool_exit_code.store(1, Ordering::SeqCst);
     app.exit(1);

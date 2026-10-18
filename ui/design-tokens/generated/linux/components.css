@@ -159,6 +159,7 @@
   --menu-item-radius: var(--radius-small);
   --menu-item-gap: 24px;
   --menu-separator-inset: 6px;
+  --menu-check-width: 16px;
   --popover-offset: 2px;
   --popover-padding: 4px;
   --popover-panel-padding-y: 12px;

@@ -24,7 +24,7 @@ pub struct LogPage {
     pub commits: Option<Vec<CommitSummary>>,
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn get_log(
     repo_path: String,
     offset: usize,
@@ -45,12 +45,12 @@ pub async fn get_log(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn get_commit_details(repo_path: String, commit_id: String) -> AppResult<CommitDetails> {
     blocking(move || log::details(&git_repo::open(&repo_path)?, &commit_id)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn get_commit_file_diff(
     repo_path: String,
     commit_id: String,
@@ -67,17 +67,17 @@ pub async fn get_commit_file_diff(
 
 /// Blames a file at `revision`, or the file on disk when None. The editor blames its own
 /// text with `editor::blame_contents`.
-#[tauri::command]
+#[crate::command]
 pub async fn blame_file(repo_path: String, file_path: String, revision: Option<String>) -> AppResult<BlameRuns> {
     blocking(move || Ok(blame::blame(Path::new(&repo_path), &file_path, revision.as_deref(), None)?.into_runs())).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn cherry_pick(repo_path: String, commit_id: String) -> AppResult<OpOutcome> {
     blocking(move || run_op(&repo_path, &["cherry-pick", &commit_id])).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn revert_commit(repo_path: String, commit_id: String) -> AppResult<OpOutcome> {
     blocking(move || run_op(&repo_path, &["revert", "--no-edit", &commit_id])).await
 }
@@ -101,7 +101,7 @@ fn run_reset(repo_path: &str, revision: &str, mode: &str) -> AppResult<()> {
 }
 
 /// `git reset` of the current branch to any revision: soft, mixed, hard or keep.
-#[tauri::command]
+#[crate::command]
 pub async fn reset_to(repo_path: String, commit_id: String, mode: String) -> AppResult<()> {
     blocking(move || run_reset(&repo_path, &commit_id, &mode)).await
 }
@@ -112,12 +112,12 @@ fn run_resolve(repo_path: &str, revision: &str) -> AppResult<String> {
     Ok(commit_id)
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn resolve_revision(repo_path: String, revision: String) -> AppResult<String> {
     blocking(move || run_resolve(&repo_path, &revision)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn file_history(
     repo_path: String,
     file_path: String,
@@ -131,7 +131,7 @@ pub async fn file_history(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn line_history(
     repo_path: String,
     file_path: String,
@@ -156,7 +156,7 @@ fn run_compare(repo_path: &str, file_path: &str, orig_path: Option<&str>, revisi
 
 /// The file at `revision` against its work tree copy (Compare with Revision / Branch, the
 /// Changes tab). `orig_path` is the old name of a renamed file.
-#[tauri::command]
+#[crate::command]
 pub async fn compare_with_revision(
     repo_path: String,
     file_path: String,
@@ -166,7 +166,7 @@ pub async fn compare_with_revision(
     blocking(move || run_compare(&repo_path, &file_path, orig_path.as_deref(), &revision)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn checkout_commit(repo_path: String, commit_id: String) -> AppResult<()> {
     blocking(move || {
         cli::run(Path::new(&repo_path), &["switch", "--detach", &commit_id])?;
