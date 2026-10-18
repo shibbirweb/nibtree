@@ -2,6 +2,7 @@
 // the web app runs, so a theme looks the same on every platform. GMThemes.swift lists the themes and finds one's
 // colors; GMThemeColors*.swift hold the colors, a few themes per file.
 import { catalogThemeIds, themeColors } from "../../web/src/lib/themes/catalog";
+import { COLOR_TOKENS } from "../../web/src/lib/themes/colorTokens";
 import { THEME_INDEX } from "../../web/src/lib/themes/themeIndex";
 import { chunkBlocks, chunkName } from "./chunks";
 import { parseTokenColor } from "./color";
@@ -54,6 +55,24 @@ function themeBlock(themeId: string): string[] {
   ];
 }
 
+/** `case bg, frame, panel, ...` lines for GMColorToken, packed like the colors. */
+function colorTokenCases(): string[] {
+  const names = COLOR_TOKENS.filter((token) => token !== "--shadow").map((token) => camelName(token.slice(2)));
+  const lines: string[] = [];
+  let line = "";
+  for (const name of names) {
+    const next = line ? `${line}, ${name}` : name;
+    if (line && `    case ${next}`.length > WIDTH) {
+      lines.push(`    case ${line}`);
+      line = name;
+    } else {
+      line = next;
+    }
+  }
+  lines.push(`    case ${line}`);
+  return lines;
+}
+
 /** GMThemes.swift: the theme list in picker order and the lookup of a theme's colors. */
 function themesSwift(): string {
   const ids = catalogThemeIds();
@@ -63,6 +82,11 @@ function themesSwift(): string {
     "/** A color theme: its id (the settings value), name and kind (light, dark, high-contrast-light or -dark). */",
     "public struct GMThemeInfo: Sendable {",
     "    public let id: String, name: String, kind: String",
+    "}",
+    "",
+    "/** Every color a theme sets, named like GMColor; the raw value is its key in GMTheme.colors(_:). */",
+    "public enum GMColorToken: String, CaseIterable, Sendable {",
+    ...colorTokenCases(),
     "}",
     "",
     "public enum GMTheme {",

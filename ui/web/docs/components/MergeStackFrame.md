@@ -26,6 +26,10 @@ the top row, or between the top panes, to resize.
 - `resultEnd` (`Snippet`): At the end of the result's title, such as how many changes are left.
 - `onready` (`(parts: MergeFrameParts) => void | (() => void)`): The panes, once shown.
 
+## States
+
+Draws hover, dragging; scenarios force them with `state`.
+
 ## Rules
 
 - Never draw UI in the panes: they hold only the editors the app builds.

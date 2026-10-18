@@ -6,6 +6,19 @@ public struct GMThemeInfo: Sendable {
     public let id: String, name: String, kind: String
 }
 
+/** Every color a theme sets, named like GMColor; the raw value is its key in GMTheme.colors(_:). */
+public enum GMColorToken: String, CaseIterable, Sendable {
+    case bg, frame, panel, panelAlt, border, borderStrong, text, textDim, textFaint, accent, accentHover, accentText
+    case avatarText, hover, selected, selectedInactive, danger, success, warning, overlay, editorBg, editorGutter
+    case editorLineNumber, editorActiveLine, editorSelection, editorCursor, termBackground, termForeground, termCursor
+    case termSelection, termBlack, termRed, termGreen, termYellow, termBlue, termMagenta, termCyan, termWhite
+    case termBrightBlack, termBrightRed, termBrightGreen, termBrightYellow, termBrightBlue, termBrightMagenta
+    case termBrightCyan, termBrightWhite, termScrollbar, termScrollbarHover, diffModified, diffModifiedEdge, diffAdded
+    case diffAddedEdge, diffDeleted, diffDeletedEdge, diffConflict, diffConflictEdge, diffInline, diffRemoved
+    case diffRemovedWord, diffAddedWord, tokKeyword, tokString, tokNumber, tokComment, tokType, tokFunction, tokProperty
+    case tokMeta, tokTag, tokAttr, tokInvalid, tokConstant, tokOperator, bracket1, bracket2, bracket3
+}
+
 public enum GMTheme {
     /** Every theme in picker order. */
     public static let all: [GMThemeInfo] = [

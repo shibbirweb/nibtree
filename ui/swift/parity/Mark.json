@@ -1,0 +1,55 @@
+[
+  {
+    "id": "mark-normal-row",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Mark", "props": { "text": "CC", "title": "Claude Code" } },
+        { "component": "Mark", "props": { "text": "G", "size": "normal" } },
+        { "component": "Mark", "props": { "text": "AMP" } },
+        { "component": "Text", "text": "Claude Code" }
+      ]
+    }
+  },
+  {
+    "id": "mark-small-row",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Mark", "props": { "text": "CX", "size": "small", "title": "Codex" } },
+        { "component": "Mark", "props": { "text": "G", "size": "small" } },
+        { "component": "Mark", "props": { "text": "AMP", "size": "small" } },
+        { "component": "Text", "text": "42%", "props": { "tone": "dim" } }
+      ]
+    }
+  },
+  {
+    "id": "mark-column-stretched",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Mark", "props": { "text": "CC" } },
+        { "component": "Mark", "props": { "text": "CC", "size": "small" } }
+      ]
+    }
+  },
+  {
+    "id": "mark-row-stretched",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Title", "props": { "variant": "display" } },
+        { "component": "Mark", "props": { "text": "CC" } },
+        { "component": "Mark", "props": { "text": "CC", "size": "small" } }
+      ]
+    }
+  }
+]

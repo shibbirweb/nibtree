@@ -1,0 +1,48 @@
+[
+  {
+    "id": "checkbox-states",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Checkbox", "props": { "label": "Amend last commit", "size": "normal" } },
+        { "component": "Checkbox", "props": { "label": "Sign off", "checked": true } },
+        { "component": "Checkbox", "props": { "label": "Some files", "indeterminate": true } },
+        { "component": "Checkbox", "props": { "label": "Locked", "checked": true, "disabled": true } },
+        { "component": "Checkbox", "props": { "label": "Off and locked", "disabled": true } },
+        { "component": "Checkbox", "props": { "label": "Partly locked", "indeterminate": true, "disabled": true } }
+      ]
+    }
+  },
+  {
+    "id": "checkbox-small-row",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Checkbox", "props": { "label": "Do Not Disturb", "size": "small" } },
+        {
+          "component": "Checkbox",
+          "props": { "label": "Mute", "size": "small", "checked": true, "title": "Mutes sounds" }
+        }
+      ]
+    }
+  },
+  {
+    "id": "checkbox-children",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "padding": "md" },
+      "children": [
+        {
+          "component": "Checkbox",
+          "props": { "checked": true },
+          "children": [{ "component": "Text", "props": { "mono": true, "tone": "dim" }, "text": "--no-verify" }]
+        }
+      ]
+    }
+  }
+]

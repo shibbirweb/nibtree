@@ -9,7 +9,7 @@ This is a map of the repository. It lists the folders and files you will touch m
 ├── src/                    Svelte 5 + TypeScript UI
 ├── src-tauri/              Rust backend (Tauri 2)
 ├── scripts/                demo repositories, version and wiki tools
-├── ui/                     the UI library (ui/web) and the design tokens for every platform (ui/design-tokens)
+├── ui/                     the UI libraries (ui/web, ui/swift) and the tokens for every platform (ui/design-tokens)
 ├── docs/wiki/              source of the GitHub wiki (this page lives here)
 ├── static/                 files served as they are (favicon.png, file-icons/ sets)
 ├── .github/                workflows, issue forms, pull request template
@@ -169,11 +169,16 @@ ui/
 │   ├── src/lib/docs/       one doc per component: the showcase and the AI pages come from it
 │   ├── src/showcase/       the local site: stories, props, code tabs, colors and sizes
 │   └── COMPONENTS.md       the generated index for AI agents (docs/components/<Name>.md per component)
+├── swift/                  the SwiftUI twin of ui/web: `bun run ui:swift` opens its showcase
+│   ├── Sources/NibtreeUI/  one N<Name> view per ui/web component, plus the theme palette and presets
+│   ├── Sources/NibtreeTokens/ the design tokens as Swift, written by `bun run ui:tokens`
+│   ├── Sources/NibtreeShowcase/ the showcase app and `--render` (every story to PNG)
+│   └── Tests/              Swift Testing tests (`bun run ui:swift:test`)
 └── design-tokens/          colors.json, tokens.json, components*.json and the generators
-    └── generated/          Swift (macos), XAML (windows), GTK CSS (linux) and web colors
+    └── generated/          XAML (windows) and GTK CSS (linux)
 ```
 
-See [UI Library](UI-Library.md).
+See [UI Library](UI-Library.md) and [Swift UI Library](Swift-UI-Library.md).
 
 ## Docs: `docs/wiki/`
 

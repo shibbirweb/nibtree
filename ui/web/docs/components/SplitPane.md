@@ -27,6 +27,10 @@ Use for a sidebar and an editor, or an editor and a bottom panel. Save `size` in
 - `first` (`Snippet`, required): The first pane.
 - `second` (`Snippet`): The second pane; leave it out to show the first alone, still mounted.
 
+## States
+
+Draws hover, dragging; scenarios force them with `state`.
+
 ## Example: Sidebar
 
 ```svelte

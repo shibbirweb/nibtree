@@ -13,7 +13,7 @@ Nibtree has its own UI library and design system in `ui/`. The Svelte components
 ```mermaid
 flowchart LR
   T["ui/design-tokens/*.json"] -->|"bun run ui:tokens"| CSS["web tokens.css and tokens.ts"]
-  T --> Swift["generated/macos/*.swift"]
+  T --> Swift["swift/Sources/NibtreeTokens"]
   T --> XAML["generated/windows/*.xaml"]
   T --> GTK["generated/linux/*.css"]
   CSS --> C["ui/web components"]

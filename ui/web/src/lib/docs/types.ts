@@ -1,6 +1,8 @@
 // One doc per component: the showcase page and the generated Markdown (COMPONENTS.md and docs/components/*.md) for
 // people and AI agents both come from it. docs.test.ts checks every prop here against the component's $props().
 
+import type { InteractionState } from "../logic/forcedState";
+
 export type ComponentGroup = "Actions" | "Forms" | "Feedback" | "Overlays" | "Navigation" | "Layout" | "Editor";
 
 export interface PropDoc {
@@ -39,6 +41,8 @@ export interface ComponentDoc {
   examples: ExampleDoc[];
   /** The app markup this component replaces, for moving the app onto the library. */
   replaces: string[];
+  /** Interaction states it draws, which scenarios can force (`state`) and the parity gate checks in Swift too. */
+  states?: InteractionState[];
   /** Rules an agent must follow, e.g. "Destructive actions confirm first". */
   rules?: string[];
   /** Named like the standard library parts (shadcn/ui) it covers, for search. */

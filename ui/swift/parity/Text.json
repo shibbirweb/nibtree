@@ -1,0 +1,152 @@
+[
+  {
+    "id": "text-body",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "text": "The quick brown fox jumps over"
+    }
+  },
+  {
+    "id": "text-hint",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "variant": "hint"
+      },
+      "text": "A dim hint"
+    }
+  },
+  {
+    "id": "text-title",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "variant": "title"
+      },
+      "text": "Title"
+    }
+  },
+  {
+    "id": "text-section-label",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "variant": "sectionLabel"
+      },
+      "text": "Changes"
+    }
+  },
+  {
+    "id": "text-tone-danger",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "tone": "danger",
+        "weight": "semibold"
+      },
+      "text": "Could not push"
+    }
+  },
+  {
+    "id": "text-mono",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "mono": true
+      },
+      "text": "a1b2c3d main"
+    }
+  },
+  {
+    "id": "text-truncate",
+    "width": 200,
+    "node": {
+      "component": "Text",
+      "props": {
+        "truncate": true
+      },
+      "text": "src/lib/views/a/very/long/path/file.ts"
+    }
+  },
+  {
+    "id": "text-strike",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "strike": true
+      },
+      "text": "legacy-coupons.ts"
+    }
+  },
+  {
+    "id": "text-tabular",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "tabular": true
+      },
+      "text": "1,111 changes in 10:01"
+    }
+  },
+  {
+    "id": "text-wrap",
+    "width": 180,
+    "node": {
+      "component": "Text",
+      "text": "A sentence long enough to wrap onto a second and a third line"
+    }
+  },
+  {
+    "id": "text-paragraph-wrap",
+    "width": 220,
+    "node": {
+      "component": "Text",
+      "props": {
+        "variant": "paragraph"
+      },
+      "text": "Paragraph text uses a taller line height, so wrapped lines sit further apart."
+    }
+  },
+  {
+    "id": "text-size-weight",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "size": "heading",
+        "weight": "bold"
+      },
+      "text": "Heading bold"
+    }
+  },
+  {
+    "id": "text-caption",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "variant": "caption"
+      },
+      "text": "3 files changed"
+    }
+  },
+  {
+    "id": "text-code",
+    "width": 320,
+    "node": {
+      "component": "Text",
+      "props": {
+        "variant": "code"
+      },
+      "text": "git rebase --onto main"
+    }
+  }
+]

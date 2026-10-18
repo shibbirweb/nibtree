@@ -1,0 +1,80 @@
+[
+  {
+    "id": "divider-horizontal-centered-column",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Above" },
+        { "component": "Divider", "props": { "direction": "horizontal", "strong": true } },
+        { "component": "Text", "text": "Below" }
+      ]
+    }
+  },
+  {
+    "id": "divider-soft",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Above" },
+        { "component": "Divider", "props": { "strong": false } },
+        { "component": "Text", "text": "Below" }
+      ]
+    }
+  },
+  {
+    "id": "divider-vertical-row",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Text", "props": { "variant": "title" }, "text": "Left" },
+        { "component": "Divider", "props": { "direction": "vertical" } },
+        { "component": "Text", "text": "Right" },
+        { "component": "Divider", "props": { "direction": "vertical", "strong": false } },
+        { "component": "Text", "text": "End" }
+      ]
+    }
+  },
+  {
+    "id": "divider-content-width-column",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "padding": "md", "align": "start" },
+      "children": [
+        {
+          "component": "Stack",
+          "props": { "gap": "xs", "surface": "alt", "padding": "sm" },
+          "children": [
+            { "component": "Text", "text": "Open" },
+            { "component": "Divider" },
+            { "component": "Text", "text": "A longer item" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "divider-vertical-alone",
+    "width": 320,
+    "node": { "component": "Divider", "props": { "direction": "vertical" } }
+  },
+  {
+    "id": "divider-vertical-centered-column",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Above" },
+        { "component": "Divider", "props": { "direction": "vertical" } },
+        { "component": "Text", "text": "Below" }
+      ]
+    }
+  }
+]

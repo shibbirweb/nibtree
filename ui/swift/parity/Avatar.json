@@ -1,0 +1,45 @@
+[
+  {
+    "id": "avatar-circles",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Avatar", "props": { "text": "MS", "label": "MD. Shibbir Ahmed" } },
+        { "component": "Avatar", "props": { "text": "A", "shape": "circle", "color": "accent" } },
+        { "component": "Avatar", "props": { "text": "GB", "color": "blue" } },
+        { "component": "Avatar", "props": { "text": "WWW" } },
+        { "component": "Text", "text": "Signed in" }
+      ]
+    }
+  },
+  {
+    "id": "avatar-tiles",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Avatar", "props": { "text": "N", "shape": "tile" } },
+        { "component": "Avatar", "props": { "text": "GM", "shape": "tile", "color": "blue" } },
+        { "component": "Avatar", "props": { "text": "WS", "shape": "tile", "color": "green" } },
+        { "component": "Avatar", "props": { "text": "UI", "shape": "tile", "color": "magenta" } },
+        { "component": "Avatar", "props": { "text": "CL", "shape": "tile", "color": "cyan" } },
+        { "component": "Avatar", "props": { "text": "RD", "shape": "tile", "color": "red" } }
+      ]
+    }
+  },
+  {
+    "id": "avatar-column",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Avatar", "props": { "text": "MS" } },
+        { "component": "Avatar", "props": { "text": "NB", "shape": "tile", "color": "green" } }
+      ]
+    }
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "id": "slider-values",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "Slider",
+          "props": { "value": 8, "min": 8, "max": 24, "label": "Font size", "valueWidth": "normal" }
+        },
+        { "component": "Slider", "props": { "value": 13, "min": 8, "max": 24, "label": "Font size" } },
+        { "component": "Slider", "props": { "value": 24, "min": 8, "max": 24, "label": "Font size" } },
+        { "component": "Slider", "props": { "value": 1.5, "min": 1, "max": 2, "step": 0.1, "label": "Line height" } },
+        { "component": "Slider", "props": { "value": 16, "min": 8, "max": 24, "label": "Locked", "disabled": true } }
+      ]
+    }
+  },
+  {
+    "id": "slider-wide-row",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Weight" },
+        {
+          "component": "Slider",
+          "props": {
+            "value": 400,
+            "min": 100,
+            "max": 900,
+            "step": 100,
+            "label": "Font weight",
+            "valueWidth": "wide",
+            "resetValue": 400
+          }
+        }
+      ]
+    }
+  }
+]

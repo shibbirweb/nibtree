@@ -1,0 +1,28 @@
+[
+  {
+    "id": "spinner-sizes",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "padding": "md", "align": "center" },
+      "children": [
+        { "component": "Spinner", "props": { "size": "small" } },
+        { "component": "Spinner", "props": { "size": "normal", "label": "Loading files" } },
+        { "component": "Spinner", "props": { "size": "large" } },
+        { "component": "Text", "text": "Loading", "props": { "tone": "dim" } }
+      ]
+    }
+  },
+  {
+    "id": "spinner-delayed",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Spinner", "props": { "delayed": true } },
+        { "component": "Spinner", "props": { "delayed": false, "size": "large" } }
+      ]
+    }
+  }
+]

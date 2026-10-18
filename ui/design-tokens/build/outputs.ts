@@ -3,6 +3,7 @@
 import { chunkBlocks, chunkName } from "./chunks";
 import { colorsCss, componentBlocksCss, componentsSheet, scalesCss, tokensCss, typographyCss } from "./css";
 import { colorsGtk, metricsGtk, typographyGtk } from "./gtk";
+import { iconFilesSwift } from "./icons";
 import { designTokens, type Tokens } from "./model";
 import { colorsSwift, componentBlocksSwift, metricsSwift, SWIFT_HEADER, typographySwift } from "./swift";
 import { themeFilesSwift } from "./themes";
@@ -40,11 +41,12 @@ export function tokenOutputs(tokens: Tokens = designTokens): Output[] {
     ...components.css.map((file) => ({ path: `web/src/lib/styles/${file.name}`, content: file.content })),
     ...tokensTs(tokens).map((file) => ({ path: `web/src/lib/styles/${file.name}`, content: file.content })),
     { path: "web/src/lib/styles/colors.css", content: colorsCss(tokens) },
-    { path: "design-tokens/generated/macos/GMColors.swift", content: colorsSwift(tokens) },
-    { path: "design-tokens/generated/macos/GMMetrics.swift", content: metricsSwift(tokens) },
-    { path: "design-tokens/generated/macos/GMTypography.swift", content: typographySwift(tokens) },
-    ...components.swift.map((file) => ({ path: `design-tokens/generated/macos/${file.name}`, content: file.content })),
-    ...themeFilesSwift().map((file) => ({ path: `design-tokens/generated/macos/${file.name}`, content: file.content })),
+    { path: "swift/Sources/NibtreeTokens/GMColors.swift", content: colorsSwift(tokens) },
+    { path: "swift/Sources/NibtreeTokens/GMMetrics.swift", content: metricsSwift(tokens) },
+    { path: "swift/Sources/NibtreeTokens/GMTypography.swift", content: typographySwift(tokens) },
+    ...components.swift.map((file) => ({ path: `swift/Sources/NibtreeTokens/${file.name}`, content: file.content })),
+    ...themeFilesSwift().map((file) => ({ path: `swift/Sources/NibtreeTokens/${file.name}`, content: file.content })),
+    ...iconFilesSwift().map((file) => ({ path: `swift/Sources/NibtreeTokens/${file.name}`, content: file.content })),
     { path: "design-tokens/generated/windows/Colors.xaml", content: colorsXaml(tokens) },
     { path: "design-tokens/generated/windows/Metrics.xaml", content: metricsXaml(tokens) },
     { path: "design-tokens/generated/windows/Typography.xaml", content: typographyXaml(tokens) },

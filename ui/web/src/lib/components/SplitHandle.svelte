@@ -3,6 +3,7 @@
      `resetRatio` (the middle). Its parent must be positioned. `gutter` px between the sides, such as a diff's change
      arrows, never grow. -->
 <script lang="ts">
+  import { useForcedState } from "../logic/forcedState";
   import { keyedRatio, pointerRatio } from "../logic/splitRatio";
 
   interface Props {
@@ -17,6 +18,9 @@
   let { ratio = $bindable(0.5), gutter = 0, resetRatio = 0.5, label, oncommit }: Props = $props();
 
   let dragging = $state(false);
+  // Pointed at and dragged look the same: the accent line.
+  const forced = useForcedState();
+  const active = $derived(dragging || forced() === "hover" || forced() === "dragging");
   let handle = $state<HTMLDivElement | null>(null);
 
   function move(event: PointerEvent): void {
@@ -31,7 +35,7 @@
 <div
   bind:this={handle}
   class="split-handle"
-  class:dragging
+  class:dragging={active}
   role="separator"
   aria-orientation="vertical"
   aria-label={label}

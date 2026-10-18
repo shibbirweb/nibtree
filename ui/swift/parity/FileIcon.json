@@ -1,0 +1,21 @@
+[
+  {
+    "id": "file-icon-views",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "FileIcon", "props": { "view": null } },
+        { "component": "FileIcon", "props": { "view": null, "plain": false } },
+        { "component": "FileIcon", "props": { "view": { "kind": "image", "icon": "typescript" } } },
+        { "component": "FileIcon", "props": { "view": { "kind": "image", "icon": "rust" }, "size": "large" } },
+        { "component": "FileIcon", "props": { "view": { "kind": "mask", "glyph": "code", "tone": "blue" } } },
+        {
+          "component": "FileIcon",
+          "props": { "view": { "kind": "mask", "glyph": "markdown", "tone": "gray" }, "size": "compact", "plain": true }
+        }
+      ]
+    }
+  }
+]

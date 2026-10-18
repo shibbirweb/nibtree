@@ -1,0 +1,32 @@
+[
+  {
+    "id": "spacer-row",
+    "width": 280,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Text", "props": { "variant": "title" }, "text": "Title" },
+        { "component": "Spacer" },
+        { "component": "Text", "text": "One" },
+        { "component": "Text", "text": "Two" }
+      ]
+    }
+  },
+  {
+    "id": "spacer-column-two",
+    "width": 200,
+    "height": 140,
+    "node": {
+      "component": "Stack",
+      "props": { "grow": true, "padding": "md", "surface": "alt" },
+      "children": [
+        { "component": "Text", "text": "Top" },
+        { "component": "Spacer" },
+        { "component": "Text", "text": "Middle" },
+        { "component": "Spacer" },
+        { "component": "Text", "text": "Bottom" }
+      ]
+    }
+  }
+]

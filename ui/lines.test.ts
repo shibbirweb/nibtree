@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 const uiRoot = __dirname;
 const CHECKED = /\.(ts|svelte|json|css|md|swift|xaml|html)$/;
-const SKIPPED = new Set([".parity", "node_modules"]);
+const SKIPPED = new Set([".parity", "node_modules", ".build", ".swiftpm"]);
 
 function files(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {

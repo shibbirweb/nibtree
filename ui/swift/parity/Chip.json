@@ -1,0 +1,52 @@
+[
+  {
+    "id": "chip-filters",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Chip", "props": { "text": "3 running", "variant": "filter", "tone": "neutral" } },
+        { "component": "Chip", "props": { "text": "2 need you", "tone": "warning", "status": "waiting" } },
+        { "component": "Chip", "props": { "text": "1 working", "status": "working", "pressable": true } },
+        { "component": "Chip", "props": { "text": "Done", "status": "done" } },
+        { "component": "Chip", "props": { "text": "Starred", "icon": "star" } }
+      ]
+    }
+  },
+  {
+    "id": "chip-picks",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        {
+          "component": "Chip",
+          "props": { "text": "Menlo", "variant": "pick", "fontFamily": "Menlo", "pressable": true }
+        },
+        {
+          "component": "Chip",
+          "props": { "text": "Georgia", "variant": "pick", "fontFamily": "Georgia, serif", "title": "Use Georgia" }
+        },
+        { "component": "Chip", "props": { "text": "Settings", "variant": "pick", "icon": "settings" } }
+      ]
+    }
+  },
+  {
+    "id": "chip-badges-column",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "xs", "padding": "md" },
+      "children": [
+        { "component": "Chip", "props": { "text": "node 20", "variant": "badge" } },
+        {
+          "component": "Chip",
+          "props": { "text": "outdated", "variant": "badge", "tone": "warning", "pressable": true }
+        },
+        { "component": "Chip", "props": { "text": "exited", "variant": "badge", "status": "exited" } }
+      ]
+    }
+  }
+]

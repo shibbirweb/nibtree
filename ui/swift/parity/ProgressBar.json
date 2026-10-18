@@ -1,0 +1,48 @@
+[
+  {
+    "id": "progress-tones",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "ProgressBar", "props": { "value": 0.62, "label": "Nibtree", "tone": "accent" } },
+        { "component": "ProgressBar", "props": { "value": 0.3, "label": "WebKit", "tone": "warning" } },
+        { "component": "ProgressBar", "props": { "value": 0.9, "label": "Disk", "tone": "danger" } },
+        { "component": "ProgressBar", "props": { "value": 0.45, "label": "Git", "tone": "success" } }
+      ]
+    }
+  },
+  {
+    "id": "progress-clamped",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "ProgressBar", "props": { "value": 0, "label": "Empty" } },
+        { "component": "ProgressBar", "props": { "value": 0.001, "label": "Sliver" } },
+        { "component": "ProgressBar", "props": { "value": 1.5, "label": "Over" } },
+        { "component": "ProgressBar", "props": { "value": -1, "label": "Under" } }
+      ]
+    }
+  },
+  {
+    "id": "progress-in-row",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md", "align": "center" },
+      "children": [
+        { "component": "Text", "text": "Memory" },
+        {
+          "component": "Stack",
+          "props": { "grow": true },
+          "children": [{ "component": "ProgressBar", "props": { "value": 0.5, "label": "Memory" } }]
+        },
+        { "component": "ProgressBar", "props": { "value": 0.5, "label": "No width" } },
+        { "component": "Text", "text": "50%", "props": { "tone": "dim" } }
+      ]
+    }
+  }
+]

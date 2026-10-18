@@ -1,0 +1,69 @@
+[
+  {
+    "id": "notice-cards",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "Notice",
+          "props": { "tone": "info", "variant": "card" },
+          "text": "Tip: drag a file to stage it."
+        },
+        { "component": "Notice", "props": { "tone": "success" }, "text": "Stash applied" },
+        {
+          "component": "Notice",
+          "props": { "tone": "warning" },
+          "text": "This file changed on disk while you were editing it, so saving would overwrite those changes."
+        },
+        { "component": "Notice", "props": { "tone": "danger", "icon": "x" }, "text": "Push was rejected" }
+      ]
+    }
+  },
+  {
+    "id": "notice-banners",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm" },
+      "children": [
+        { "component": "Notice", "props": { "variant": "banner" }, "text": "Merging feature into main" },
+        {
+          "component": "Notice",
+          "props": { "variant": "banner", "tone": "danger" },
+          "text": "Bisect found a bad commit"
+        },
+        {
+          "component": "Notice",
+          "props": { "variant": "banner", "tone": "warning" },
+          "text": "3 conflicts left",
+          "slots": { "action": [{ "component": "Button", "props": { "size": "small" }, "text": "Abort merge" }] }
+        }
+      ]
+    }
+  },
+  {
+    "id": "notice-action-message",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "Notice",
+          "props": { "tone": "warning" },
+          "text": "app.ts changed on disk.",
+          "slots": { "action": [{ "component": "Button", "props": { "size": "small" }, "text": "Reload" }] }
+        },
+        {
+          "component": "Notice",
+          "props": { "tone": "info" },
+          "children": [
+            { "component": "Text", "props": { "size": "small", "tone": "dim" }, "text": "No remote is set up yet." }
+          ]
+        }
+      ]
+    }
+  }
+]

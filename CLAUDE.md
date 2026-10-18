@@ -13,6 +13,11 @@ bun run check                  # svelte-check + TypeScript: must end with 0 erro
 bun run test                   # Vitest (frontend unit tests)
 bun run format                 # Prettier: format src/, ui/ and scripts/ (format:check is what CI runs)
 bun run ui:migration           # what each app .svelte file still owns instead of the UI library (see below)
+bun run ui:swift               # the Swift UI library showcase (ui/swift); --render <dir> in ui/swift draws stories
+bun run ui:swift:test          # Swift Testing tests of ui/swift (works with the Command Line Tools, no Xcode)
+bun run ui:swift:coverage      # ui/web components that have no Swift twin yet
+bun run ui:swift:parity        # every Swift component vs its web twin: at least 99% match and faster (CI gate)
+bun run ui:swift:compare       # web and Swift side by side with editable props, match and speed (localhost:1433)
 cd src-tauri && cargo test --workspace     # Rust unit and git integration tests (app and cli/)
 cd src-tauri && cargo clippy --workspace --all-targets   # must report no warnings
 bun tauri build --bundles app  # release .app in src-tauri/target/release/bundle/macos
@@ -44,6 +49,12 @@ Both refuse non-empty targets. The Rust tests run the conflict script and assert
   (`ui/mcp/`, registered in `.mcp.json`: list, search and get components, tokens, icons and rules). Tests keep
   docs equal to each component's `$props()`, generated files fresh, and the generated `colors.css` equal to the
   theme catalog's built-in themes.
+- **Swift UI library**: `ui/swift/` is the SwiftUI twin of `ui/web` that the native app (Nibtree Native, settings in
+  `~/.nibtree-native`) is built from: one `N<Name>` view per web component with the same props as presets, colors
+  from `Palette` (`.nibtreeTheme`), sizes only from the generated `Sources/NibtreeTokens`. Add a component with its
+  story in `Stories.swift` and parity scenarios in `ui/swift/parity/<Name>.json`; `bun run ui:swift:coverage` is the
+  burn-down. Every component must match its web twin to at least 99% (near and at the same spot), render faster,
+  and have a scenario for every prop and every value of its own enums (`bun run ui:swift:parity`, also in CI). See `docs/wiki/developer/Swift-UI-Library.md`.
 - **Editor engines live in the library**: the Markdown engine is `ui/web/src/lib/markdown/` with the
   `MarkdownPreview` and `MarkdownEditor` components; the app keeps only glue (`src/lib/markdown/markdownContext.ts`,
   `viewMode.ts`) and thin views that pass links, settings and keys as props and events. Library code never imports

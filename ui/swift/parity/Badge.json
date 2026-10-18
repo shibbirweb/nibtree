@@ -1,0 +1,61 @@
+[
+  {
+    "id": "badge-tones",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Changes" },
+        { "component": "Badge", "props": { "count": 3, "label": "3 changes" } },
+        { "component": "Badge", "props": { "count": 7, "tone": "accent", "size": "normal" } },
+        { "component": "Badge", "props": { "count": 12, "tone": "danger" } },
+        { "component": "Badge", "props": { "count": 1, "tone": "warning" } },
+        { "component": "Badge", "props": { "count": 48, "tone": "neutral" } },
+        { "component": "Badge", "props": { "count": 0, "tone": "quiet" } }
+      ]
+    }
+  },
+  {
+    "id": "badge-sizes-max",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Badge", "props": { "count": 120 } },
+        { "component": "Badge", "props": { "count": 1500, "max": 999, "tone": "danger" } },
+        { "component": "Badge", "props": { "count": 2, "size": "small", "tone": "warning" } },
+        { "component": "Badge", "props": { "count": 100, "size": "small" } },
+        { "component": "Badge", "props": { "count": 9, "size": "large", "tone": "quiet" } },
+        { "component": "Badge", "props": { "count": 345, "size": "large", "tone": "neutral" } }
+      ]
+    }
+  },
+  {
+    "id": "badge-corner",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "lg", "align": "end", "padding": "lg" },
+      "children": [
+        { "component": "Text", "text": "Options" },
+        { "component": "Badge", "props": { "count": 2, "size": "corner" } },
+        { "component": "Text", "text": "Push" },
+        { "component": "Badge", "props": { "count": 120, "size": "corner", "tone": "danger" } }
+      ]
+    }
+  },
+  {
+    "id": "badge-column-stretched",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Badge", "props": { "count": 3 } },
+        { "component": "Badge", "props": { "count": 250, "size": "large", "tone": "quiet" } }
+      ]
+    }
+  }
+]

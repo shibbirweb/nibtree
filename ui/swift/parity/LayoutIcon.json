@@ -1,0 +1,42 @@
+[
+  {
+    "id": "layout-icon-sidebars",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "LayoutIcon", "props": { "kind": "sidebar-left" } },
+        { "component": "LayoutIcon", "props": { "kind": "sidebar-left", "active": true } },
+        { "component": "LayoutIcon", "props": { "kind": "sidebar-right" } },
+        { "component": "LayoutIcon", "props": { "kind": "sidebar-right", "active": true } }
+      ]
+    }
+  },
+  {
+    "id": "layout-icon-commit",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "LayoutIcon", "props": { "kind": "commit-single" } },
+        { "component": "LayoutIcon", "props": { "kind": "commit-per-repo" } },
+        { "component": "LayoutIcon", "props": { "kind": "commit-single", "size": "xxlarge" } },
+        { "component": "LayoutIcon", "props": { "kind": "commit-per-repo", "size": "normal" } }
+      ]
+    }
+  },
+  {
+    "id": "layout-icon-column",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "xs", "padding": "md" },
+      "children": [
+        { "component": "LayoutIcon", "props": { "kind": "sidebar-left", "active": true, "size": "xlarge" } },
+        { "component": "Text", "text": "Sidebar" }
+      ]
+    }
+  }
+]

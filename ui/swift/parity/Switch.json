@@ -1,0 +1,40 @@
+[
+  {
+    "id": "switch-states",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Switch", "props": { "label": "Wrap lines" } },
+        { "component": "Switch", "props": { "label": "Show minimap", "checked": true } },
+        { "component": "Switch", "props": { "label": "Locked", "disabled": true } },
+        { "component": "Switch", "props": { "label": "Locked on", "checked": true, "disabled": true } }
+      ]
+    }
+  },
+  {
+    "id": "switch-setting-row",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "justify": "between", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Wrap lines" },
+        { "component": "Switch", "props": { "label": "Wrap lines", "checked": true } }
+      ]
+    }
+  },
+  {
+    "id": "switch-column",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Switch", "props": { "label": "Wrap lines" } },
+        { "component": "Text", "text": "Wraps long lines" }
+      ]
+    }
+  }
+]

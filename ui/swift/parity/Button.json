@@ -1,0 +1,102 @@
+[
+  {
+    "id": "button-variants",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm" },
+          "children": [
+            { "component": "Button", "props": { "variant": "default" }, "text": "Cancel" },
+            { "component": "Button", "props": { "variant": "primary" }, "text": "Save" },
+            { "component": "Button", "props": { "variant": "danger" }, "text": "Discard" },
+            { "component": "Button", "props": { "variant": "danger-primary" }, "text": "Delete Branch" }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            {
+              "component": "Button",
+              "props": { "variant": "ghost", "icon": "branch", "trailingIcon": "chevron-down" },
+              "text": "main"
+            },
+            {
+              "component": "Button",
+              "props": { "variant": "accent", "icon": "settings", "badge": 2 },
+              "text": "Options"
+            },
+            { "component": "Button", "props": { "variant": "ghost", "count": 12 }, "text": "Repositories" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "button-sizes",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Button", "props": { "size": "normal", "icon": "refresh" }, "text": "Fetch" },
+        { "component": "Button", "props": { "size": "small", "icon": "refresh", "count": 3 }, "text": "Pull" },
+        { "component": "Button", "props": { "size": "tiny", "icon": "plus" }, "text": "Add" },
+        { "component": "Button", "props": { "size": "mini" }, "text": "Stage All" },
+        { "component": "Button", "props": { "size": "small", "disabled": true }, "text": "Push" }
+      ]
+    }
+  },
+  {
+    "id": "button-icon-only",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Button", "props": { "icon": "settings" } },
+        { "component": "Button", "props": { "size": "small", "icon": "settings" } },
+        { "component": "Button", "props": { "size": "tiny", "icon": "plus" } },
+        { "component": "Button", "props": { "size": "small", "layout": "sidebar-left" } },
+        { "component": "Button", "props": { "layout": "commit-single", "layoutActive": true } },
+        { "component": "Button", "props": { "size": "small", "icon": "sync", "spinning": true } },
+        { "component": "Button", "props": { "size": "tiny", "pressed": true }, "text": "Fit" },
+        { "component": "Button", "props": { "size": "tiny", "pressed": false }, "text": "100%" }
+      ]
+    }
+  },
+  {
+    "id": "button-fill",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Button", "props": { "variant": "primary", "width": "fill" }, "text": "Commit" },
+        { "component": "Button", "props": { "width": "auto", "icon": "sync" }, "text": "Sync Changes" }
+      ]
+    }
+  },
+  {
+    "id": "button-label-view",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        {
+          "component": "Button",
+          "props": { "variant": "ghost", "trailingIcon": "chevron-down" },
+          "children": [
+            { "component": "Text", "props": { "weight": "semibold" }, "text": "nibtree" },
+            { "component": "Text", "props": { "tone": "dim", "size": "small" }, "text": "3 repos" }
+          ]
+        }
+      ]
+    }
+  }
+]

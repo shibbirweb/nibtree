@@ -1,0 +1,106 @@
+[
+  {
+    "id": "breadcrumbs-inline",
+    "width": 420,
+    "node": {
+      "component": "Breadcrumbs",
+      "props": {
+        "label": "Path",
+        "open": 1,
+        "variant": "inline",
+        "crumbs": [
+          { "label": "git-merger", "icon": "folder-git", "kind": "repo" },
+          { "label": "src", "kind": "folder" },
+          { "label": "lib" },
+          { "label": "app.ts", "fileIcon": { "kind": "image", "icon": "typescript" }, "kind": "file" }
+        ]
+      }
+    }
+  },
+  {
+    "id": "breadcrumbs-narrow",
+    "width": 230,
+    "node": {
+      "component": "Stack",
+      "props": { "padding": "sm" },
+      "children": [
+        {
+          "component": "Breadcrumbs",
+          "props": {
+            "crumbs": [
+              { "label": "git-merger", "icon": "folder-git", "kind": "repo" },
+              { "label": "components" },
+              { "label": "navigation" },
+              { "label": "Breadcrumbs.svelte", "fileIcon": null, "kind": "file" }
+            ]
+          }
+        },
+        {
+          "component": "Breadcrumbs",
+          "props": {
+            "crumbs": [
+              { "label": "a" },
+              { "label": "settings" },
+              {
+                "label": "ThemeSwatch.svelte",
+                "fileIcon": { "kind": "mask", "glyph": "code", "tone": "orange" },
+                "kind": "file"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "breadcrumbs-row",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "sm" },
+      "children": [
+        { "component": "Text", "props": { "size": "small", "tone": "dim" }, "text": "In" },
+        {
+          "component": "Breadcrumbs",
+          "props": {
+            "title": "src/lib/app.ts",
+            "crumbs": [{ "label": "src" }, { "label": "lib" }, { "label": "app.ts", "kind": "file" }]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "breadcrumbs-floating",
+    "width": 420,
+    "height": 90,
+    "node": {
+      "component": "Breadcrumbs",
+      "props": {
+        "variant": "floating",
+        "crumbs": [
+          { "label": "git-merger", "icon": "folder-git", "kind": "repo" },
+          { "label": "src" },
+          { "label": "main.rs", "fileIcon": { "kind": "image", "icon": "rust" }, "kind": "file" }
+        ]
+      }
+    }
+  },
+  {
+    "id": "breadcrumbs-anchored",
+    "width": 420,
+    "height": 90,
+    "node": {
+      "component": "Breadcrumbs",
+      "props": {
+        "variant": "anchored",
+        "at": { "top": 12, "left": 30, "maxWidth": 200 },
+        "crumbs": [
+          { "label": "git-merger", "icon": "folder-git", "kind": "repo" },
+          { "label": "documentation" },
+          { "label": "README.md", "fileIcon": { "kind": "mask", "glyph": "markdown", "tone": "blue" }, "kind": "file" }
+        ]
+      }
+    }
+  }
+]
