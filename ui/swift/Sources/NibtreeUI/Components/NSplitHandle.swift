@@ -17,6 +17,7 @@ public struct NSplitHandle: View {
     @State private var hovering = false
     @State private var startRatio: Double?
     @Environment(\.nibtreePalette) private var palette
+    @Environment(\.nibtreeForcedState) private var forced
 
     /// `gutter` is points (data: the space a layout keeps between the sides), not a design size.
     public init(
@@ -35,7 +36,7 @@ public struct NSplitHandle: View {
     public var body: some View {
         NRatioPlacement(ratio: ratio, gutter: gutter, measure: measure) {
             Rectangle()
-                .fill(hovering || startRatio != nil ? palette.color(.accent) : .clear)
+                .fill(hovering || startRatio != nil || forced.showsHandle ? palette.color(.accent) : .clear)
                 .frame(width: GMSplitHandleTokens.line)
                 .frame(width: GMSplitHandleTokens.width)
                 .contentShape(Rectangle())

@@ -7,11 +7,15 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { webkit, type Page } from "playwright";
+import { webkit } from "playwright";
 import { createServer } from "vite";
-import { CHANNEL_TOLERANCE, compare, best, verdict, type Match, type Picture, type Verdict } from "./parity/compare";
-import { propProblems, swiftProps } from "./parity/props";
+import { sideBySidePng } from "./parity/browser";
+import { compare, best, verdict, type Match, type Verdict } from "./parity/compare";
+import { decodePng } from "./parity/png";
+import { componentDocs } from "../../web/src/lib/docs";
+import { propProblems, stateProblems, swiftProps } from "./parity/props";
 import { scenarioProblems, type Scenario } from "./parity/scenario";
+import { swiftBinary } from "./parity/swiftBinary";
 import { swiftComponents } from "./coverage";
 
 const swiftRoot = fileURLToPath(new URL("..", import.meta.url));
@@ -37,6 +41,8 @@ function loadScenarios(): Scenario[] {
   for (const component of known) {
     const source = readFileSync(join(swiftRoot, `Sources/NibtreeUI/Components/N${component}.swift`), "utf8");
     problems.push(...propProblems(component, swiftProps(source, component), all, harness));
+    const states = componentDocs.find((doc) => doc.name === component)?.states ?? [];
+    problems.push(...stateProblems(component, states, all));
   }
   if (problems.length > 0) {
     console.error(problems.join("\n"));
@@ -46,78 +52,10 @@ function loadScenarios(): Scenario[] {
   return only.length ? all.filter((scenario) => only.includes(scenario.id)) : all;
 }
 
-function swiftBinary(): string {
-  execFileSync("swift", ["build", "-c", "release", "--product", "NibtreeShowcase"], {
-    cwd: swiftRoot,
-    stdio: "inherit",
-  });
-  const bin = execFileSync("swift", ["build", "-c", "release", "--show-bin-path"], { cwd: swiftRoot })
-    .toString()
-    .trim();
-  return join(bin, "NibtreeShowcase");
-}
-
-async function picture(page: Page, file: string): Promise<Picture> {
-  const base64 = readFileSync(file).toString("base64");
-  return page.evaluate(async (data) => {
-    const image = new Image();
-    image.src = `data:image/png;base64,${data}`;
-    await image.decode();
-    const canvas = document.createElement("canvas");
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    context.drawImage(image, 0, 0);
-    return {
-      width: image.width,
-      height: image.height,
-      data: [...context.getImageData(0, 0, image.width, image.height).data],
-    };
-  }, base64);
-}
-
-/** web | Swift | the pixels that differ beyond the tolerance in magenta, for a look at what to fix. */
-async function sideBySide(page: Page, webFile: string, swiftFile: string, outFile: string): Promise<void> {
-  const [web, swift] = [readFileSync(webFile), readFileSync(swiftFile)].map((data) => data.toString("base64"));
-  const png = await page.evaluate(
-    async ([webData, swiftData, tolerance]) => {
-      const load = async (data: string) => {
-        const image = new Image();
-        image.src = `data:image/png;base64,${data}`;
-        await image.decode();
-        return image;
-      };
-      const [a, b] = [await load(webData as string), await load(swiftData as string)];
-      const width = Math.max(a.width, b.width);
-      const height = Math.max(a.height, b.height);
-      const canvas = document.createElement("canvas");
-      canvas.width = width * 3;
-      canvas.height = height;
-      const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-      context.drawImage(a, 0, 0);
-      context.drawImage(b, width, 0);
-      const pa = context.getImageData(0, 0, width, height).data;
-      const pb = context.getImageData(width, 0, width, height).data;
-      context.drawImage(b, width * 2, 0);
-      const out = context.getImageData(width * 2, 0, width, height);
-      for (let index = 0; index < pa.length; index += 4) {
-        const worst = Math.max(...[0, 1, 2, 3].map((channel) => Math.abs(pa[index + channel] - pb[index + channel])));
-        if (worst > (tolerance as number)) {
-          out.data.set([255, 0, 255, 255], index);
-        }
-      }
-      context.putImageData(out, width * 2, 0);
-      return canvas.toDataURL("image/png").split(",")[1];
-    },
-    [web, swift, CHANNEL_TOLERANCE] as const,
-  );
-  writeFileSync(outFile, Buffer.from(png, "base64"));
-}
-
 const scenarios = loadScenarios();
 mkdirSync(join(outDir, "web"), { recursive: true });
 mkdirSync(join(outDir, "diff"), { recursive: true });
-const binary = swiftBinary();
+const binary = swiftBinary(swiftRoot);
 execFileSync(binary, ["--parity", scenarioDir, join(outDir, "swift")], { stdio: "inherit" });
 const swiftTimes = new Map<string, number>();
 for (const line of execFileSync(binary, [
@@ -152,8 +90,10 @@ for (const scenario of scenarios) {
     const webFile = join(outDir, "web", `${scenario.id}-${theme}.png`);
     await page.locator("#frame").screenshot({ path: webFile });
     const swiftFile = join(outDir, "swift", `${scenario.id}-${theme}.png`);
-    matches.push(compare(await picture(page, webFile), await picture(page, swiftFile)));
-    await sideBySide(page, webFile, swiftFile, join(outDir, "diff", `${scenario.id}-${theme}.png`));
+    const [webBytes, swiftBytes] = [readFileSync(webFile), readFileSync(swiftFile)];
+    matches.push(compare(decodePng(webBytes), decodePng(swiftBytes)));
+    const diff = await sideBySidePng(page, webBytes.toString("base64"), swiftBytes.toString("base64"));
+    writeFileSync(join(outDir, "diff", `${scenario.id}-${theme}.png`), Buffer.from(diff, "base64"));
   }
   // Warmed up, then the best of BENCH_RUNS in the same page: the component's own cost, not the machine's noise.
   await page.goto(`${base}native.html?scenario=${scenario.id}&theme=light`);

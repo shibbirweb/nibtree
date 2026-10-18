@@ -104,14 +104,16 @@ enum ParityRunner {
 /// A scenario at its width on the theme's panel color, with no padding, like the web harness's frame. Its height is
 /// rounded up to whole points, like Playwright's screenshot of the web frame, which also keeps ImageRenderer's
 /// coordinates (measured from the picture's center) on whole device pixels, as a window's are.
-private struct ParityFrame<Content: View>: View {
+struct ParityFrame<Content: View>: View {
     let width: Double
     @ViewBuilder let content: () -> Content
     @Environment(\.nibtreePalette) private var palette
 
     var body: some View {
         WholePoints {
-            content().frame(width: width, alignment: .topLeading)
+            // A column like the web frame's flex column, so a child's own alignment (a vertical NDivider centers)
+            // applies at the top level too.
+            NStack(gap: .none) { content() }.frame(width: width, alignment: .topLeading)
         }
         .background(palette.color(.panel))
     }

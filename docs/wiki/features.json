@@ -137,6 +137,8 @@
     { "page": "developer/UI-Library-Bugs.md", "summary": "Bugs fixed in the UI library: what you saw, why, and the fix." },
     { "page": "developer/Swift-UI-Library.md", "summary": "The SwiftUI twin of the UI library that the native app is built from: palette, presets, showcase and coverage." },
     { "page": "developer/Swift-UI-Parity.md", "summary": "The gate that keeps every Swift component at least 99% like its web twin, faster, and tested for every prop." },
+    { "page": "developer/Swift-UI-Compare.md", "summary": "A page that shows a web component and its Swift twin side by side with the same props, their match and speed." },
+    { "page": "developer/Swift-UI-States.md", "summary": "Hover, pressed, focus and dragging drawn on demand in both libraries, and every prop value of a component at once." },
     { "page": "developer/Swift-UI-Icons.md", "summary": "How the web icons become Swift outlines, why NIcon draws a kept bitmap, and Divider and Spacer." },
     { "page": "developer/UI-Library-Migration.md", "summary": "How the app uses the library as a local package and moves onto it, screen by screen." },
     { "page": "developer/Contributing.md", "summary": "Code style, commits, pull requests and the docs checklist." }

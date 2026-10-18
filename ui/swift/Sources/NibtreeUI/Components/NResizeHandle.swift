@@ -22,6 +22,7 @@ public struct NResizeHandle: View {
     private let oncommit: ((Double) -> Void)?
 
     @State private var hovering = false
+    @Environment(\.nibtreeForcedState) private var forced
     @State private var startSize: Double?
     @Environment(\.nibtreePalette) private var palette
 
@@ -55,7 +56,7 @@ public struct NResizeHandle: View {
 
     private var lowest: Double { min ?? preset.min }
     private var horizontal: Bool { side == .top || side == .bottom }
-    private var active: Bool { hovering || startSize != nil }
+    private var active: Bool { hovering || startSize != nil || forced.showsHandle }
 
     public var body: some View {
         let thickness = active ? GMResizeHandleTokens.activeLine : GMResizeHandleTokens.line

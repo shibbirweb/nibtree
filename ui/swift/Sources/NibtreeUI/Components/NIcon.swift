@@ -29,9 +29,15 @@ public struct NIcon: View {
             let color = context.environment.nibtreePalette.cgColor(tone ?? context.environment.nibtreeCurrentColor)
             let scale = max(1, context.environment.displayScale)
             let key = NIconImages.Key(name: name, points: points, lineWidth: lineWidth, scale: scale, color: color)
-            if let image = NIconImages.image(key, color: color) {
-                let frame = CGRect(x: 0, y: 0, width: points, height: points)
-                context.draw(Image(decorative: image, scale: scale), in: frame)
+            guard let image = NIconImages.image(key, color: color) else {
+                return
+            }
+            // Straight to Core Graphics: a SwiftUI Image would be made and resolved for every draw. The context's y
+            // runs down, a bitmap's up.
+            context.withCGContext { cg in
+                cg.translateBy(x: 0, y: points)
+                cg.scaleBy(x: 1, y: -1)
+                cg.draw(image, in: CGRect(x: 0, y: 0, width: points, height: points))
             }
         }
         .frame(width: points, height: points)

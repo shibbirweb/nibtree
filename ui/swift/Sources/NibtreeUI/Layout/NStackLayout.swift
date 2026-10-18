@@ -63,9 +63,26 @@ struct NStackLayout: Layout {
         if cache.offer == offer, cache.sizes.count == subviews.count {
             return cache.sizes
         }
-        let sizes = subviews.map { measure($0, offer) }
+        let sizes = subviews.map { subview in
+            fitted(subview, offer, align: subview[NStackAlignSelf.self] ?? align)
+        }
         cache = Cache(offer: offer, sizes: sizes)
         return sizes
+    }
+
+    /// A child that is not stretched is as wide as its content, up to the room on offer (CSS fit-content): measured
+    /// with no cross size first, and again within the room only when the content is wider. A stretched child gets the
+    /// room, which a stack fills like a CSS block.
+    private func fitted(_ subview: LayoutSubview, _ offer: ProposedViewSize, align: NStackAlign) -> CGSize {
+        let room = axis == .horizontal ? offer.height : offer.width
+        guard align != .stretch, let room else {
+            return measure(subview, offer)
+        }
+        let free = axis == .horizontal
+            ? ProposedViewSize(width: offer.width, height: nil)
+            : ProposedViewSize(width: nil, height: offer.height)
+        let natural = measure(subview, free)
+        return cross(natural) <= room ? natural : measure(subview, offer)
     }
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
@@ -82,8 +99,10 @@ struct NStackLayout: Layout {
         let crossSize = align == .stretch ? max(largest, offeredCross ?? largest) : largest
         let content2D = size(main: mainSize, cross: crossSize)
         let natural = CGSize(width: content2D.width + horizontalInsets, height: content2D.height + verticalInsets)
+        // As wide as offered, like a CSS block (its parent offers a child it does not stretch only its content's
+        // width); as high as the content unless it grows.
         guard fills else {
-            return natural
+            return CGSize(width: max(natural.width, proposal.width ?? natural.width), height: natural.height)
         }
         return CGSize(
             width: max(natural.width, proposal.width ?? natural.width),

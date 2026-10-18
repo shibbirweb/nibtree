@@ -167,6 +167,7 @@ export const surfaceDocs: ComponentDoc[] = [
   {
     name: "MergeStackFrame",
     group: "Editor",
+    states: ["hover", "dragging"],
     summary: "The stacked frame of a 3-way merge: yours and theirs side by side on top, the result below.",
     usage:
       "The other layout of MergeFrame, for a merge read top to bottom. Like it, it draws no editor: `onready` " +

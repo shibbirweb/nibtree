@@ -2,7 +2,7 @@
 // prop at least once, every value of the component's own enums, and `true` for each flag. Values of shared presets
 // (NSpacing and the like) need the prop only; the token tests cover their steps.
 
-import { nestedNodes, type PropValue, type Scenario, type ScenarioNode } from "./scenario";
+import { allNodes, nestedNodes, type PropValue, type Scenario, type ScenarioNode } from "./scenario";
 
 export interface SwiftProp {
   name: string;
@@ -84,13 +84,27 @@ export function triedValues(scenarios: Scenario[], component: string): Map<strin
   return tried;
 }
 
+/** The harness's `case "<component>":` that turns a scenario node into the Swift twin's values, or "". */
+function harnessCase(component: string, harness: string): string {
+  const caseStart = harness.indexOf(`case "${component}":`);
+  if (caseStart < 0) {
+    return "";
+  }
+  const nextCase = harness.slice(caseStart + 1).search(/case "|default:/);
+  return harness.slice(caseStart, nextCase < 0 ? undefined : caseStart + 1 + nextCase);
+}
+
+/** The scenario props the Swift harness reads for `component` (`node.string("tone")` and the like). */
+export function harnessProps(component: string, harness: string): string[] {
+  const mapping = harnessCase(component, harness);
+  return [...new Set([...mapping.matchAll(/node\.\w+\("(\w+)"/g)].map((match) => match[1]))];
+}
+
 /** Props and values of `component` that no scenario tries, and props the Swift harness does not read. */
 export function propProblems(component: string, props: SwiftProp[], scenarios: Scenario[], harness: string): string[] {
   const tried = triedValues(scenarios, component);
   const problems: string[] = [];
-  const caseStart = harness.indexOf(`case "${component}":`);
-  const nextCase = harness.slice(caseStart + 1).search(/case "|default:/);
-  const mapping = caseStart < 0 ? "" : harness.slice(caseStart, nextCase < 0 ? undefined : caseStart + 1 + nextCase);
+  const mapping = harnessCase(component, harness);
   for (const prop of props) {
     if (!mapping.includes(`"${prop.name}"`)) {
       problems.push(`${component}: the Swift harness (ScenarioView.swift) does not read ${prop.name}`);
@@ -106,4 +120,18 @@ export function propProblems(component: string, props: SwiftProp[], scenarios: S
     }
   }
   return problems;
+}
+
+/** States of the component's doc that no scenario forces, and forced states the component does not draw. */
+export function stateProblems(component: string, states: readonly string[], scenarios: Scenario[]): string[] {
+  const forced = scenarios
+    .flatMap((scenario) => allNodes(scenario.node))
+    .filter((node) => node.component === component && node.state !== undefined)
+    .map((node) => node.state as string);
+  return [
+    ...states.filter((state) => !forced.includes(state)).map((state) => `${component}: no scenario shows ${state}`),
+    ...[...new Set(forced)]
+      .filter((state) => !states.includes(state))
+      .map((state) => `${component}: a scenario forces ${state}, which its doc does not list in states`),
+  ];
 }

@@ -14,6 +14,8 @@ indirect enum ResolvedNode: Sendable {
     case divider(NDividerDirection, strong: Bool)
     case spacer
     case icon(GMIconName, NIconSize, NIconStroke, NText.Tone?)
+    /// A node with a forced interaction state: its own node, drawn with `nibtreeForcedState` set.
+    case stated(NInteractionState, ResolvedNode)
     case unknown
 
     struct SplitHandleProps: Sendable {
@@ -73,6 +75,15 @@ indirect enum ResolvedNode: Sendable {
     }
 
     init(_ node: ScenarioNode) {
+        let plain = ResolvedNode(plain: node)
+        if let state = node.state.flatMap(NInteractionState.init(rawValue:)) {
+            self = .stated(state, plain)
+        } else {
+            self = plain
+        }
+    }
+
+    private init(plain node: ScenarioNode) {
         switch node.component {
         case "Stack":
             self = .stack(
@@ -88,7 +99,7 @@ indirect enum ResolvedNode: Sendable {
                     scroll: node.string("scroll").flatMap(NStackScroll.init(rawValue:)) ?? .none,
                     surface: node.string("surface").flatMap(NStackSurface.init(rawValue:)) ?? .none,
                     line: node.string("line").flatMap(NStackLine.init(rawValue:)) ?? .none),
-                (node.children ?? []).map(ResolvedNode.init))
+                (node.children ?? []).map { ResolvedNode($0) })
         case "Text":
             self = .text(
                 TextProps(
@@ -119,8 +130,8 @@ indirect enum ResolvedNode: Sendable {
                     size: node.number("size") ?? 0, sized: node.string("sized").flatMap(NSplitSized.init) ?? .first,
                     preset: node.string("preset").flatMap(NPanelPreset.init) ?? .pane, max: node.number("max") ?? 800,
                     label: node.string("label") ?? "", extent: node.number("extent"), inPanel: node.flag("inPanel")),
-                first: (slots["first"] ?? []).map(ResolvedNode.init),
-                second: slots["second"].map { $0.map(ResolvedNode.init) })
+                first: (slots["first"] ?? []).map { ResolvedNode($0) },
+                second: slots["second"].map { $0.map { ResolvedNode($0) } })
         case "MergeStackFrame":
             let labels = node.object("labels")
             self = .mergeStackFrame(
@@ -131,7 +142,7 @@ indirect enum ResolvedNode: Sendable {
                         right: labels?["right"] ?? "Theirs"),
                     fileName: node.string("fileName") ?? "", topHeight: node.number("topHeight") ?? 0,
                     ratio: node.number("ratio") ?? 0.5),
-                resultEnd: (node.slots?["resultEnd"] ?? []).map(ResolvedNode.init))
+                resultEnd: (node.slots?["resultEnd"] ?? []).map { ResolvedNode($0) })
         case "Divider":
             self = .divider(
                 node.string("direction").flatMap(NDividerDirection.init) ?? .horizontal,

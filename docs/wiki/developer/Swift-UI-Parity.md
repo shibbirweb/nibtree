@@ -1,6 +1,6 @@
 # Swift UI Parity
 
-Every component in `ui/swift` must look like its `ui/web` twin and draw faster. The parity gate checks both for every component, in CI too, so the native app cannot drift from the Tauri app or get slower than it. This page explains the gate and the tricks that make SwiftUI draw like WebKit. The library itself is in [Swift UI Library](Swift-UI-Library.md).
+Every component in `ui/swift` must look like its `ui/web` twin and draw faster. The parity gate checks both for every component, in CI too, so the native app cannot drift from the Tauri app or get slower than it. This page explains the gate and the tricks that make SwiftUI draw like WebKit. The library itself is in [Swift UI Library](Swift-UI-Library.md); to try one component's props by hand, use [Swift UI Compare](Swift-UI-Compare.md).
 
 ## Why we need it
 
@@ -44,6 +44,7 @@ Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 - **Fractions kept.** `NStackLayout` places children at exact fractional points, like flexbox, never rounded.
 - **Borders add height.** A stack's `line` adds one point, like a CSS border.
 - **Grow.** Children marked `NStackGrows` share the free length (`flex: 1 1 0`).
+- **States.** A component's doc lists the interaction states it draws (`states`); the gate asks for a scenario forcing each one (`"state": "hover"`), drawn with `forcedState.ts` and `nibtreeForcedState`.
 - **Align self.** A child's `NStackAlignSelf` overrides the stack's `align`, like CSS `align-self` (`NDivider`).
 - **Whole points.** The picture's height is rounded up to whole points, like Playwright's screenshot, which also keeps `ImageRenderer`'s coordinates (measured from the picture's center) on whole device pixels, as a window's are. Without that, text could draw a pixel lower than in a window.
 

@@ -51,5 +51,93 @@
       "props": { "size": 100, "preset": "list", "label": "Resize" },
       "slots": { "first": [{ "component": "Text", "text": "Only the first pane" }] }
     }
+  },
+  {
+    "id": "split-pane-hover",
+    "width": 320,
+    "height": 80,
+    "node": {
+      "component": "SplitPane",
+      "props": {
+        "direction": "row",
+        "size": 120,
+        "sized": "first",
+        "preset": "pane",
+        "max": 400,
+        "label": "Resize",
+        "inPanel": false
+      },
+      "slots": {
+        "first": [{ "component": "Text", "text": "Left pane" }],
+        "second": [{ "component": "Text", "props": { "tone": "dim" }, "text": "Right takes the rest" }]
+      },
+      "state": "hover"
+    }
+  },
+  {
+    "id": "split-pane-dragging",
+    "width": 320,
+    "height": 80,
+    "node": {
+      "component": "SplitPane",
+      "props": {
+        "direction": "row",
+        "size": 120,
+        "sized": "first",
+        "preset": "pane",
+        "max": 400,
+        "label": "Resize",
+        "inPanel": false
+      },
+      "slots": {
+        "first": [{ "component": "Text", "text": "Left pane" }],
+        "second": [{ "component": "Text", "props": { "tone": "dim" }, "text": "Right takes the rest" }]
+      },
+      "state": "dragging"
+    }
+  },
+  {
+    "id": "split-pane-oversized-first",
+    "width": 320,
+    "height": 80,
+    "node": {
+      "component": "SplitPane",
+      "props": {
+        "direction": "column",
+        "size": 120,
+        "sized": "first",
+        "preset": "pane",
+        "max": 400,
+        "label": "Resize",
+        "inPanel": false
+      },
+      "slots": {
+        "first": [{ "component": "Text", "text": "Left pane" }],
+        "second": [{ "component": "Text", "props": { "tone": "dim" }, "text": "Right takes the rest" }]
+      },
+      "state": "hover"
+    }
+  },
+  {
+    "id": "split-pane-oversized-second",
+    "width": 320,
+    "height": 80,
+    "node": {
+      "component": "SplitPane",
+      "props": {
+        "direction": "column",
+        "size": 120,
+        "sized": "second",
+        "preset": "pane",
+        "max": 400,
+        "label": "Resize",
+        "inPanel": false
+      },
+      "slots": {
+        "first": [{ "component": "Text", "text": "Left pane" }],
+        "second": [{ "component": "Text", "props": { "tone": "dim" }, "text": "Right takes the rest" }]
+      },
+      "state": "hover"
+    }
   }
 ]

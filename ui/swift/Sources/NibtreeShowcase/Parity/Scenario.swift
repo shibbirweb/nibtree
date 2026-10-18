@@ -24,6 +24,8 @@ struct ScenarioNode: Decodable, Sendable {
     let children: [ScenarioNode]?
     /// Named content for components that take it as slots (SplitPane's first and second).
     let slots: [String: [ScenarioNode]]?
+    /// Drawn as if hovered, pressed, focused or dragged (`nibtreeForcedState`).
+    let state: String?
 
     func number(_ name: String) -> Double? {
         if case .number(let value) = props?[name] {

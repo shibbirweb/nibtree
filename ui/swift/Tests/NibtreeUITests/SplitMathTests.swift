@@ -31,3 +31,15 @@ struct SplitMathTests {
         #expect(NSplitMath.keyedSize(.left, key: .up, shift: false, size: 200, min: 80, max: 400) == nil)
     }
 }
+
+@Suite("Split layout")
+struct SplitLayoutTests {
+    @Test("a sized pane keeps its size past the split's end, like the web's flex: none; the rest takes what is left")
+    func firstLength() {
+        #expect(NSplitLayout.firstLength(300, size: 120, sizedFirst: true) == 120)
+        #expect(NSplitLayout.firstLength(80, size: 120, sizedFirst: true) == 120)
+        #expect(NSplitLayout.firstLength(300, size: 120, sizedFirst: false) == 179)
+        #expect(NSplitLayout.firstLength(80, size: 120, sizedFirst: false) == 0)
+        #expect(NSplitLayout.firstLength(80, size: -5, sizedFirst: true) == 0)
+    }
+}

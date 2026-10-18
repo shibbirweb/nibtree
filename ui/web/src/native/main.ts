@@ -1,16 +1,18 @@
 // The web half of the native parity check (ui/swift/scripts/parity.ts): draws one scenario of ui/swift/parity for a
-// screenshot, or times drawing many copies of it. `?scenario=<id>&theme=light|dark`.
+// screenshot, or times drawing many copies of it. `?scenario=<id>&theme=light|dark`, or `?data=<scenario JSON>` for
+// one that is not saved yet (the compare tool's edited props).
 import { mount, tick, unmount } from "svelte";
 import "$ui/styles/tokens.css";
 import "$ui/styles/base.css";
 import "$ui/styles/code.css";
 import NativePage from "./NativePage.svelte";
 import BenchList from "./BenchList.svelte";
-import { scenarioById } from "./scenarios";
+import { scenarioById, scenarioFromData } from "./scenarios";
 
 const params = new URLSearchParams(location.search);
 document.documentElement.setAttribute("data-theme", params.get("theme") === "dark" ? "dark" : "light");
-const scenario = scenarioById(params.get("scenario") ?? "");
+const data = params.get("data");
+const scenario = data === null ? scenarioById(params.get("scenario") ?? "") : scenarioFromData(data);
 mount(NativePage, { target: document.getElementById("app") as HTMLElement, props: { scenario } });
 
 /** Milliseconds to mount `count` copies of the scenario and get them laid out and painted. */

@@ -21,6 +21,10 @@ puts it back at `resetRatio`.
 - `label` (`string`, required): Accessible name.
 - `oncommit` (`(ratio: number) => void`): A drag ended or a key moved it: save it.
 
+## States
+
+Draws hover, dragging; scenarios force them with `state`.
+
 ## Example: Diff
 
 ```svelte

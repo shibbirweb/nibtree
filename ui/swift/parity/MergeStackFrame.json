@@ -21,9 +21,44 @@
     "id": "merge-stack-sized",
     "width": 640,
     "height": 360,
+    "node": { "component": "MergeStackFrame", "props": { "label": "Merge report.ts", "topHeight": 150, "ratio": 0.35 } }
+  },
+  {
+    "id": "merge-stack-hover",
+    "width": 640,
+    "height": 360,
     "node": {
       "component": "MergeStackFrame",
-      "props": { "label": "Merge report.ts", "topHeight": 150, "ratio": 0.35 }
+      "props": {
+        "label": "Merge app.ts",
+        "labels": { "left": "Yours (main)", "result": "Result", "right": "Theirs (feature)" },
+        "fileName": "app.ts",
+        "topHeight": 0,
+        "ratio": 0.5
+      },
+      "slots": {
+        "resultEnd": [{ "component": "Text", "props": { "size": "small", "tone": "danger" }, "text": "2 conflicts" }]
+      },
+      "state": "hover"
+    }
+  },
+  {
+    "id": "merge-stack-dragging",
+    "width": 640,
+    "height": 360,
+    "node": {
+      "component": "MergeStackFrame",
+      "props": {
+        "label": "Merge app.ts",
+        "labels": { "left": "Yours (main)", "result": "Result", "right": "Theirs (feature)" },
+        "fileName": "app.ts",
+        "topHeight": 0,
+        "ratio": 0.5
+      },
+      "slots": {
+        "resultEnd": [{ "component": "Text", "props": { "size": "small", "tone": "danger" }, "text": "2 conflicts" }]
+      },
+      "state": "dragging"
     }
   }
 ]

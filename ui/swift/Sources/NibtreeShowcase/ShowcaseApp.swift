@@ -3,9 +3,11 @@ import NibtreeUI
 import SwiftUI
 
 /// The Swift UI library's showcase (`bun run ui:swift`), the twin of ui/web's (`bun run ui`): every component in
-/// light and dark side by side, in any pair of color themes.
+/// light and dark side by side, in any pair of color themes. With `--live <file>` it is the compare tool's window.
 @main
 struct ShowcaseApp: App {
+    @NSApplicationDelegateAdaptor(ShowcaseAppDelegate.self) private var delegate
+
     init() {
         NTypography.matchWebTextRendering()
         if ParityRunner.runIfRequested() {
@@ -27,9 +29,13 @@ struct ShowcaseApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("Nibtree UI") {
-            ShowcaseView()
-                .frame(minWidth: 900, minHeight: 600)
+        WindowGroup(LiveWindow.file == nil ? "Nibtree UI" : "Nibtree UI Live") {
+            if let file = LiveWindow.file {
+                LiveView(file: file)
+            } else {
+                ShowcaseView()
+                    .frame(minWidth: 900, minHeight: 600)
+            }
         }
     }
 }

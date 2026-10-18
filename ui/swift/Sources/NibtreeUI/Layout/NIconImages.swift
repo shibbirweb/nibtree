@@ -7,19 +7,31 @@ import NibtreeTokens
 /// pixel smaller than WebKit's (Core Graphics); a bitmap matches WebKit exactly, and drawing a kept bitmap is faster
 /// than stroking the path again. The store is small (a 16-point icon is 4 KB at 2x) and starts over when full.
 enum NIconImages {
+    /// Plain numbers only, so making and hashing a key allocates nothing: it is done for every icon drawn.
     struct Key: Hashable {
         let name: GMIconName
         let points: CGFloat
         let lineWidth: CGFloat
         let scale: CGFloat
-        let rgba: [CGFloat]
+        /// The color as 8-bit RGBA in one number (a bitmap holds 8 bits a channel anyway).
+        let rgba: UInt32
 
         init(name: GMIconName, points: CGFloat, lineWidth: CGFloat, scale: CGFloat, color: CGColor) {
             self.name = name
             self.points = points
             self.lineWidth = lineWidth
             self.scale = scale
-            rgba = color.components ?? []
+            rgba = Self.pack(color)
+        }
+
+        private static func pack(_ color: CGColor) -> UInt32 {
+            guard let parts = color.components, parts.count >= 3 else {
+                return 0
+            }
+            let alpha = parts.count >= 4 ? parts[3] : 1
+            return [parts[0], parts[1], parts[2], alpha].reduce(UInt32(0)) { packed, part in
+                packed << 8 | UInt32((min(max(part, 0), 1) * 255).rounded())
+            }
         }
     }
 

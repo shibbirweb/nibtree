@@ -17,6 +17,7 @@ bun run ui:swift               # the Swift UI library showcase (ui/swift); --ren
 bun run ui:swift:test          # Swift Testing tests of ui/swift (works with the Command Line Tools, no Xcode)
 bun run ui:swift:coverage      # ui/web components that have no Swift twin yet
 bun run ui:swift:parity        # every Swift component vs its web twin: at least 99% match and faster (CI gate)
+bun run ui:swift:compare       # web and Swift side by side with editable props, match and speed (localhost:1433)
 cd src-tauri && cargo test --workspace     # Rust unit and git integration tests (app and cli/)
 cd src-tauri && cargo clippy --workspace --all-targets   # must report no warnings
 bun tauri build --bundles app  # release .app in src-tauri/target/release/bundle/macos

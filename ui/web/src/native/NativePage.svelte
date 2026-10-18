@@ -35,7 +35,9 @@
     background: var(--panel);
   }
 
+  /* Positioned, so a component placed in its parent (SplitHandle) lands in the frame, as Swift's does. */
   .frame {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: var(--panel);

@@ -47,9 +47,10 @@ struct NSplitLayout: Layout {
         Task { @MainActor in onLength(length) }
     }
 
-    /// The first pane's length, out of `length` along the axis.
+    /// The first pane's length, out of `length` along the axis. A sized pane keeps its size even when the split is
+    /// shorter, like the web's `flex: none` pane: the handle and the other pane go past the end, out of view.
     static func firstLength(_ length: CGFloat, size: Double, sizedFirst: Bool) -> CGFloat {
-        let sized = min(max(0, size), max(0, length - 1))
+        let sized = max(0, size)
         return sizedFirst ? sized : max(0, length - 1 - sized)
     }
 

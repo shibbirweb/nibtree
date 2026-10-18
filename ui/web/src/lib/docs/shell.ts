@@ -4,6 +4,7 @@ export const shellDocs: ComponentDoc[] = [
   {
     name: "SplitPane",
     group: "Layout",
+    states: ["hover", "dragging"],
     summary: "Two panes side by side or stacked, with a ResizeHandle between; `size` is one pane's px.",
     usage: "Use for a sidebar and an editor, or an editor and a bottom panel. Save `size` in oncommit.",
     aliases: ["Resizable", "Splitter"],
@@ -50,6 +51,7 @@ export const shellDocs: ComponentDoc[] = [
   {
     name: "ResizeHandle",
     group: "Layout",
+    states: ["hover", "dragging"],
     summary: "A drag handle on a panel's edge: a line that becomes an accent bar on hover; keys and double-click.",
     usage: "Use beside a panel whose size the parent keeps. SplitPane wraps it for the common two-pane case.",
     aliases: ["Resizable handle"],

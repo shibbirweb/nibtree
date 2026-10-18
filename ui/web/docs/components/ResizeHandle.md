@@ -27,6 +27,10 @@ Use beside a panel whose size the parent keeps. SplitPane wraps it for the commo
 - `onresize` (`(size: number) => void`, required): The new size while dragging or on a key.
 - `oncommit` (`(size: number) => void`): Called once when it ends, to save the size.
 
+## States
+
+Draws hover, dragging; scenarios force them with `state`.
+
 ## Example: Left panel
 
 ```svelte

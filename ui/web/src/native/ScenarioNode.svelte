@@ -1,8 +1,10 @@
-<!-- One node of a parity scenario: the ui/web component it names, with its props and its text or children. -->
+<!-- One node of a parity scenario: the ui/web component it names, with its props and its text or children, in its
+     forced interaction state when it has one. -->
 <script lang="ts">
   import type { Component } from "svelte";
   import type { ScenarioNode } from "../../../swift/scripts/parity/scenario";
   import Self from "./ScenarioNode.svelte";
+  import ForcedState from "./ForcedState.svelte";
 
   let { node }: { node: ScenarioNode } = $props();
 
@@ -20,12 +22,20 @@
   const Adapter = $derived(adapters[`./adapters/${node.component}.svelte`]?.default);
 </script>
 
-{#if Adapter}
-  <Adapter {node} Render={Self} />
-{:else if Found}
-  <Found {...node.props ?? {}}>
-    {#if node.text !== undefined}{node.text}{:else}{#each node.children ?? [] as child, index (index)}<Self
-          node={child}
-        />{/each}{/if}
-  </Found>
+{#snippet drawn()}
+  {#if Adapter}
+    <Adapter {node} Render={Self} />
+  {:else if Found}
+    <Found {...node.props ?? {}}>
+      {#if node.text !== undefined}{node.text}{:else}{#each node.children ?? [] as child, index (index)}<Self
+            node={child}
+          />{/each}{/if}
+    </Found>
+  {/if}
+{/snippet}
+
+{#if node.state}
+  <ForcedState state={node.state}>{@render drawn()}</ForcedState>
+{:else}
+  {@render drawn()}
 {/if}

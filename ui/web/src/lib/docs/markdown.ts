@@ -50,6 +50,9 @@ export function componentMarkdown(doc: ComponentDoc): string {
     "",
     ...doc.props.flatMap(propItem),
   ];
+  if (doc.states?.length) {
+    lines.push("", "## States", "", ...wrap(`Draws ${doc.states.join(", ")}; scenarios force them with \`state\`.`));
+  }
   if (doc.rules?.length) {
     lines.push("", "## Rules", "", ...doc.rules.flatMap((rule) => wrap(rule, "- ", "  ")));
   }

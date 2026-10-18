@@ -38,6 +38,8 @@ public struct NMergeStackFrame<Left: View, Result: View, Right: View, ResultEnd:
     /// kept, so a drag that leaves the frame goes on), or always for VoiceOver.
     @State private var interactive = false
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
+    /// A forced state (the parity check) needs the handles there to draw it.
+    @Environment(\.nibtreeForcedState) private var forced
 
     /// `topHeight` (points) and `ratio` (0 to 1) are data: the sizes the user drags.
     public init(
@@ -84,7 +86,7 @@ public struct NMergeStackFrame<Left: View, Result: View, Right: View, ResultEnd:
             left.clipped().layoutValue(key: NMergeStackRoleKey.self, value: .leftPane)
             right.clipped().layoutValue(key: NMergeStackRoleKey.self, value: .rightPane)
             result.clipped().layoutValue(key: NMergeStackRoleKey.self, value: .resultPane)
-            if interactive || voiceOver {
+            if interactive || voiceOver || forced != nil {
                 NSplitHandle(ratio: $ratio, label: "Resize the two top panes") { _ in oncommit?(topHeight, ratio) }
                     .layoutValue(key: NMergeStackRoleKey.self, value: .splitHandle)
                 NResizeHandle(

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { enumCases, propProblems, swiftProps, triedValues } from "./props";
+import { enumCases, harnessProps, propProblems, stateProblems, swiftProps, triedValues } from "./props";
 import type { Scenario } from "./scenario";
 
 const source = `
@@ -85,5 +85,42 @@ describe("props", () => {
     ];
     const withOpen = harness.replace('gap: node.string("gap")', 'gap: node.string("gap"), open: node.flag("open")');
     expect(propProblems("Box", swiftProps(source), scenarios, withOpen)).toEqual([]);
+  });
+});
+
+describe("harnessProps", () => {
+  it("lists the props the harness reads for one component only", () => {
+    const harness = `
+        case "Icon":
+            self = .icon(node.string("name"), node.string("size").flatMap(NIconSize.init), node.flag("strong"))
+        case "Spacer":
+            self = .spacer(node.number("gap"))
+        default:`;
+    expect(harnessProps("Icon", harness)).toEqual(["name", "size", "strong"]);
+    expect(harnessProps("Spacer", harness)).toEqual(["gap"]);
+    expect(harnessProps("Divider", harness)).toEqual([]);
+  });
+});
+
+describe("stateProblems", () => {
+  const scenarios: Scenario[] = [
+    {
+      id: "a",
+      width: 100,
+      node: { component: "Stack", children: [{ component: "SplitHandle", state: "hover" }] },
+    },
+  ];
+
+  it("asks for a scenario per listed state, nested nodes included", () => {
+    expect(stateProblems("SplitHandle", ["hover"], scenarios)).toEqual([]);
+    expect(stateProblems("SplitHandle", ["hover", "dragging"], scenarios)).toEqual([
+      "SplitHandle: no scenario shows dragging",
+    ]);
+  });
+
+  it("flags a forced state the component does not draw", () => {
+    expect(stateProblems("SplitHandle", [], scenarios)).toEqual([
+      "SplitHandle: a scenario forces hover, which its doc does not list in states",
+    ]);
   });
 });

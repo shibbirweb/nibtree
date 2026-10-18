@@ -58,5 +58,23 @@
         }
       ]
     }
+  },
+  {
+    "id": "divider-vertical-alone",
+    "width": 320,
+    "node": { "component": "Divider", "props": { "direction": "vertical" } }
+  },
+  {
+    "id": "divider-vertical-centered-column",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Above" },
+        { "component": "Divider", "props": { "direction": "vertical" } },
+        { "component": "Text", "text": "Below" }
+      ]
+    }
   }
 ]

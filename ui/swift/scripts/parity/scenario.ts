@@ -2,7 +2,10 @@
 // props as JSON values, at a fixed width. ui/web renders them in WebKit, ui/swift with SwiftUI, and the pictures and
 // render times are compared (scripts/parity.ts).
 
-export type PropValue = string | number | boolean;
+/** A prop's JSON value; an object is a group of named texts (MergeStackFrame's labels). */
+export type PropValue = string | number | boolean | Record<string, string>;
+
+import { isInteractionState, type InteractionState } from "../../../web/src/lib/logic/forcedState";
 
 export interface ScenarioNode {
   /** A ui/web component name; Swift draws its `N<Name>` twin. */
@@ -11,6 +14,8 @@ export interface ScenarioNode {
   /** The text inside (Text and other text components). */
   text?: string;
   children?: ScenarioNode[];
+  /** Drawn as if hovered, pressed, focused or dragged (both libraries' forced state). */
+  state?: InteractionState;
   /** Named content, for components that take it as snippets (SplitPane's first and second). */
   slots?: Record<string, ScenarioNode[]>;
 }
@@ -28,6 +33,11 @@ export interface Scenario {
 /** A node's nested nodes: its children and every slot's content. */
 export function nestedNodes(node: ScenarioNode): ScenarioNode[] {
   return [...(node.children ?? []), ...Object.values(node.slots ?? {}).flat()];
+}
+
+/** The node and every node under it. */
+export function allNodes(node: ScenarioNode): ScenarioNode[] {
+  return [node, ...nestedNodes(node).flatMap(allNodes)];
 }
 
 /** Every component a scenario uses, nested ones included. */
@@ -50,6 +60,11 @@ export function scenarioProblems(file: string, scenarios: unknown, known: Set<st
       problems.push(`${file}: duplicate id ${scenario.id}`);
     }
     seen.add(scenario.id);
+    for (const node of allNodes(scenario.node)) {
+      if (node.state !== undefined && !isInteractionState(node.state)) {
+        problems.push(`${file}: ${scenario.id} has an unknown state ${String(node.state)}`);
+      }
+    }
     for (const component of componentsOf(scenario.node)) {
       if (!known.has(component)) {
         problems.push(`${file}: ${scenario.id} uses ${component}, which has no Swift twin yet`);

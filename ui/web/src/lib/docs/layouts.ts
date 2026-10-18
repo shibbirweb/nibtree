@@ -50,6 +50,7 @@ export const layoutPartDocs: ComponentDoc[] = [
   {
     name: "SplitHandle",
     group: "Layout",
+    states: ["hover", "dragging"],
     summary: "A handle between two side-by-side views in one box: drag or arrow keys move the split.",
     usage:
       "DiffFrame uses it between a diff's sides, MergeFrame on each connector's edge. Put it in a positioned box; " +

@@ -3,6 +3,7 @@
      smallest and default size; `min` and `defaultSize` replace them when they come from the layout, such as half
      of a split. -->
 <script lang="ts">
+  import { useForcedState } from "../logic/forcedState";
   import type { PanelPreset } from "../logic/presets";
   import { draggedSize, keyedSize, type PanelSide } from "../logic/resize";
   import { scales } from "../styles/tokens";
@@ -38,6 +39,9 @@
 
   const horizontal = $derived(side === "bottom" || side === "top");
   let dragging = $state(false);
+  // Pointed at and dragged look the same: the accent bar.
+  const forced = useForcedState();
+  const active = $derived(dragging || forced() === "hover" || forced() === "dragging");
   let startPosition = 0;
   let startSize = 0;
 
@@ -85,7 +89,7 @@
 <div
   class="handle"
   class:horizontal
-  class:dragging
+  class:dragging={active}
   class:in-panel={inPanel}
   role="separator"
   aria-orientation={horizontal ? "horizontal" : "vertical"}

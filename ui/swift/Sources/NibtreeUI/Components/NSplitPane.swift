@@ -29,6 +29,8 @@ public struct NSplitPane<First: View, Second: View>: View {
     /// so a drag that leaves the split goes on), or always for VoiceOver.
     @State private var interactive = false
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
+    /// A forced state (the parity check) needs the handles there to draw it.
+    @Environment(\.nibtreeForcedState) private var forced
 
     /// `size` and `max` are points (data: a dragged pane size and its limit).
     public init(
@@ -70,14 +72,14 @@ public struct NSplitPane<First: View, Second: View>: View {
             row: row, size: size, sizedFirst: sized == .first,
             onLength: reportLength, measure: measure
         ) {
-            first.clipped()
+            first.paneFrame()
             if let second {
-                if interactive || voiceOver {
+                if interactive || voiceOver || forced != nil {
                     NResizeHandle(
                         size: size, side: handleSide, preset: preset, max: max, label: label, inPanel: inPanel,
                         onresize: { size = $0 }, oncommit: oncommit)
                 }
-                second.clipped()
+                second.paneFrame()
             }
         }
         .onHover { inside in
@@ -120,5 +122,12 @@ extension NSplitPane where Second == EmptyView {
         self.oncommit = oncommit
         self.first = first()
         self.second = nil
+    }
+}
+
+extension View {
+    /// Exactly the room the split gives, from the top left, clipped: a pane with none shows nothing, like the web's.
+    fileprivate func paneFrame() -> some View {
+        frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading).clipped()
     }
 }

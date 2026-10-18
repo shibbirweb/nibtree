@@ -55,6 +55,8 @@ struct ComponentNode: View {
             NSpacer()
         case .icon(let name, let size, let stroke, let tone):
             NIcon(name, size: size, stroke: stroke, tone: tone)
+        case .stated(let state, let inner):
+            ScenarioView(node: inner).environment(\.nibtreeForcedState, state)
         default:
             EmptyView()
         }
