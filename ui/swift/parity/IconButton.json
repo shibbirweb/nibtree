@@ -1,0 +1,273 @@
+[
+  {
+    "id": "iconbutton-sizes",
+    "width": 440,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "large",
+            "iconSize": "large"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "normal",
+            "iconSize": "large"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "header",
+            "iconSize": "large"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "compact",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "small",
+            "iconSize": "compact"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "chevron-down",
+            "label": "Settings",
+            "size": "chevron",
+            "iconSize": "compact"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "inline",
+            "iconSize": "compact"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "mini",
+            "iconSize": "compact"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "micro",
+            "iconSize": "small"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "tool",
+            "iconSize": "compact"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "settings",
+            "label": "Settings",
+            "size": "row",
+            "iconSize": "compact"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "iconbutton-tones",
+    "width": 440,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "trash",
+            "label": "Delete",
+            "tone": "default",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "trash",
+            "label": "Delete",
+            "tone": "dim",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "trash",
+            "label": "Delete",
+            "tone": "faint",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "trash",
+            "label": "Delete",
+            "tone": "dim-danger",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "trash",
+            "label": "Delete",
+            "tone": "success",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "trash",
+            "label": "Delete",
+            "tone": "danger",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "search",
+            "label": "Search",
+            "active": true,
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "play",
+            "label": "Run",
+            "disabled": true,
+            "iconSize": "normal"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "iconbutton-extras",
+    "width": 440,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "sync",
+            "label": "Sync",
+            "size": "row",
+            "iconSize": "compact",
+            "count": "2↓ 1↑"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "refresh",
+            "label": "Refresh",
+            "spinning": true,
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "layout": "sidebar-left",
+            "label": "Toggle sidebar",
+            "iconSize": "normal"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "x",
+            "label": "Close",
+            "title": "Close tab",
+            "size": "small",
+            "iconSize": "compact"
+          }
+        },
+        {
+          "component": "IconButton",
+          "props": {
+            "icon": "plus",
+            "label": "New terminal",
+            "size": "compact",
+            "iconSize": "compact"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "props": {
+                "size": "small"
+              },
+              "text": "New"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -85,6 +85,18 @@ enum Stories {
                 NLayoutIcon(kind: .sidebarRight, active: true, size: .xxlarge)
             }
         },
+        Story("Button", group: "Actions") { ButtonStory() },
+        Story("IconButton", group: "Actions") {
+            NStack(direction: .row, gap: .xs, align: .center) {
+                NIconButton(icon: .settings, label: "Settings") {}
+                NIconButton(icon: .trash, label: "Delete", iconSize: .normal, tone: .dimDanger) {}
+                NIconButton(icon: .search, label: "Search", iconSize: .normal, active: true) {}
+                NIconButton(icon: .refresh, label: "Refresh", iconSize: .normal, spinning: true) {}
+                NIconButton(layout: .sidebarLeft, label: "Toggle sidebar", iconSize: .normal) {}
+                NIconButton(icon: .sync, label: "Sync", iconSize: .compact, size: .row, count: "2\u{2193} 1\u{2191}") {}
+                NIconButton(icon: .x, label: "Close", iconSize: .small, size: .micro) {}
+            }
+        },
         Story("Text", group: "Content") {
             NStack(gap: .sm) {
                 ForEach(NText.Variant.allCases, id: \.self) { variant in

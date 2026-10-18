@@ -35,8 +35,13 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
   but it draws nothing there, and dropping the layout made a row of letters 8% faster.
 - One `accessibilityRepresentation` (a real `Toggle` for `NSwitch`) instead of five accessibility modifiers: 5%
   faster on a row of switches, and VoiceOver reads a switch.
+- A control's words in the control's own canvas. `NCheckbox` with a plain label is one layout and one canvas that
+  draws the box and the words; a stack, a box canvas and an `NText` took a column of six checkboxes from 100 ms to
+  227 ms, where the web took 164.
 - No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
   is one: an empty `.help` cost as much as a whole `NMark`, and choosing inside the component cost almost as much.
+  When the tooltip is the component's own (an `NIconButton`'s label), it is made only while the pointer is over the
+  button, which already tracks hover for its color: a tooltip on every icon button cost a fifth of its time.
 
 The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title
 strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles. There are no
