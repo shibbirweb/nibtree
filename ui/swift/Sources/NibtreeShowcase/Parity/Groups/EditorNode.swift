@@ -34,8 +34,8 @@ enum EditorNode: Sendable {
 
 extension EditorNode {
     /// The component, drawn straight into `ScenarioView`'s switch: a view of its own would cost every child a node.
-    @MainActor @ViewBuilder
-    var view: some View {
+    @MainActor @Erased
+    var view: AnyView {
         switch self {
         case .mergeStackFrame(let props, let resultEnd):
             NMergeStackFrame(

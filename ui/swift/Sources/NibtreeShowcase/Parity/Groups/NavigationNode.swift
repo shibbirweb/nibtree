@@ -62,8 +62,8 @@ enum NavigationNode: Sendable {
 
 extension NavigationNode {
     /// The component, drawn straight into `ScenarioView`'s switch.
-    @MainActor @ViewBuilder
-    var view: some View {
+    @MainActor @Erased
+    var view: AnyView {
         switch self {
         case .breadcrumbs(let crumbs, let label, let open, let variant, let at):
             if let at {

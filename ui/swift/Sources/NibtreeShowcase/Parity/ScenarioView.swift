@@ -116,7 +116,13 @@ indirect enum ResolvedNode: Sendable {
 struct ScenarioView: View {
     let node: ResolvedNode
 
-    var body: some View {
+    var body: AnyView {
+        Self.content(node)
+    }
+
+    /// The node's component in one `AnyView`, drawn straight into its parent.
+    @Erased
+    static func content(_ node: ResolvedNode) -> AnyView {
         switch node {
         case .stack(let props, let children):
             NStack(
@@ -124,7 +130,7 @@ struct ScenarioView: View {
                 paddingY: props.paddingY, align: props.align, justify: props.justify, grow: props.grow,
                 scroll: props.scroll, surface: props.surface, line: props.line
             ) {
-                ScenarioChildren(nodes: children)
+                ScenarioChildren.content(children)
             }
         case .text(let props):
             NText(
@@ -144,7 +150,7 @@ struct ScenarioView: View {
         case .navigation(let inner):
             inner.view
         case .stated(let state, let inner):
-            ScenarioView(node: inner).environment(\.nibtreeForcedState, state)
+            content(inner).environment(\.nibtreeForcedState, state)
         case .unknown:
             EmptyView()
         }
@@ -156,32 +162,37 @@ struct ScenarioView: View {
 struct ScenarioChildren: View {
     let nodes: [ResolvedNode]
 
-    var body: some View {
-        switch nodes.count {
-        case 1:
-            ScenarioView(node: nodes[0])
-        case 2:
-            node(0); node(1)
-        case 3:
-            node(0); node(1); node(2)
-        case 4:
-            node(0); node(1); node(2); node(3)
-        case 5:
-            node(0); node(1); node(2); node(3); node(4)
-        case 6:
-            node(0); node(1); node(2); node(3); node(4); node(5)
-        case 7:
-            node(0); node(1); node(2); node(3); node(4); node(5); node(6)
-        case 8:
-            node(0); node(1); node(2); node(3); node(4); node(5); node(6); node(7)
-        default:
-            ForEach(Array(nodes.enumerated()), id: \.offset) { _, child in
-                ScenarioView(node: child)
-            }
-        }
+    var body: AnyView {
+        Self.content(nodes)
     }
 
-    private func node(_ index: Int) -> ScenarioView {
-        ScenarioView(node: nodes[index])
+    static func content(_ nodes: [ResolvedNode]) -> AnyView {
+        let views = nodes.map(ScenarioView.content)
+        switch views.count {
+        case 0: return AnyView(EmptyView())
+        case 1: return views[0]
+        case 2: return AnyView(TupleView((views[0], views[1])))
+        case 3: return AnyView(TupleView((views[0], views[1], views[2])))
+        case 4: return AnyView(TupleView((views[0], views[1], views[2], views[3])))
+        case 5: return AnyView(TupleView((views[0], views[1], views[2], views[3], views[4])))
+        case 6: return AnyView(TupleView((views[0], views[1], views[2], views[3], views[4], views[5])))
+        case 7: return AnyView(TupleView((views[0], views[1], views[2], views[3], views[4], views[5], views[6])))
+        case 8:
+            return AnyView(
+                TupleView((views[0], views[1], views[2], views[3], views[4], views[5], views[6], views[7])))
+        default: return AnyView(ForEach(Array(views.enumerated()), id: \.offset) { $0.element })
+        }
     }
+}
+
+/// A switch whose every case is one `AnyView`. SwiftUI makes a `switch` one nested type of all its cases, and a node
+/// pays for each level: a scenario's tree of switches (node kind, group, child count) cost a row of two checkboxes a
+/// third of its time, a static row's code none. One `AnyView` per node costs a tenth of that.
+@resultBuilder
+enum Erased {
+    static func buildExpression(_ view: some View) -> AnyView { AnyView(view) }
+    static func buildExpression(_ view: AnyView) -> AnyView { view }
+    static func buildBlock(_ view: AnyView) -> AnyView { view }
+    static func buildEither(first view: AnyView) -> AnyView { view }
+    static func buildEither(second view: AnyView) -> AnyView { view }
 }

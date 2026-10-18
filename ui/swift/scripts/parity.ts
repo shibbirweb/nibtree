@@ -148,8 +148,12 @@ if (process.env.GITHUB_ACTIONS && failed.length > 0) {
   console.log(`::error title=${failed.length} of ${verdicts.length} scenarios fail::${lines.join("%0A")}`);
 }
 if (process.env.GITHUB_ACTIONS && checkSpeed) {
+  // GitHub cuts an annotation at 4096 characters: 50 scenarios each.
   const times = verdicts.map((one) => `${one.id} ${one.swiftMs.toFixed(1)} / ${one.webMs.toFixed(1)}`);
-  console.log(`::notice title=Swift / web ms::${times.join("%0A")}`);
+  for (let first = 0; first < times.length; first += 50) {
+    const part = times.slice(first, first + 50);
+    console.log(`::notice title=Swift / web ms ${first + 1}-${first + part.length}::${part.join("%0A")}`);
+  }
 }
 console.log(
   `\n${verdicts.length - failed.length} of ${verdicts.length} scenarios pass (pictures in ui/swift/.parity).`,

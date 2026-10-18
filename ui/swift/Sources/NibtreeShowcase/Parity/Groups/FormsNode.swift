@@ -60,8 +60,8 @@ enum FormsNode: Sendable {
 
 extension FormsNode {
     /// The component, drawn straight into `ScenarioView`'s switch: a view of its own would cost every child a node.
-    @MainActor @ViewBuilder
-    var view: some View {
+    @MainActor @Erased
+    var view: AnyView {
         switch self {
         case .toggle(let checked, let label, let disabled):
             NSwitch(checked: .constant(checked), label: label, disabled: disabled)

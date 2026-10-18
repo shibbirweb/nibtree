@@ -52,8 +52,8 @@ Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 
 ## Speed
 
-How the components stay faster than the web, and how the gate times both sides fairly, is in
-[Swift UI speed](Swift-UI-Speed.md).
+How the components stay faster than the web is in [Swift UI speed](Swift-UI-Speed.md), and how the gate times both
+sides fairly is in [Swift UI bench](Swift-UI-Bench.md).
 
 ## Where the code lives
 

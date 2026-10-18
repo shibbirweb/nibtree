@@ -114,9 +114,8 @@ enum ParityRunner {
         // still records every copy's drawing (each canvas runs), which WebKit skips for what is off screen.
         let list = ParityFrame(width: scenario.width) {
             VStack(spacing: 0) {
-                ForEach(0..<count, id: \.self) { index in
-                    ScenarioView(node: resolved).sized(scenario.height).modifier(OffScreen(hidden: index >= shown))
-                }
+                Copies(node: resolved, height: scenario.height, range: 0..<min(shown, count))
+                Copies(node: resolved, height: scenario.height, range: min(shown, count)..<count).hidden()
             }
         }
         .frame(width: 1000, height: 800, alignment: .topLeading)
@@ -129,15 +128,18 @@ enum ParityRunner {
     }
 }
 
-/// A copy below the viewport: laid out, but not drawn.
-private struct OffScreen: ViewModifier {
-    let hidden: Bool
+/// Copies of a scenario, each at its set height. The height is the same for every copy, so it is chosen once here:
+/// a choice in each copy cost as much as the copy's Stack.
+private struct Copies: View {
+    let node: ResolvedNode
+    let height: Double?
+    let range: Range<Int>
 
-    func body(content: Content) -> some View {
-        if hidden {
-            content.hidden()
+    var body: some View {
+        if let height {
+            ForEach(range, id: \.self) { _ in ScenarioView.content(node).frame(height: height, alignment: .top) }
         } else {
-            content
+            ForEach(range, id: \.self) { _ in ScenarioView.content(node) }
         }
     }
 }
