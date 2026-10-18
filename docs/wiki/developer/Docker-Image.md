@@ -28,6 +28,15 @@ and prints the address in the container's log (`docker logs`).
   `-v ~/.gitconfig:/home/nibtree/.gitconfig:ro -v ~/.ssh:/home/nibtree/.ssh:ro`.
 - **File owners:** on Linux add `--user "$(id -u):$(id -g)"`, so files the app writes belong to you.
 
+### With Docker Compose
+
+`docker/compose.yaml` runs the same container with `docker compose up -d`. It differs from the `docker run` line
+on purpose: it listens on `127.0.0.1` only, so other machines cannot reach it until you change that line, and it
+restarts with Docker. Every choice is a variable with a default, so the file works unchanged:
+`NIBTREE_TOKEN`, `NIBTREE_TAG` (default `next`), `NIBTREE_WORKSPACE` (default: the file's folder),
+`NIBTREE_OUTSIDE_PORT` (default 4410, which also sets `NIBTREE_PUBLIC_URL`) and `NIBTREE_USER`. `NIBTREE_IMAGE`
+replaces the whole image name, which CI uses to start the image it just built.
+
 ## What is inside
 
 ```mermaid
@@ -63,6 +72,9 @@ Each builds the image from its platform's package and runs `bun scripts/browser-
 4. the same checks as the npm smoke test: the token, the page, the socket, `get_status`, a commit through the
    git command, and settings in `~/.nibtree-browser`;
 5. `docker stop` must end it in under 8 seconds, which shows `tini` passed the signal on.
+
+Then the job starts the same image through `docker/compose.yaml`: `docker compose config` checks the file,
+`up --wait` waits for the health check, and the page must load with the token.
 
 ## Publishing
 

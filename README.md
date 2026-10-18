@@ -4,7 +4,10 @@ A native desktop Git client with a 3-way merge tool, multi-folder workspaces, ta
 
 ![Nibtree: Changes, the editor with blame, and the Files panel](docs/wiki/images/window-overview.png)
 
-**[Download the latest release](https://github.com/shibbirweb/nibtree/releases)** (macOS for Apple Silicon and Intel, Windows 10 and 11) · in your browser with `npx nibtree` or [Docker](#in-docker) · **[User guide and developer docs](https://github.com/shibbirweb/nibtree/wiki)** · **[Report a bug or request a feature](https://github.com/shibbirweb/nibtree/issues/new/choose)**
+- **[Download the latest release](https://github.com/shibbirweb/nibtree/releases)**: the desktop app for macOS (Apple Silicon and Intel) and Windows 10 and 11
+- **In your browser**: `npx nibtree` ([npm](#in-your-browser-with-npm)), or [Docker](#in-docker) with `docker run` or `docker compose`
+- **[User guide and developer docs](https://github.com/shibbirweb/nibtree/wiki)**
+- **[Report a bug or request a feature](https://github.com/shibbirweb/nibtree/issues/new/choose)**
 
 ## Screenshots
 
@@ -61,7 +64,7 @@ Every feature has its own page with screenshots in the [wiki](https://github.com
 
 ## Platforms
 
-Nibtree runs on macOS and Windows with the same features; Linux is planned. Each platform is built and tested on every pull request. Where they differ:
+The desktop app runs on macOS and Windows with the same features; Linux is planned. The [browser version](#in-your-browser-with-npm) runs on more platforms, [below](#browser-version-platforms). Each platform is built and tested on every pull request. Where the desktop app differs:
 
 | | macOS | Windows | Linux |
 | --- | --- | --- | --- |
@@ -80,6 +83,19 @@ Nibtree runs on macOS and Windows with the same features; Linux is planned. Each
 | Settings folder | `~/.nibtree` | `C:\Users\<you>\.nibtree` | |
 | Command line tool | `nibtree` in the app, linked into `~/.local/bin` | `nibtree-cli.exe` next to the app, `nibtree.cmd` in WindowsApps | |
 | Memory readout | Activity Monitor's Memory (physical footprint) | Task Manager's Memory (private working set) | |
+
+### Browser version platforms
+
+Only a small server runs on your machine (or in a container); any modern browser shows the app.
+
+| | npm (`npx nibtree`) | Docker |
+| --- | --- | --- |
+| Runs on | macOS (Apple Silicon and Intel), Linux (x64 and Arm, glibc), Windows (x64 and Arm) | Any machine with Docker: `linux/amd64` and `linux/arm64` images |
+| Needs | git, and Node.js 18 or newer (or Bun) | Docker; git, git-lfs, SSH and GnuPG are inside the image |
+| Default port | 4300, moving on to the next free one when busy | 4410 |
+| Settings folder | `~/.nibtree-browser` | `/home/nibtree/.nibtree-browser`, kept in the `nibtree-home` volume |
+| Git sign-in | Your git setup | The git config and SSH keys you mount in |
+| Newer version | `npx nibtree@latest` or `npx nibtree@next` | `docker pull` or `docker compose pull` |
 | Clear Cache | Yes | Not yet (macOS only for now) | |
 | Option as Meta in the terminal, Enter Full Screen | Yes | No | |
 | PDF preview | Safari's built-in viewer | Microsoft Edge's built-in viewer | |
@@ -147,6 +163,27 @@ Then open `http://localhost:4410/?token=pick-a-secret`.
 - Add `-v ~/.gitconfig:/home/nibtree/.gitconfig:ro -v ~/.ssh:/home/nibtree/.ssh:ro` for your git identity and SSH keys.
 - On Linux add `--user "$(id -u):$(id -g)"`, so files it writes belong to you.
 - Another outside port, such as `-p 9000:4410`, needs `-e NIBTREE_PUBLIC_URL=http://localhost:9000` so the printed address is right.
+
+#### With Docker Compose
+
+[`docker/compose.yaml`](docker/compose.yaml) does the same, listening only on this machine. Put it in the folder you want to open, then:
+
+```sh
+NIBTREE_TOKEN=pick-a-secret docker compose up -d   # start it in the background
+docker compose logs nibtree                        # the address, also with a random token when none is set
+docker compose pull && docker compose up -d        # move to a newer version
+docker compose down                                # stop it (settings stay in the nibtree-home volume)
+```
+
+| Variable | What it does |
+| --- | --- |
+| `NIBTREE_TOKEN` | The access token (default: a new random one on each start) |
+| `NIBTREE_TAG` | The image tag (default `next`) |
+| `NIBTREE_WORKSPACE` | The folder to open (default: the one with `compose.yaml`) |
+| `NIBTREE_OUTSIDE_PORT` | The port on this machine (default 4410) |
+| `NIBTREE_USER` | On Linux, `"$(id -u):$(id -g)"`, so files it writes belong to you |
+
+Uncomment its two `.gitconfig` and `.ssh` lines to use your git identity and SSH keys inside.
 
 Details: [Docker Image](https://github.com/shibbirweb/nibtree/wiki/Docker-Image).
 

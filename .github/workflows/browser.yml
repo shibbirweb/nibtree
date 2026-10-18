@@ -209,6 +209,21 @@ jobs:
       - name: Smoke test in a container
         run: bun scripts/browser-smoke.ts --docker nibtree:smoke
 
+      - name: Start it with docker/compose.yaml
+        working-directory: docker
+        env:
+          NIBTREE_IMAGE: nibtree:smoke
+          NIBTREE_TOKEN: compose-check
+        run: |
+          docker compose config --quiet
+          if ! docker compose up --detach --wait --wait-timeout 60; then
+            docker compose logs
+            exit 1
+          fi
+          curl --fail --silent --show-error --location --cookie-jar jar --cookie jar --output /dev/null \
+            "http://127.0.0.1:4410/?token=$NIBTREE_TOKEN"
+          docker compose down --volumes
+
   docker-publish:
     name: Publish the Docker image
     needs: docker
