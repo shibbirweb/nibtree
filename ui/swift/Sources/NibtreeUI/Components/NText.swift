@@ -139,8 +139,9 @@ public struct NText: View {
     }
 }
 
-/// Selection needs a real text view: SwiftUI's Text, moved onto WebKit's line box. Rare in the app, so it may read
-/// the environment; plain `NText` does not, which keeps it cheap.
+/// Selection needs a real text view: SwiftUI's Text, moved onto WebKit's line box, which costs about twice a drawn
+/// text. So the text is drawn like plain `NText` and becomes a Text the first time the pointer is over it (and stays
+/// one, so a selection is kept), or always for VoiceOver.
 private struct NSelectableText: View {
     let text: String
     let font: NTypography.FontKey
@@ -151,8 +152,27 @@ private struct NSelectableText: View {
     let tabular: Bool
     let strike: Bool
     @Environment(\.nibtreePalette) private var palette
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
+    @State private var live = false
 
     var body: some View {
+        if live || voiceOver {
+            selectable
+        } else {
+            NTextCanvas(
+                spec: NTextSpec(
+                    text: text, font: font, kerning: kerning, tabular: tabular, truncate: truncate, line: line,
+                    tone: tone, strike: strike))
+                .accessibilityLabel(text)
+                .onHover { inside in
+                    if inside {
+                        live = true
+                    }
+                }
+        }
+    }
+
+    private var selectable: some View {
         var shown = Text(text).font(NTypography.font(font)).foregroundStyle(palette.color(tone))
         if kerning != 0 {
             shown = shown.kerning(kerning)

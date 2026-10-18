@@ -4,7 +4,9 @@ import SwiftUI
 /// A small rounded chip with a word or two: the Swift side of ui/web `Chip` (docs/components/Chip.md). `filter` chips
 /// sum up a list and filter it (the AI panel's "2 waiting"), `pick` chips offer a value to use (font names in Settings,
 /// each in its own `fontFamily`), `badge` is a small bordered fact. A `status` mark goes before the words in place of
-/// `icon`. With an `action` it is a button. The web's `title` is SwiftUI's `.help` on the chip.
+/// `icon`. With an `action` it is a button. The web's `title` is SwiftUI's `.help` on the chip. The web's status mark
+/// has a tooltip with the chip's own words; here the chip draws a still mark itself and only a spinner is a view, so
+/// that tooltip is left out.
 public struct NChip: View {
     public enum Variant: String, CaseIterable, Sendable {
         case filter, pick, badge
@@ -55,8 +57,8 @@ private struct NChipBody: View {
     var body: some View {
         NChipFrame(look: look) {
             NChipFace(look: look, hovering: hovering)
-            if let status = look.status {
-                NStatusIcon(state: status, label: look.words.text)
+            if look.status == .working || look.status == .starting {
+                NStatusIconSpin()
             }
         }
         .onTapGesture { action?() }
@@ -114,7 +116,17 @@ private struct NChipFace: View {
         let origin = look.words.state.origin
         let phase = CGPoint(
             x: origin.x - (origin.x * scale).rounded() / scale, y: origin.y - (origin.y * scale).rounded() / scale)
-        if look.status == nil, let icon = look.icon {
+        if let status = look.status, status != .working, status != .starting {
+            // Where the frame would put the mark's own view, on whole device pixels like SwiftUI puts a view.
+            let side = NStatusIconFace.side
+            let pixel = { (value: CGFloat) in (value * scale).rounded() / scale }
+            let x = pixel(origin.x + NChipLook.cssBorder + look.paddingLeft) - pixel(origin.x)
+            let y = pixel(origin.y + (size.height - side) / 2) - pixel(origin.y)
+            cg.saveGState()
+            cg.translateBy(x: x, y: y)
+            NStatusIconFace.draw(status, palette: palette, scale: scale, in: cg)
+            cg.restoreGState()
+        } else if look.status == nil, let icon = look.icon {
             let points = NIconSize.small.points
             let key = NIconImages.Key(
                 name: icon, points: points, lineWidth: NIconStroke.normal.width, scale: scale, color: color)

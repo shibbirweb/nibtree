@@ -8,7 +8,8 @@ it, and how the gate times both sides fairly.
 
 Each side builds, lays out and draws 200 copies of the scenario, a few times after warming up, and keeps its best time.
 The web side does it in a fresh WebKit page per scenario. The Swift side runs `NibtreeShowcase --bench` once per
-scenario, in its own process, for the same reason (see the bug below).
+scenario, in its own process, for the same reason (see the bugs below). Both sides are timed back to back, and a
+scenario Swift loses is timed twice more, both sides, before it fails.
 
 ```mermaid
 flowchart LR
@@ -25,8 +26,10 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
 
 - One `Layout` per stack that also does the padding.
 - One canvas per text, and one per small component: `NKbd` is one layout and one canvas that draws the key cap and its
-  text.
-- Colors cached per theme, and no environment reads in `NText` (a canvas reads the palette while drawing).
+  text. A Chip draws a still status mark in its own canvas too; only a spinner is a view of its own.
+- Colors cached per theme, and no environment reads in `NText` or `NStack` (a canvas reads the palette while drawing).
+- Selectable text is drawn like other text and becomes SwiftUI's selectable `Text` once the pointer is over it: that
+  `Text` cost twice the drawn one.
 - A scroll view only when the content overflows.
 - No `if` in a component's body for an option most uses leave off: each one cost a row of six `NStatusDot`s 3 to
   5 ms. An animation is the caller's modifier too: a running dot is `NStatusDot(...).nibtreePulse()`, so the
@@ -79,11 +82,22 @@ Fix: `parity.ts` runs the bench once per scenario (`--bench <folder> <count> <wa
 side loads a fresh page per scenario. Each scenario is timed on its own, so one heavy scenario cannot hide or cause a
 failure in another. A run takes a little longer (about four minutes in all), which is worth a fair verdict.
 
+**CI failed the speed check while a Mac passed.** On GitHub's runner a third of the scenarios were slower than the
+web, and different ones in each run, while every one passed on a Mac.
+
+Why: the gate timed every Swift scenario first and every web one minutes later. A fresh runner indexes the checkout
+and the build (Spotlight) in its first minutes, so Swift was timed on a busy machine: the first scenarios twice as
+slow as on a Mac, the web side as fast. A loaded Mac flattered Swift the same way the other way round.
+
+Fix: each scenario is timed Swift then web, back to back, so both see the same machine; a loser is timed twice more
+before it fails; and the CI speed job turns Spotlight off. CI runs match and speed as two jobs side by side, so the
+speed job is not also taking pictures.
+
 ## Where the code lives
 
 | File | What it does |
 | --- | --- |
-| `ui/swift/scripts/parity.ts` | Times both sides, one Swift process per scenario |
+| `ui/swift/scripts/parity.ts` | Times both sides back to back, one Swift process per scenario |
 | `ui/swift/Sources/NibtreeShowcase/Parity/ParityRunner.swift` | `--bench`: copies, warm-ups, best run |
 | `ui/swift/Sources/NibtreeShowcase/Parity/ScenarioView.swift` | The group switch and `ScenarioChildren` |
 | `ui/web/src/native/` | The web side's timing list (`nativeBench`) |

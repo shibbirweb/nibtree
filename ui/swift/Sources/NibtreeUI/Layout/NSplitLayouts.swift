@@ -1,3 +1,4 @@
+import NibtreeTokens
 import SwiftUI
 
 /// What a split's layout measured last, for the handles' drags (a reference, so writing it does not redraw).
@@ -6,8 +7,9 @@ final class NSplitMeasure: @unchecked Sendable {
     var height: Double = 0
 }
 
-/// Places one handle at `ratio` of its box's width (less `gutter`), the box's full height: what `NSplitHandle` stands
-/// in, without a GeometryReader (which rebuilds its content on every layout and costs many times this).
+/// Places one handle at `ratio` of its box's width (less `gutter`), the handle's width and the box's full height: what
+/// `NSplitHandle` stands in, without a GeometryReader (which rebuilds its content on every layout and costs many times
+/// this).
 struct NRatioPlacement: Layout {
     var ratio: Double
     var gutter: Double
@@ -22,7 +24,7 @@ struct NRatioPlacement: Layout {
         measure.width = shared
         subviews.first?.place(
             at: CGPoint(x: bounds.minX + shared * ratio, y: bounds.midY), anchor: .center,
-            proposal: ProposedViewSize(width: nil, height: bounds.height))
+            proposal: ProposedViewSize(width: GMSplitHandleTokens.width, height: bounds.height))
     }
 }
 

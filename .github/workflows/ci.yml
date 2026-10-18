@@ -130,6 +130,11 @@ jobs:
         with:
           bun-version: latest
 
+      # A fresh runner indexes the checkout and the build for its first minutes, which slowed whatever was timed then.
+      - name: Turn Spotlight off
+        if: matrix.check == 'speed'
+        run: sudo mdutil -a -i off
+
       - name: Parity with ui/web (${{ matrix.check }})
         run: |
           bun install --frozen-lockfile

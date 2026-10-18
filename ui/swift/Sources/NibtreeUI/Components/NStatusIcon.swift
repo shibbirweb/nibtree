@@ -36,7 +36,7 @@ public struct NStatusIcon: View {
 }
 
 /// The still states in one canvas, centered in the mark's square like the web's `inline-flex`.
-private struct NStatusIconFace: View {
+struct NStatusIconFace: View {
     let state: NStatusIcon.State
 
     nonisolated static let side = GMStatusIconTokens.size
@@ -62,8 +62,9 @@ private struct NStatusIconFace: View {
         .frame(width: Self.side, height: Self.side)
     }
 
+    /// Draws a still state in a `side` square at the context's origin (a chip draws it in its own canvas too).
     @MainActor
-    private static func draw(_ state: NStatusIcon.State, palette: Palette, scale: CGFloat, in cg: CGContext) {
+    static func draw(_ state: NStatusIcon.State, palette: Palette, scale: CGFloat, in cg: CGContext) {
         switch state {
         case .waiting:
             let circle = GMStatusIconTokens.question
@@ -106,7 +107,7 @@ private struct NStatusIconFace: View {
 }
 
 /// The spinner: an accent quarter on a faint accent ring, turning every 0.9 seconds; still in pictures.
-private struct NStatusIconSpin: View {
+struct NStatusIconSpin: View {
     @State private var started = false
     @Environment(\.nibtreeStill) private var still
 

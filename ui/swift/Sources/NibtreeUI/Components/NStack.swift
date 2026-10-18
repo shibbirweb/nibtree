@@ -33,7 +33,6 @@ public struct NStack<Content: View>: View {
     private let surface: Surface
     private let line: Line
     private let content: Content
-    @Environment(\.nibtreePalette) private var palette
 
     public init(
         direction: Direction = .column, gap: NSpacing = .md, padding: NSpacing = .none, paddingX: NSpacing? = nil,
@@ -70,9 +69,7 @@ public struct NStack<Content: View>: View {
             insets: insets, fills: grow)
         scrolled(layout { content })
             .modifier(
-                NStackChrome(
-                    fill: surfaceToken.map { palette.cgColor($0) }, line: line,
-                    lineColor: palette.cgColor(.borderStrong), grow: grow))
+                NStackChrome(fill: surfaceToken, line: line, grow: grow))
     }
 
     /// Padding, plus the line's 1 point at its edge (it adds to the height, like a CSS border).
@@ -98,11 +95,11 @@ public struct NStack<Content: View>: View {
 }
 
 /// The surface and the line, drawn by one canvas behind the children, and the mark that makes a growing stack share
-/// its parent's free length: added only when set, since most stacks are plain.
+/// its parent's free length: added only when set, since most stacks are plain. The canvas reads the theme itself, so a
+/// stack does not depend on it.
 private struct NStackChrome: ViewModifier {
-    let fill: CGColor?
+    let fill: GMColorToken?
     let line: NStackLine
-    let lineColor: CGColor
     let grow: Bool
 
     func body(content: Content) -> some View {
@@ -121,15 +118,18 @@ private struct NStackChrome: ViewModifier {
             content
                 .background {
                     Canvas(opaque: false, rendersAsynchronously: false) { context, size in
-                        context.withCGContext { cg in
-                            if let fill {
-                                cg.setFillColor(fill)
-                                cg.fill(CGRect(origin: .zero, size: size))
-                            }
-                            if line != .none {
-                                cg.setFillColor(lineColor)
-                                let top = line == .top ? 0 : size.height - 1
-                                cg.fill(CGRect(x: 0, y: top, width: size.width, height: 1))
+                        MainActor.assumeIsolated {
+                            let palette = context.environment.nibtreePalette
+                            context.withCGContext { cg in
+                                if let fill {
+                                    cg.setFillColor(palette.cgColor(fill))
+                                    cg.fill(CGRect(origin: .zero, size: size))
+                                }
+                                if line != .none {
+                                    cg.setFillColor(palette.cgColor(.borderStrong))
+                                    let top = line == .top ? 0 : size.height - 1
+                                    cg.fill(CGRect(x: 0, y: top, width: size.width, height: 1))
+                                }
                             }
                         }
                     }

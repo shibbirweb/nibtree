@@ -25,6 +25,8 @@ const outDir = join(swiftRoot, ".parity");
 const BENCH_COUNT = Number(process.env.NIBTREE_PARITY_COUNT ?? 200);
 const BENCH_WARMUP = 2;
 const BENCH_RUNS = 7;
+/** Times a scenario whose Swift side lost is timed again, both sides, before it fails. */
+const BENCH_RECHECKS = 2;
 const THEMES = ["light", "dark"] as const;
 const flags = process.argv.slice(2);
 const checkMatch = !flags.includes("--speed");
@@ -62,12 +64,12 @@ const binary = swiftBinary(swiftRoot);
 if (checkMatch) {
   execFileSync(binary, ["--parity", scenarioDir, join(outDir, "swift")], { stdio: "inherit" });
 }
-const swiftTimes = new Map<string, number>();
-// One process per scenario, like the web side's fresh page: a big scenario leaves a process slower for the rest.
-for (const scenario of checkSpeed ? scenarios : []) {
-  const args = ["--bench", scenarioDir, String(BENCH_COUNT), String(BENCH_WARMUP), String(BENCH_RUNS), scenario.id];
+
+/** One process per scenario, like the web side's fresh page: a big scenario leaves a process slower for the rest. */
+function swiftBench(id: string): number {
+  const args = ["--bench", scenarioDir, String(BENCH_COUNT), String(BENCH_WARMUP), String(BENCH_RUNS), id];
   const line = execFileSync(binary, args).toString().trim().split("\n")[0] ?? "{}";
-  swiftTimes.set(scenario.id, (JSON.parse(line) as { ms?: number }).ms ?? Number.NaN);
+  return (JSON.parse(line) as { ms?: number }).ms ?? Number.NaN;
 }
 
 const server = await createServer({
@@ -80,6 +82,24 @@ const base = server.resolvedUrls?.local[0] ?? "http://localhost:1432/";
 const browser = await webkit.launch();
 const page = await browser.newPage({ viewport: { width: 1000, height: 800 }, deviceScaleFactor: 2 });
 const verdicts: Verdict[] = [];
+
+/** Warmed up, then the best of BENCH_RUNS in the same page: the component's own cost, not the machine's noise. */
+async function webBench(id: string): Promise<number> {
+  await page.goto(`${base}native.html?scenario=${id}&theme=light`);
+  await page.waitForSelector("#frame[data-ready]");
+  const webTimes: number[] = [];
+  for (let run = 0; run < BENCH_WARMUP + BENCH_RUNS; run += 1) {
+    const ms = await page.evaluate(
+      (count) => (window as unknown as { nativeBench(n: number): Promise<number> }).nativeBench(count),
+      BENCH_COUNT,
+    );
+    if (run >= BENCH_WARMUP) {
+      webTimes.push(ms);
+    }
+  }
+  return best(webTimes);
+}
+
 for (const scenario of scenarios) {
   const matches: Match[] = [];
   for (const theme of checkMatch ? THEMES : []) {
@@ -98,20 +118,14 @@ for (const scenario of scenarios) {
     verdicts.push(verdict(scenario.id, matches));
     continue;
   }
-  // Warmed up, then the best of BENCH_RUNS in the same page: the component's own cost, not the machine's noise.
-  await page.goto(`${base}native.html?scenario=${scenario.id}&theme=light`);
-  await page.waitForSelector("#frame[data-ready]");
-  const webTimes: number[] = [];
-  for (let run = 0; run < BENCH_WARMUP + BENCH_RUNS; run += 1) {
-    const ms = await page.evaluate(
-      (count) => (window as unknown as { nativeBench(n: number): Promise<number> }).nativeBench(count),
-      BENCH_COUNT,
-    );
-    if (run >= BENCH_WARMUP) {
-      webTimes.push(ms);
-    }
+  // Both sides back to back, so a shared machine's speed (a CI runner's drifts by a third) is the same for both;
+  // a loser is timed again, both sides, so one slow moment does not fail it.
+  let [webMs, swiftMs] = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
+  for (let attempt = 0; attempt <= BENCH_RECHECKS && !(swiftMs < webMs); attempt += 1) {
+    swiftMs = Math.min(swiftMs, swiftBench(scenario.id));
+    webMs = Math.min(webMs, await webBench(scenario.id));
   }
-  verdicts.push(verdict(scenario.id, matches, best(webTimes), swiftTimes.get(scenario.id) ?? Number.NaN));
+  verdicts.push(verdict(scenario.id, matches, webMs, swiftMs));
 }
 await browser.close();
 await server.close();
