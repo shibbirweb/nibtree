@@ -1,4 +1,9 @@
+import NibtreeTokens
 import SwiftUI
+
+private struct CurrentColorKey: EnvironmentKey {
+    static let defaultValue = GMColorToken.text
+}
 
 private struct PaletteKey: EnvironmentKey {
     static let defaultValue = Palette.light
@@ -9,6 +14,12 @@ extension EnvironmentValues {
     public var nibtreePalette: Palette {
         get { self[PaletteKey.self] }
         set { self[PaletteKey.self] = newValue }
+    }
+
+    /// The color of the content a component sits in, like CSS `currentColor`: icons with no tone draw in it.
+    public var nibtreeCurrentColor: GMColorToken {
+        get { self[CurrentColorKey.self] }
+        set { self[CurrentColorKey.self] = newValue }
     }
 }
 

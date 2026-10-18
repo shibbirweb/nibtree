@@ -1,0 +1,75 @@
+[
+  {
+    "id": "icon-sizes",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Icon", "props": { "name": "settings", "size": "xxsmall" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "xsmall" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "small" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "compact" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "medium" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "normal" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "regular" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "large" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "xlarge" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "activity" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "xxlarge" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "emphasis" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "huge" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "logo" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "giant" } },
+        { "component": "Icon", "props": { "name": "settings", "size": "display" } }
+      ]
+    }
+  },
+  {
+    "id": "icon-strokes",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Icon", "props": { "name": "refresh", "size": "huge", "stroke": "thin" } },
+        { "component": "Icon", "props": { "name": "refresh", "size": "huge", "stroke": "light" } },
+        { "component": "Icon", "props": { "name": "refresh", "size": "huge", "stroke": "normal" } },
+        { "component": "Icon", "props": { "name": "refresh", "size": "huge", "stroke": "bold" } },
+        { "component": "Icon", "props": { "name": "more", "size": "huge" } }
+      ]
+    }
+  },
+  {
+    "id": "icon-tones",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "inherit" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "default" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "dim" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "faint" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "accent" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "danger" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "success" } },
+        { "component": "Icon", "props": { "name": "circle-check", "size": "xlarge", "tone": "warning" } }
+      ]
+    }
+  },
+  {
+    "id": "icon-after-text",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Branch" },
+        { "component": "Icon", "props": { "name": "branch", "size": "compact" } },
+        { "component": "Text", "props": { "tone": "dim" }, "text": "feature/a" },
+        { "component": "Icon", "props": { "name": "chevron-down", "size": "small", "tone": "dim" } }
+      ]
+    }
+  }
+]

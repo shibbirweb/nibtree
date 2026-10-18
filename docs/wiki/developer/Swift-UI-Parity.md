@@ -44,11 +44,12 @@ Selectable text keeps a SwiftUI `Text`, which needs a real text view.
 - **Fractions kept.** `NStackLayout` places children at exact fractional points, like flexbox, never rounded.
 - **Borders add height.** A stack's `line` adds one point, like a CSS border.
 - **Grow.** Children marked `NStackGrows` share the free length (`flex: 1 1 0`).
+- **Align self.** A child's `NStackAlignSelf` overrides the stack's `align`, like CSS `align-self` (`NDivider`).
 - **Whole points.** The picture's height is rounded up to whole points, like Playwright's screenshot, which also keeps `ImageRenderer`'s coordinates (measured from the picture's center) on whole device pixels, as a window's are. Without that, text could draw a pixel lower than in a window.
 
 ## Speed: fewer views
 
-SwiftUI's cost is mostly the number of views in its graph, so components keep it small: one `Layout` per stack that also does the padding, one canvas per text, colors cached per theme, no environment reads in `NText`, and a scroll view only when the content overflows.
+SwiftUI's cost is mostly the number of views in its graph, so components keep it small: one `Layout` per stack that also does the padding, one canvas per text, colors cached per theme, no environment reads in `NText`, and a scroll view only when the content overflows. The harness counts too: SwiftUI makes one nested view type of all of a `switch`'s cases, so `ScenarioView` keeps Stack and Text in a short switch and hands every other component to `ComponentNode` (three more cases there made every stack 60% slower).
 
 The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles, with no stacks or `GeometryReader`s (a `GeometryReader` rebuilds its content on every layout and cost three times the web's time). Handles draw nothing until pointed at, so a frame or split makes them the first time the pointer enters it and keeps them, or at once when VoiceOver is on. On macOS a split view's divider is not in the Tab order, so the handles are adjusted with VoiceOver's increment and decrement instead of the web's arrow keys.
 

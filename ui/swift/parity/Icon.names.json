@@ -1,0 +1,138 @@
+[
+  {
+    "id": "icon-every-name",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "chevron-right" } },
+            { "component": "Icon", "props": { "name": "chevron-down" } },
+            { "component": "Icon", "props": { "name": "chevron-up" } },
+            { "component": "Icon", "props": { "name": "chevrons-right" } },
+            { "component": "Icon", "props": { "name": "chevrons-left" } },
+            { "component": "Icon", "props": { "name": "check" } },
+            { "component": "Icon", "props": { "name": "x" } },
+            { "component": "Icon", "props": { "name": "plus" } },
+            { "component": "Icon", "props": { "name": "minus" } },
+            { "component": "Icon", "props": { "name": "arrow-down" } },
+            { "component": "Icon", "props": { "name": "arrow-up" } },
+            { "component": "Icon", "props": { "name": "arrow-left" } }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "arrow-right" } },
+            { "component": "Icon", "props": { "name": "external-link" } },
+            { "component": "Icon", "props": { "name": "locate" } },
+            { "component": "Icon", "props": { "name": "refresh" } },
+            { "component": "Icon", "props": { "name": "branch" } },
+            { "component": "Icon", "props": { "name": "commit" } },
+            { "component": "Icon", "props": { "name": "merge" } },
+            { "component": "Icon", "props": { "name": "folder-git" } },
+            { "component": "Icon", "props": { "name": "folder" } },
+            { "component": "Icon", "props": { "name": "stash" } },
+            { "component": "Icon", "props": { "name": "undo" } },
+            { "component": "Icon", "props": { "name": "redo" } }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "wand" } },
+            { "component": "Icon", "props": { "name": "tag" } },
+            { "component": "Icon", "props": { "name": "cloud" } },
+            { "component": "Icon", "props": { "name": "cloud-upload" } },
+            { "component": "Icon", "props": { "name": "cloud-download" } },
+            { "component": "Icon", "props": { "name": "sync" } },
+            { "component": "Icon", "props": { "name": "copy" } },
+            { "component": "Icon", "props": { "name": "file" } },
+            { "component": "Icon", "props": { "name": "alert" } },
+            { "component": "Icon", "props": { "name": "more" } },
+            { "component": "Icon", "props": { "name": "settings" } },
+            { "component": "Icon", "props": { "name": "star" } }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "pin" } },
+            { "component": "Icon", "props": { "name": "bug" } },
+            { "component": "Icon", "props": { "name": "lightbulb" } },
+            { "component": "Icon", "props": { "name": "lock" } },
+            { "component": "Icon", "props": { "name": "memory" } },
+            { "component": "Icon", "props": { "name": "book" } },
+            { "component": "Icon", "props": { "name": "keyboard" } },
+            { "component": "Icon", "props": { "name": "sun" } },
+            { "component": "Icon", "props": { "name": "moon" } },
+            { "component": "Icon", "props": { "name": "search" } },
+            { "component": "Icon", "props": { "name": "carets" } },
+            { "component": "Icon", "props": { "name": "discard" } }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "history" } },
+            { "component": "Icon", "props": { "name": "pilcrow" } },
+            { "component": "Icon", "props": { "name": "eye" } },
+            { "component": "Icon", "props": { "name": "list-tree" } },
+            { "component": "Icon", "props": { "name": "git-compare" } },
+            { "component": "Icon", "props": { "name": "app-window" } },
+            { "component": "Icon", "props": { "name": "play" } },
+            { "component": "Icon", "props": { "name": "stop" } },
+            { "component": "Icon", "props": { "name": "terminal" } },
+            { "component": "Icon", "props": { "name": "brush" } },
+            { "component": "Icon", "props": { "name": "trash" } },
+            { "component": "Icon", "props": { "name": "bold" } }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "italic" } },
+            { "component": "Icon", "props": { "name": "strikethrough" } },
+            { "component": "Icon", "props": { "name": "code" } },
+            { "component": "Icon", "props": { "name": "link" } },
+            { "component": "Icon", "props": { "name": "heading" } },
+            { "component": "Icon", "props": { "name": "list" } },
+            { "component": "Icon", "props": { "name": "list-ordered" } },
+            { "component": "Icon", "props": { "name": "list-checks" } },
+            { "component": "Icon", "props": { "name": "quote" } },
+            { "component": "Icon", "props": { "name": "code-block" } },
+            { "component": "Icon", "props": { "name": "table" } },
+            { "component": "Icon", "props": { "name": "editor-only" } }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "Icon", "props": { "name": "coffee" } },
+            { "component": "Icon", "props": { "name": "bot" } },
+            { "component": "Icon", "props": { "name": "rich-editor" } },
+            { "component": "Icon", "props": { "name": "split-view" } },
+            { "component": "Icon", "props": { "name": "split-rows" } },
+            { "component": "Icon", "props": { "name": "split-stacked" } },
+            { "component": "Icon", "props": { "name": "split-three" } },
+            { "component": "Icon", "props": { "name": "bell" } },
+            { "component": "Icon", "props": { "name": "bell-off" } },
+            { "component": "Icon", "props": { "name": "info" } },
+            { "component": "Icon", "props": { "name": "circle-check" } },
+            { "component": "Icon", "props": { "name": "circle-alert" } }
+          ]
+        }
+      ]
+    }
+  }
+]

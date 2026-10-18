@@ -10,3 +10,9 @@ public struct NExactWidth: LayoutValueKey {
 struct NStackGrows: LayoutValueKey {
     static let defaultValue = false
 }
+
+/// A child's own cross-axis alignment in the stack it sits in, like CSS `align-self`: `NDivider` stretches across a
+/// column and centers in a row whatever the stack's `align`.
+struct NStackAlignSelf: LayoutValueKey {
+    static let defaultValue: NStackAlign? = nil
+}

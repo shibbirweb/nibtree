@@ -46,11 +46,11 @@ struct ScenarioNode: Decodable, Sendable {
         return nil
     }
 
-    func flag(_ name: String) -> Bool {
+    func flag(_ name: String, default fallback: Bool = false) -> Bool {
         if case .bool(let value) = props?[name] {
             return value
         }
-        return false
+        return fallback
     }
 }
 

@@ -1,3 +1,4 @@
+import NibtreeTokens
 import NibtreeUI
 import SwiftUI
 
@@ -10,6 +11,9 @@ indirect enum ResolvedNode: Sendable {
     case resizeHandle(ResizeHandleProps)
     case splitPane(SplitPaneProps, first: [ResolvedNode], second: [ResolvedNode]?)
     case mergeStackFrame(MergeStackFrameProps, resultEnd: [ResolvedNode])
+    case divider(NDividerDirection, strong: Bool)
+    case spacer
+    case icon(GMIconName, NIconSize, NIconStroke, NText.Tone?)
     case unknown
 
     struct SplitHandleProps: Sendable {
@@ -128,6 +132,21 @@ indirect enum ResolvedNode: Sendable {
                     fileName: node.string("fileName") ?? "", topHeight: node.number("topHeight") ?? 0,
                     ratio: node.number("ratio") ?? 0.5),
                 resultEnd: (node.slots?["resultEnd"] ?? []).map(ResolvedNode.init))
+        case "Divider":
+            self = .divider(
+                node.string("direction").flatMap(NDividerDirection.init) ?? .horizontal,
+                strong: node.flag("strong", default: true))
+        case "Spacer":
+            self = .spacer
+        case "Icon":
+            guard let name = node.string("name").flatMap(GMIconName.init) else {
+                self = .unknown
+                return
+            }
+            self = .icon(
+                name, node.string("size").flatMap(NIconSize.init) ?? .large,
+                node.string("stroke").flatMap(NIconStroke.init) ?? .normal,
+                node.string("tone").flatMap(NText.Tone.init))
         default:
             self = .unknown
         }
@@ -135,7 +154,7 @@ indirect enum ResolvedNode: Sendable {
 }
 
 /// Draws a resolved node with the Swift twin of the ui/web component it names; an unknown component draws nothing,
-/// and the parity check fails on it.
+/// and the parity check fails on it. Stack and Text are drawn here, everything else by `ComponentNode`.
 struct ScenarioView: View {
     let node: ResolvedNode
 
@@ -156,47 +175,8 @@ struct ScenarioView: View {
                 props.content, variant: props.variant, tone: props.tone, size: props.size, weight: props.weight,
                 mono: props.mono, truncate: props.truncate, selectable: props.selectable, tabular: props.tabular,
                 strike: props.strike)
-        case .splitHandle(let props):
-            NSplitHandle(
-                ratio: .constant(props.ratio), gutter: props.gutter, resetRatio: props.resetRatio, label: props.label)
-        case .resizeHandle(let props):
-            NResizeHandle(
-                size: props.size, side: props.side, preset: props.preset, max: props.max, min: props.min,
-                defaultSize: props.defaultSize, label: props.label, inPanel: props.inPanel, onresize: { _ in })
-        case .splitPane(let props, let first, let second):
-            if let second {
-                NSplitPane(
-                    direction: props.direction, size: .constant(props.size), sized: props.sized, preset: props.preset,
-                    max: props.max, label: props.label, extent: props.extent.map { .constant($0) },
-                    inPanel: props.inPanel
-                ) {
-                    ScenarioList(nodes: first)
-                } second: {
-                    ScenarioList(nodes: second)
-                }
-            } else {
-                NSplitPane(
-                    direction: props.direction, size: .constant(props.size), sized: props.sized, preset: props.preset,
-                    max: props.max, label: props.label, inPanel: props.inPanel
-                ) {
-                    ScenarioList(nodes: first)
-                }
-            }
-        case .mergeStackFrame(let props, let resultEnd):
-            NMergeStackFrame(
-                label: props.label, labels: props.labels, fileName: props.fileName,
-                topHeight: .constant(props.topHeight), ratio: .constant(props.ratio)
-            ) {
-                EmptyView()
-            } result: {
-                EmptyView()
-            } right: {
-                EmptyView()
-            } resultEnd: {
-                ScenarioList(nodes: resultEnd)
-            }
-        case .unknown:
-            EmptyView()
+        default:
+            ComponentNode(node: node)
         }
     }
 }

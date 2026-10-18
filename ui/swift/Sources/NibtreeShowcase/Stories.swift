@@ -1,3 +1,4 @@
+import NibtreeTokens
 import NibtreeUI
 import SwiftUI
 
@@ -40,6 +41,40 @@ enum Stories {
                 NStack(gap: .xs, padding: .lg, surface: .panel, line: .bottom) {
                     NText("First")
                     NText("Second", tone: .dim)
+                }
+            }
+        },
+        Story("Divider", group: "Layout") {
+            NStack(gap: .sm) {
+                NText("Strong, then soft")
+                NDivider()
+                NDivider(strong: false)
+                NStack(direction: .row, gap: .sm) {
+                    NText("Left")
+                    NDivider(direction: .vertical)
+                    NText("Right")
+                }
+            }
+        },
+        Story("Spacer", group: "Layout") {
+            NStack(direction: .row, gap: .sm) {
+                NText("Title", variant: .title)
+                NSpacer()
+                box("One")
+                box("Two")
+            }
+        },
+        Story("Icon", group: "Content") {
+            NStack(gap: .sm) {
+                ForEach(Array(stride(from: 0, to: GMIconName.allCases.count, by: 14)), id: \.self) { start in
+                    NStack(direction: .row, gap: .sm) {
+                        ForEach(GMIconName.allCases[start..<min(start + 14, GMIconName.allCases.count)], id: \.self) {
+                            NIcon($0)
+                        }
+                    }
+                }
+                NStack(direction: .row, gap: .sm, align: .center) {
+                    ForEach(NIconSize.allCases, id: \.self) { NIcon(.settings, size: $0, tone: .dim) }
                 }
             }
         },

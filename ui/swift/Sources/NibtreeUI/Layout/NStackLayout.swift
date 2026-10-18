@@ -1,10 +1,10 @@
 import SwiftUI
 
 /// The flexbox subset `NStack` needs: a row or a column with a gap, children aligned on the cross axis (stretch fills
-/// it) and spread on the main axis (start, center, end, or between with the free space shared out between them). It
-/// also does the stack's padding (insets), like a CSS box, so a stack costs one SwiftUI view instead of several.
-/// Children marked `NStackGrows` share the free main-axis length; a growing stack (`fills`) takes the length it is
-/// offered, so it fills what its parent hands it.
+/// it, a child's `NStackAlignSelf` overrides it) and spread on the main axis (start, center, end, or between with the
+/// free space shared out between them). It also does the stack's padding (insets), like a CSS box, so a stack costs
+/// one SwiftUI view instead of several. Children marked `NStackGrows` share the free main-axis length; a growing
+/// stack (`fills`) takes the length it is offered, so it fills what its parent hands it.
 struct NStackLayout: Layout {
     var axis: Axis
     var spacing: CGFloat
@@ -120,6 +120,7 @@ struct NStackLayout: Layout {
         let origin = axis == .horizontal ? box.minX : box.minY
         let crossOrigin = axis == .horizontal ? box.minY : box.minX
         for (subview, childSize) in zip(subviews, sizes) {
+            let align = subview[NStackAlignSelf.self] ?? align
             let childCross = align == .stretch ? crossBounds : min(cross(childSize), crossBounds)
             let crossOffset: CGFloat
             switch align {

@@ -3,6 +3,7 @@
 import { chunkBlocks, chunkName } from "./chunks";
 import { colorsCss, componentBlocksCss, componentsSheet, scalesCss, tokensCss, typographyCss } from "./css";
 import { colorsGtk, metricsGtk, typographyGtk } from "./gtk";
+import { iconFilesSwift } from "./icons";
 import { designTokens, type Tokens } from "./model";
 import { colorsSwift, componentBlocksSwift, metricsSwift, SWIFT_HEADER, typographySwift } from "./swift";
 import { themeFilesSwift } from "./themes";
@@ -45,6 +46,7 @@ export function tokenOutputs(tokens: Tokens = designTokens): Output[] {
     { path: "swift/Sources/NibtreeTokens/GMTypography.swift", content: typographySwift(tokens) },
     ...components.swift.map((file) => ({ path: `swift/Sources/NibtreeTokens/${file.name}`, content: file.content })),
     ...themeFilesSwift().map((file) => ({ path: `swift/Sources/NibtreeTokens/${file.name}`, content: file.content })),
+    ...iconFilesSwift().map((file) => ({ path: `swift/Sources/NibtreeTokens/${file.name}`, content: file.content })),
     { path: "design-tokens/generated/windows/Colors.xaml", content: colorsXaml(tokens) },
     { path: "design-tokens/generated/windows/Metrics.xaml", content: metricsXaml(tokens) },
     { path: "design-tokens/generated/windows/Typography.xaml", content: typographyXaml(tokens) },

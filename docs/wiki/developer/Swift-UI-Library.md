@@ -49,6 +49,7 @@ A web prop with named values becomes a Swift enum with the same names: `gap: "md
 | `ui/swift/Sources/NibtreeShowcase/` | The showcase, its stories and `--render` |
 | `ui/swift/scripts/` | `test.sh` and the coverage report |
 | `ui/design-tokens/build/themes.ts` | Writes the themes and `GMColorToken` |
+| `ui/design-tokens/build/icons.ts` | Writes the icons (see [Swift UI Icons](Swift-UI-Icons.md)) |
 
 ## Commands
 
