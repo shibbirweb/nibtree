@@ -1,52 +1,32 @@
 // The page's side of nibtree-browser (src-tauri/browser): when the server serves the page, Tauri's IPC
 // is replaced by one WebSocket before the app starts, so `src/lib/api.ts` and every other `invoke`
 // work unchanged. Channels and backend events come back over the same socket. Desktop window
-// commands and Tauri plugins have browser answers here instead. See docs/plans/browser-app-plan.md.
+// commands and Tauri plugins have browser answers instead (localCommands.ts). See docs/plans/browser-app-plan.md.
 
 import { Channel } from "@tauri-apps/api/core";
 import { emit } from "@tauri-apps/api/event";
 import { mockIPC, mockWindows } from "@tauri-apps/api/mocks";
 
+import { saveTabLabel, savedTabLabel, setCloseConnection } from "./closedTab.svelte";
+import { answerLocally, SERVER_PLUGIN_COMMANDS } from "./localCommands";
 import { callMessage, channelPayload, parseServerMessage, socketUrl, type ServerMessage } from "./protocol";
 
 type Args = Record<string, unknown>;
 
-/** Commands the page answers itself: what a desktop window does, done by the browser tab. */
-const LOCAL_COMMANDS: Record<string, (args: Args) => unknown> = {
-  window_set_workspace: (args) => {
-    document.title = typeof args.title === "string" && args.title.trim() ? args.title : "Nibtree";
-    return null;
-  },
-  window_focus_owner: () => null,
-  window_open: () => {
-    window.open(location.href, "_blank");
-    return { windowLabel: "", existing: false };
-  },
-  window_close: () => {
-    window.close();
-    return null;
-  },
-  clear_cache: () => {
-    location.reload();
-    return null;
-  },
-  "plugin:app|version": () => window.__NIBTREE_BROWSER__?.version ?? "",
-  "plugin:app|name": () => "Nibtree",
-  "plugin:window|is_fullscreen": () => false,
-  "plugin:opener|open_url": (args) => {
-    window.open(String(args.url ?? ""), "_blank", "noopener");
-    return null;
-  },
-};
-
 export function startBrowserTransport(): void {
   const basePath = window.__NIBTREE_BROWSER__?.basePath ?? "/";
-  const socket = new WebSocket(socketUrl(location, basePath));
+  const socket = new WebSocket(socketUrl(location, basePath, savedTabLabel()));
   const opened = new Promise<void>((resolve) => socket.addEventListener("open", () => resolve(), { once: true }));
   const pending = new Map<number, { resolve: (value: unknown) => void; reject: (error: unknown) => void }>();
   const channels = new Map<number, Channel<unknown>>();
   const warned = new Set<string>();
   let nextCallId = 1;
+  setCloseConnection(() => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: "close" }));
+    }
+    socket.close();
+  });
 
   socket.addEventListener("message", (event) => {
     const message = typeof event.data === "string" ? parseServerMessage(event.data) : null;
@@ -62,7 +42,9 @@ export function startBrowserTransport(): void {
   });
 
   function receive(message: ServerMessage): void {
-    if (message.type === "result") {
+    if (message.type === "hello") {
+      saveTabLabel(message.tabLabel);
+    } else if (message.type === "result") {
       const waiter = pending.get(message.callId);
       pending.delete(message.callId);
       if (message.ok) {
@@ -80,11 +62,11 @@ export function startBrowserTransport(): void {
   mockWindows("main");
   mockIPC(
     (command, args) => {
-      const local = LOCAL_COMMANDS[command];
+      const local = answerLocally(command, (args ?? {}) as Args);
       if (local) {
-        return local((args ?? {}) as Args);
+        return local.answer;
       }
-      if (command.startsWith("plugin:")) {
+      if (command.startsWith("plugin:") && !SERVER_PLUGIN_COMMANDS.has(command)) {
         if (!warned.has(command)) {
           warned.add(command);
           console.warn(`Not available in the browser yet: ${command}`);

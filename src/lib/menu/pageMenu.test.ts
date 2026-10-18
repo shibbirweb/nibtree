@@ -45,6 +45,8 @@ describe("pageMenus", () => {
   it("keeps the native menu's menus and leaves out what only a desktop window has", () => {
     const menus = pageMenus(spec, context());
     expect(menus.map((menu) => menu.label)).toEqual(spec.map((top) => top.text));
+    // The app's own menu (macOS) is the one in bold.
+    expect(menus.filter((menu) => menu.strong).map((menu) => menu.label)).toEqual(["Nibtree"]);
     const all = menus.flatMap((menu) => menu.items);
     for (const label of ["Services", "Hide Others", "Show All", "Minimize", "Bring All to Front"]) {
       expect(find(all, label)).toBeNull();

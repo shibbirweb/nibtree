@@ -2,6 +2,9 @@
      Open, Local History, the MCP tools, the opening progress, toasts, Git dialogs, confirms and context menus. -->
 <script lang="ts">
   import AskpassDialog from "$lib/askpass/AskpassDialog.svelte";
+  import { isBrowserHost } from "$lib/browser/host";
+  import PathPicker from "$lib/browser/PathPicker.svelte";
+  import { pathPicker } from "$lib/browser/pickerStore.svelte";
   import { helpDialogs } from "$lib/help/helpDialogs.svelte";
   import { localHistory } from "$lib/localHistory/localHistory.svelte";
   import { mcpStore } from "$lib/mcp/mcpStore.svelte";
@@ -34,6 +37,13 @@
 {/if}
 
 <AskpassDialog />
+
+<!-- The open and save dialog of the app in a browser tab, which has no system one. -->
+{#if isBrowserHost() && pathPicker.request}
+  {#key pathPicker.request}
+    <PathPicker request={pathPicker.request} />
+  {/key}
+{/if}
 
 {#if helpDialogs.shortcutsOpen}
   {#await import("$lib/help/ShortcutsDialog.svelte") then module}

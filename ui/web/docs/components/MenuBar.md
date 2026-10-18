@@ -15,7 +15,8 @@ at another name while a menu is open opens that one; Left and Right move along t
 
 ## Props
 
-- `menus` (`MenuBarMenu[] ({ label, items }, from logic/menuBarModel.ts)`, required): The menus, left to right.
+- `menus` (`MenuBarMenu[] ({ label, items, strong? }, from logic/menuBarModel.ts)`, required): The menus, left to right;
+  `strong` sets the app's own menu name in bold.
 - `label` (`string`, default `"Menu bar"`): Accessible name.
 - `surface` (`"panel" | "none"`, default `"panel"`): Its own panel background with a line under it, or none inside
   AppHeader's menuBar row, where the header's background and glow show through.

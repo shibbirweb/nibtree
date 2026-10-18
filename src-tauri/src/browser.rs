@@ -62,6 +62,16 @@ impl Runtime {
         Runtime { app }
     }
 
+    /// A tab is gone (closed, or not back after a reload): frees what it owned, as a closed desktop window.
+    pub fn release_tab(&self, tab_label: &str) {
+        let app = self.app.clone();
+        let label = tab_label.to_string();
+        std::thread::spawn(move || {
+            app.state().window_book().remove(&label);
+            crate::commands::window::release_window_state(app.state(), &label);
+        });
+    }
+
     /// Runs a command for the tab `tab_label`. Raw-body commands get their bytes in `raw`.
     pub fn call(
         &self,

@@ -36,5 +36,6 @@ describe("browser protocol", () => {
       "wss://box.example/nib/__nibtree/socket",
     );
     expect(socketUrl({ protocol: "http:", host: "h" }, "/nib")).toBe("ws://h/nib/__nibtree/socket");
+    expect(socketUrl({ protocol: "http:", host: "h" }, "/", "tab-3")).toBe("ws://h/__nibtree/socket?tab=tab-3");
   });
 });

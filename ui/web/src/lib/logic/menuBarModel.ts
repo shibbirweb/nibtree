@@ -4,6 +4,8 @@ import type { MenuItem } from "./menuModel";
 export interface MenuBarMenu {
   label: string;
   items: MenuItem[];
+  /** The app's own menu, its name in bold, as macOS shows it. */
+  strong?: boolean;
 }
 
 /** The menu `step` places from `index`, wrapping at both ends. */

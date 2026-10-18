@@ -398,22 +398,25 @@ pub fn on_window_event(app: &AppHandle, window_label: &str, event: &WindowEvent)
 
 /// Frees what a closed window owned, off the main thread: stopping watchers and shells waits for threads.
 fn release_window(app: &AppHandle, window_label: &str) {
-    let state = app.state::<AppState>();
-    state.preview_folders.remove(window_label);
-    state.keep_awake.release(window_label);
-    state.open_files.remove(window_label);
-    let watchers = super::workspace::take_window_watchers(&state, window_label);
-    let terminals = state.terminals.clone();
-    state.terminal_links.forget_window(window_label);
-    let searches = state.file_search.clone();
     let label = window_label.to_string();
     let app = app.clone();
     tauri::async_runtime::spawn_blocking(move || {
-        drop(watchers);
-        terminals.close_window(&label);
-        searches.remove(&label);
+        release_window_state(app.state::<AppState>().inner(), &label);
         save_session(&app);
     });
+}
+
+/// What a desktop window or a browser tab owned: previews, keep awake, watchers, terminals and search indexes.
+/// Stopping watchers and shells waits for their threads, so it runs off the main thread.
+pub fn release_window_state(state: &AppState, window_label: &str) {
+    state.preview_folders.remove(window_label);
+    state.keep_awake.release(window_label);
+    state.open_files.remove(window_label);
+    let watchers = super::workspace::take_window_watchers(state, window_label);
+    state.terminal_links.forget_window(window_label);
+    drop(watchers);
+    state.terminals.close_window(window_label);
+    state.file_search.remove(window_label);
 }
 
 /// The app is about to quit: every window stays in the session (Cmd+Q closes them all at once).

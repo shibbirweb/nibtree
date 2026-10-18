@@ -12,6 +12,7 @@
 <Stack gap="md">
   <MenuBar
     menus={[
+      { label: "Nibtree", strong: true, items: [{ label: "About Nibtree", action: run("About") }] },
       {
         label: "File",
         items: [

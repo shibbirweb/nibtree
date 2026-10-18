@@ -2,6 +2,7 @@ pub mod ai;
 pub mod askpass;
 pub mod auto_fetch;
 pub mod bisect;
+pub mod browse;
 pub mod branch;
 pub mod branch_actions;
 pub mod commit_options;

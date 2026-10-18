@@ -78,6 +78,7 @@
       type="button"
       class="name"
       class:open={shown?.index === index}
+      class:strong={menu.strong}
       role="menuitem"
       aria-haspopup="menu"
       aria-expanded={shown?.index === index}
@@ -140,6 +141,10 @@
     font: inherit;
     white-space: nowrap;
     cursor: default;
+  }
+
+  .name.strong {
+    font-weight: var(--font-weight-bold);
   }
 
   .name:hover,

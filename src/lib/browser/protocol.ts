@@ -60,9 +60,14 @@ export function parseServerMessage(text: string): ServerMessage | null {
   }
 }
 
-/** The socket's URL next to the page, under the server's base path. */
-export function socketUrl(location: { protocol: string; host: string }, basePath: string): string {
+/** The socket's URL next to the page, under the server's base path; `tabLabel` asks for the tab's old label. */
+export function socketUrl(
+  location: { protocol: string; host: string },
+  basePath: string,
+  tabLabel: string | null = null,
+): string {
   const scheme = location.protocol === "https:" ? "wss" : "ws";
   const base = basePath.endsWith("/") ? basePath : `${basePath}/`;
-  return `${scheme}://${location.host}${base}__nibtree/socket`;
+  const query = tabLabel ? `?tab=${encodeURIComponent(tabLabel)}` : "";
+  return `${scheme}://${location.host}${base}__nibtree/socket${query}`;
 }

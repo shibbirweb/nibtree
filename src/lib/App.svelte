@@ -9,6 +9,8 @@
   import { WheelZoom } from "$lib/editor/wheelZoom";
   import { followEditorSettings } from "$lib/editorSettingsSync.svelte";
   import { isBrowserHost } from "$lib/browser/host";
+  import { closedTab } from "$lib/browser/closedTab.svelte";
+  import TabClosed from "$lib/browser/TabClosed.svelte";
   import { usesDefaultKeys } from "$lib/commands/commandRuntime";
   import { appMenu } from "$lib/menu/appMenu.svelte";
   import { pageMenuHost } from "$lib/menu/pageMenuHost.svelte";
@@ -260,7 +262,9 @@
   }
 </script>
 
-{#if launch?.mode === "mergeTool"}
+{#if closedTab.closed}
+  <TabClosed />
+{:else if launch?.mode === "mergeTool"}
   <MergeToolApp />
 {:else if launch && repoStore.workspace}
   <Workspace />

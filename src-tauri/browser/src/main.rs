@@ -3,6 +3,7 @@
 
 mod access;
 mod assets;
+mod opener;
 mod options;
 mod socket;
 

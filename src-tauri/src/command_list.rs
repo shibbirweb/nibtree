@@ -137,6 +137,7 @@ macro_rules! with_commands {
             commands::workspace::read_workspace_file,
             commands::workspace::write_workspace_file,
             commands::files::list_directories,
+            commands::browse::browse_folder,
             commands::files::read_worktree_file,
             commands::files::preview_stat,
             commands::file_ops::file_create,

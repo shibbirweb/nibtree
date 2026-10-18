@@ -164,7 +164,8 @@ export const overlayDocs: ComponentDoc[] = [
       "items. Pointing at another name while a menu is open opens that one; Left and Right move along the bar.",
     aliases: ["Menubar", "Application menu", "Main menu"],
     props: [
-      prop("menus", "MenuBarMenu[] ({ label, items }, from logic/menuBarModel.ts)", "The menus, left to right.", {
+      prop("menus", "MenuBarMenu[] ({ label, items, strong? }, from logic/menuBarModel.ts)", "The menus, left to " +
+        "right; `strong` sets the app's own menu name in bold.", {
         required: true,
       }),
       prop("label", "string", "Accessible name.", { default: '"Menu bar"' }),

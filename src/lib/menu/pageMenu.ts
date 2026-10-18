@@ -6,7 +6,7 @@ import type { MenuBarMenu } from "@nibtree/ui/logic/menuBarModel";
 import type { MenuItem } from "@nibtree/ui/logic/menuModel";
 import type { MenuAction } from "./menuIds";
 import { isShown, type MenuState } from "./menuState";
-import type { ActionEntry, MenuEntry, NativeItem, TopMenu } from "./menuSpec";
+import { APP_NAME, type ActionEntry, type MenuEntry, type NativeItem, type TopMenu } from "./menuSpec";
 
 export interface PageMenuContext {
   state: MenuState;
@@ -38,7 +38,7 @@ const NATIVE_TEXT: Record<NativeItem, string> = {
 
 export function pageMenus(spec: TopMenu[], context: PageMenuContext): MenuBarMenu[] {
   return spec
-    .map((top) => ({ label: top.text, items: menuItems(top.items, context) }))
+    .map((top) => ({ label: top.text, items: menuItems(top.items, context), strong: top.text === APP_NAME }))
     .filter((menu) => menu.items.length > 0);
 }
 
