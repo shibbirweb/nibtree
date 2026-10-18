@@ -204,6 +204,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- Typing in the Rich Editor no longer rewrites the rest of a file whose fenced code block is followed by a code span holding a tag, such as `` `name@<version>` ``. Before, the code span was saved with a placeholder in it and lists were reindented.
 - With **Rounded panels** on, the merge, rebase and bisect banners are rounded panels with a gap around them, like the panels below, instead of a bar across the whole window.
 - On macOS the window buttons no longer cover the title of the merge tool ("Merge Revisions for"): its top bar leaves room for them, and you can drag the window by it.
 - Three panes (the staging view, merge commits and the merge tool) can be resized: drag the edge of a column of bands, double-click for equal widths. The widths are remembered.
