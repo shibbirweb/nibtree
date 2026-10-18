@@ -3774,7 +3774,7 @@ define(
     await shot.settle();
     await shot.save(await shot.clipAround([usage, details], { top: 12, left: 24, right: 12, bottom: 0 }));
   },
-  () => ({ aiUsage: true }),
+  () => ({ aiUsage: true, settings: { aiUsagePosition: "right" } }),
 );
 
 define(

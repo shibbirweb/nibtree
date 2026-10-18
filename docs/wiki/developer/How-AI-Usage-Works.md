@@ -50,6 +50,8 @@ flowchart LR
 
 **Slow polling.** Anthropic refuses frequent requests, and the numbers change slowly.
 
+**Hidden by default.** Reading Claude Code's sign-in makes macOS ask for the Keychain password, and nobody should see that prompt before choosing to show the usage. With **Hidden** the status bar mounts no `AiUsage`, `usageStore` has no viewer (so `refreshSoon` does nothing) and `ai_usage` is never called; the first read, and the first prompt, come when you pick Right or Left.
+
 ## Tests
 
 - Rust: credentials parsing; the request's address and headers; both windows; signed out, expired (not sent), 401, 429, unreadable answers and offline; Codex's last record, window sorting, both reset forms, a passed reset, the newest log with numbers; ISO and epoch times.

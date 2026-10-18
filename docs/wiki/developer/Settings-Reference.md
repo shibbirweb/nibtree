@@ -11,7 +11,7 @@ Validators: `pickBoolean` (a boolean, else the default), `pickNumber` (a finite 
 | Key | Default | Accepted | Used by |
 | --- | --- | --- | --- |
 | `theme` | `"system"` | `system`, `light`, `dark` | `applyAppearance`, `colorMode` |
-| `roundedPanels` | false | boolean | `data-rounded-panels` |
+| `roundedPanels` | true | boolean | `data-rounded-panels` |
 | `projectColorHeader` | true | boolean | `views/Header.svelte`: `AppHeader`'s `tint` |
 | `fileToolbar` | `"top"` | `top`, `bottom`, `none` | `FileView`, `EmptyMain`, `navBar/` |
 | `fileToolbarBreadcrumbs`, `fileToolbarBadges`, `fileToolbarChanges`, `fileToolbarBlame`, `fileToolbarCopyPath`, `fileToolbarMarkdownView`, `fileToolbarMarkdownFormat` | true | boolean | `views/files/fileToolbar.ts` |

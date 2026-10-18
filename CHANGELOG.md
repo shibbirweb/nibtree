@@ -148,6 +148,8 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Changed
 
+- Rounded panels are on by default for new installs. If you already use Nibtree, your current look stays until you change it in Settings > Appearance.
+- The AI usage readout in the status bar is off by default for new installs, so macOS no longer asks for your Keychain password until you turn it on. Pick **Right** or **Left** in **Settings > AI > Usage in status bar** to see it.
 - With rounded panels off, the project color in the top bar glows the same way as with rounded panels on: from the window's top left corner, easing out to the right, instead of a narrow band along the bar.
 - A folded run of unchanged lines in a diff always shows its buttons, at the left of the fold in every layout, instead of only under the pointer. They read **10 more from the top** and **10 more from the bottom**, with arrows pointing the way the lines open.
 - Every diff and the merge tool (side by side diffs, the staging view, merge commits, a commit next to your working tree) color each change through its line numbers, so it runs as one band from pane to pane. Each side's line numbers face the middle, the Apply, Ignore and Revert buttons sit beside them without covering any number, and the gaps between panes are narrower. The panes scroll together with one scrollbar at the right edge.
