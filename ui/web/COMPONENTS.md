@@ -30,8 +30,8 @@ ThemeSwatch, StatusDot, Avatar, Pill, Mark, Meter, ZoomBadge, SymbolBadge, Logo,
 
 [What each one is for](docs/groups/Overlays.md)
 
-Dialog, Popover, Menu, MenuButton, ToastHost, WindowLayer, LoadingOverlay, CommandPalette, ChoiceMenu, DialogHead,
-PaletteRow, CrumbPopup
+Dialog, Popover, Menu, MenuBar, MenuButton, ToastHost, WindowLayer, LoadingOverlay, CommandPalette, ChoiceMenu,
+DialogHead, PaletteRow, CrumbPopup
 
 ## Navigation
 

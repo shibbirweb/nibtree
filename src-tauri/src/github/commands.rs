@@ -25,48 +25,48 @@ fn with_github<T>(work: impl FnOnce(&GitHub) -> AppResult<T>) -> AppResult<T> {
 }
 
 /// The signed-in account from github.json: no keychain read, no network.
-#[tauri::command]
+#[crate::command]
 pub async fn github_account() -> AppResult<Option<GitHubAccount>> {
     blocking(|| with_github(|github| Ok(github.account()))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_cli_status() -> AppResult<GhCliStatus> {
     blocking(|| with_github(|github| Ok(github.cli_status()))).await
 }
 
 /// Verifies `token` with GitHub and saves it in the keychain. It is never sent back.
-#[tauri::command]
+#[crate::command]
 pub async fn github_sign_in_with_token(token: String) -> AppResult<GitHubAccount> {
     blocking(move || with_github(|github| github.sign_in_with_token(&token))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_sign_in_with_cli() -> AppResult<GitHubAccount> {
     blocking(|| with_github(|github| github.sign_in_with_cli())).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_sign_out() -> AppResult<()> {
     blocking(|| with_github(|github| github.sign_out())).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_share_project(repo_path: String, request: ShareRequest) -> AppResult<SharedRepository> {
     blocking(move || with_github(|github| github.share_project(&repo_path, &request))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_repository(owner: String, repo: String) -> AppResult<RepositoryInfo> {
     blocking(move || with_github(|github| github.repository(&owner, &repo))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_sync_fork(owner: String, repo: String, branch_name: String) -> AppResult<SyncForkOutcome> {
     blocking(move || with_github(|github| github.sync_fork(&owner, &repo, &branch_name))).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn github_create_gist(request: GistRequest) -> AppResult<CreatedGist> {
     blocking(move || with_github(|github| github.create_gist(&request))).await
 }

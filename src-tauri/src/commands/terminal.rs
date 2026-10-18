@@ -1,11 +1,12 @@
 use std::time::Instant;
 
 use serde::Serialize;
-use tauri::ipc::{Channel, InvokeResponseBody};
+#[cfg(feature = "desktop")]
 use tauri::{State, Window};
 
 use super::blocking;
 use crate::error::AppResult;
+use crate::host::{ChannelBody, HostChannel};
 use crate::state::AppState;
 use crate::terminal::{self, ShellProfile, TerminalInfo, TerminalRegistry};
 use crate::terminal_link::{Delivery, Sink, TerminalLinks, TerminalStash, DETACHED_TIMEOUT};
@@ -19,26 +20,26 @@ struct TerminalExitMessage {
 
 /// A terminal's or a run's page channel: merged output as raw bytes (an ArrayBuffer in JS), then
 /// the exit as a `{ exit }` JSON message, after every byte of output.
-pub(crate) fn channel_sink(output: Channel<InvokeResponseBody>) -> Sink {
+pub(crate) fn channel_sink(output: HostChannel<ChannelBody>) -> Sink {
     Box::new(move |delivery| {
         let _ = match delivery {
-            Delivery::Output(bytes) => output.send(InvokeResponseBody::Raw(bytes)),
+            Delivery::Output(bytes) => output.send_body(ChannelBody::Raw(bytes)),
             Delivery::Exit(exit_code) => match serde_json::to_string(&TerminalExitMessage { exit: exit_code }) {
-                Ok(json) => output.send(InvokeResponseBody::Json(json)),
+                Ok(json) => output.send_body(ChannelBody::Json(json)),
                 Err(_) => Ok(()),
             },
         };
     })
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn terminal_shells() -> AppResult<Vec<ShellProfile>> {
     blocking(|| Ok(terminal::shell_profiles())).await
 }
 
 /// Output goes to `output` as raw bytes, then the exit as `{ exit }` (see `send_output` and `send_exit`).
 /// The view acknowledges written output with `terminal_ack`.
-#[tauri::command]
+#[crate::command]
 pub async fn terminal_spawn(
     window: Window,
     state: State<'_, AppState>,
@@ -46,7 +47,7 @@ pub async fn terminal_spawn(
     cwd: Option<String>,
     cols: u16,
     rows: u16,
-    output: Channel<InvokeResponseBody>,
+    output: Channel<ChannelBody>,
 ) -> AppResult<TerminalInfo> {
     let terminals = state.terminals.clone();
     let links = state.terminal_links.clone();
@@ -63,24 +64,24 @@ pub async fn terminal_spawn(
 
 /// Runs on every keystroke: it only queues the bytes for the terminal's writer thread,
 /// so it stays a cheap synchronous command and keeps keystrokes in order.
-#[tauri::command]
+#[crate::command]
 pub fn terminal_write(state: State<'_, AppState>, terminal_id: u32, data: String) {
     state.terminals.write(terminal_id, data.into_bytes());
 }
 
 /// The view wrote `byte_count` more bytes of output (sent about every 128 KB), so a
 /// terminal paused by flow control can read on. Cheap and synchronous, like `terminal_write`.
-#[tauri::command]
+#[crate::command]
 pub fn terminal_ack(state: State<'_, AppState>, terminal_id: u32, byte_count: usize) {
     state.terminals.ack(terminal_id, byte_count);
 }
 
-#[tauri::command]
+#[crate::command]
 pub fn terminal_resize(state: State<'_, AppState>, terminal_id: u32, cols: u16, rows: u16) -> AppResult<()> {
     state.terminals.resize(terminal_id, cols, rows)
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn terminal_close(state: State<'_, AppState>, terminal_id: u32) -> AppResult<()> {
     let terminals = state.terminals.clone();
     blocking(move || {
@@ -91,7 +92,7 @@ pub async fn terminal_close(state: State<'_, AppState>, terminal_id: u32) -> App
 }
 
 /// Memory of the asking window's terminals and runs, each with what its shell started, for the memory details.
-#[tauri::command]
+#[crate::command]
 pub async fn terminal_memory(window: Window, state: State<'_, AppState>) -> AppResult<Vec<TerminalMemory>> {
     let shells = state.terminals.window_shells(window.label());
     blocking(move || Ok(crate::terminal_memory::usage(&shells))).await
@@ -99,7 +100,7 @@ pub async fn terminal_memory(window: Window, state: State<'_, AppState>) -> AppR
 
 /// Closes the asking window's terminals and runs (it reloaded); other windows keep theirs, and
 /// terminals waiting for this window after Clear Cache stay for `terminal_reattach`.
-#[tauri::command]
+#[crate::command]
 pub async fn terminal_close_all(window: Window, state: State<'_, AppState>) -> AppResult<()> {
     let terminals = state.terminals.clone();
     let links = state.terminal_links.clone();
@@ -130,7 +131,7 @@ pub(crate) fn stash_terminals(terminals: &TerminalRegistry, links: &TerminalLink
 }
 
 /// A starting page takes what its window left before Clear Cache, once; None after a normal start.
-#[tauri::command]
+#[crate::command]
 pub async fn terminal_unstash(window: Window, state: State<'_, AppState>) -> AppResult<Option<TerminalStash>> {
     let links = state.terminal_links.clone();
     let window_label = window.label().to_string();
@@ -139,8 +140,8 @@ pub async fn terminal_unstash(window: Window, state: State<'_, AppState>) -> App
 
 /// Connects a waiting terminal to the new page: what it printed meanwhile comes first, then
 /// live output. False when the terminal is not waiting (it was closed or timed out).
-#[tauri::command]
-pub async fn terminal_reattach(state: State<'_, AppState>, terminal_id: u32, output: Channel<InvokeResponseBody>) -> AppResult<bool> {
+#[crate::command]
+pub async fn terminal_reattach(state: State<'_, AppState>, terminal_id: u32, output: Channel<ChannelBody>) -> AppResult<bool> {
     let links = state.terminal_links.clone();
     blocking(move || Ok(links.reattach(terminal_id, channel_sink(output)))).await
 }

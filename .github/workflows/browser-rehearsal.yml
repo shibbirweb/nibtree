@@ -1,0 +1,31 @@
+# Rehearses a release of the browser version on every push to develop, the line betas are cut from: release-mode
+# programs on all six platforms, their smoke tests, `bun publish --dry-run` of every npm package and the
+# two-architecture Docker build, with nothing uploaded. So a problem with publishing shows up here, before a
+# release is cut, instead of halfway through one. See browser.yml.
+name: Browser release rehearsal
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push makes an older rehearsal pointless.
+concurrency:
+  group: browser-rehearsal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rehearse:
+    name: Rehearse
+    # browser.yml's Docker job asks for packages: write even when it pushes nothing.
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/browser.yml
+    with:
+      tag: ${{ github.sha }}
+      publish: true
+      dry_run: true

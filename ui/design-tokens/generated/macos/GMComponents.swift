@@ -221,6 +221,7 @@ public enum GMMenuTokens {
     public static let itemRadius: CGFloat = 4
     public static let itemGap: CGFloat = 24
     public static let separatorInset: CGFloat = 6
+    public static let checkWidth: CGFloat = 16
 }
 
 public enum GMPopoverTokens {

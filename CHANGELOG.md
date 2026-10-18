@@ -13,6 +13,8 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Added
 
+- Nibtree runs in your browser too: `npx nibtree` (or `npx nibtree@next` for the newest beta) starts it on your machine and opens the whole app in a browser tab, with its own settings in `~/.nibtree-browser`. It works on macOS, Linux and Windows, on Intel and Arm, and needs an access token on every page; `--host 0.0.0.0` lets other machines in.
+- The browser version also comes as a Docker image with git, git-lfs, SSH and GnuPG inside: `docker run -p 4410:4410 -v "$PWD:/workspace" ghcr.io/shibbirweb/nibtree` (also on Docker Hub). It listens on its own port, 4410, so it can run next to `npx nibtree`; `NIBTREE_PUBLIC_URL` prints the right address when you map another port. `docker/compose.yaml` starts it with `docker compose up -d`, reachable only from your own machine.
 - The merge tool has two layouts. **Columns** shows yours, the result and theirs side by side; **Stacked** shows yours and theirs on top and the result across the bottom, with **Accept**, **Accept both** and **Ignore** above each change and a note on each open conflict in the result. Switch with the buttons in the toolbar, without losing any work; the choice is remembered and **Merge tool layout** in Settings > Git sets it.
 - The window glows softly in the open project's color from its top left corner, the same color as its tile on the Welcome page, so windows are easy to tell apart. On macOS the window buttons now sit in the app's top bar, with no separate title strip. Turn the color off with **Project color in the top bar** in Settings > Appearance.
 - A commit's message and details (History panel and commit tabs) can be resized: drag the bar above the changed files. The height is remembered.
@@ -148,6 +150,9 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Changed
 
+- Rounded panels are on by default for new installs. If you already use Nibtree, your current look stays until you change it in Settings > Appearance.
+- The AI usage readout in the status bar is off by default for new installs, so macOS no longer asks for your Keychain password until you turn it on. Pick **Right** or **Left** in **Settings > AI > Usage in status bar** to see it.
+- With rounded panels off, the project color in the top bar glows the same way as with rounded panels on: from the window's top left corner, easing out to the right, instead of a narrow band along the bar.
 - A folded run of unchanged lines in a diff always shows its buttons, at the left of the fold in every layout, instead of only under the pointer. They read **10 more from the top** and **10 more from the bottom**, with arrows pointing the way the lines open.
 - Every diff and the merge tool (side by side diffs, the staging view, merge commits, a commit next to your working tree) color each change through its line numbers, so it runs as one band from pane to pane. Each side's line numbers face the middle, the Apply, Ignore and Revert buttons sit beside them without covering any number, and the gaps between panes are narrower. The panes scroll together with one scrollbar at the right edge.
 - Git Manager is now **Nibtree**: the app (`Nibtree.app`), its identifier (`io.github.shibbirweb.nibtree`), the command line tool (`nibtree`), the settings folder (`~/.nibtree`, moved from `~/.gitmanager` on first start), saved workspaces (`.nibtree-workspace`; old `.gitmanager-workspace` files still open) and the repository (`shibbirweb/nibtree`). Install the command again from Settings, set up `git mergetool` again with the new lines, and sign in to GitHub again.
@@ -199,6 +204,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- Typing in the Rich Editor no longer rewrites the rest of a file whose fenced code block is followed by a code span holding a tag, such as `` `name@<version>` ``. Before, the code span was saved with a placeholder in it and lists were reindented.
 - With **Rounded panels** on, the merge, rebase and bisect banners are rounded panels with a gap around them, like the panels below, instead of a bar across the whole window.
 - On macOS the window buttons no longer cover the title of the merge tool ("Merge Revisions for"): its top bar leaves room for them, and you can drag the window by it.
 - Three panes (the staging view, merge commits and the merge tool) can be resized: drag the edge of a column of bands, double-click for equal widths. The widths are remembered.

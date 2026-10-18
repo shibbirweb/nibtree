@@ -2,6 +2,7 @@ use crate::paths::RealPath;
 use std::collections::HashMap;
 use std::path::PathBuf;
 
+#[cfg(feature = "desktop")]
 use tauri::State;
 
 use super::{blocking, safe_join};
@@ -16,7 +17,7 @@ use crate::state::AppState;
 /// `repo_roots` are the workspace repositories, used for `isRepo` and `ignored`. A folder
 /// whose stamp in `known` still matches answers `unchanged` without being read; a folder that
 /// cannot be read answers with its own `error`, so one deleted folder never fails the rest.
-#[tauri::command]
+#[crate::command]
 pub async fn list_directories(
     root_path: String,
     dir_paths: Vec<String>,
@@ -51,7 +52,7 @@ pub async fn list_directories(
 
 /// Reads a file for the editor; with the `known_version` of the text it has, an unchanged
 /// file answers `unchanged` without its text.
-#[tauri::command]
+#[crate::command]
 pub async fn read_worktree_file(
     repo_path: String,
     file_path: String,
@@ -67,7 +68,7 @@ pub async fn read_worktree_file(
 /// What the preview needs before it loads a `gmpreview` URL: whether the file is there, its
 /// size and, when it is too big, the limit. A work tree file (absolute `file_path`) without
 /// `repo_root`, else a repo-relative `file_path` of `repo_root` at `revision`.
-#[tauri::command]
+#[crate::command]
 pub async fn preview_stat(
     window: tauri::Window,
     state: State<'_, AppState>,

@@ -2,7 +2,7 @@
 
 Rounded panels give Nibtree a calm, spaced-out look. The sidebar, each editor, the bottom panel and the Files panel become separate panels with round corners. A small gap shows the window color between them, so each part of the window stands on its own.
 
-The setting is **off by default** and works with **every color theme**, not only Islet Light and Islet Dark.
+The setting is **on by default** and works with **every color theme**, not only Islet Light and Islet Dark.
 
 ![The window with rounded panels in a dark theme](../images/rounded-panels.png)
 
@@ -11,7 +11,7 @@ The setting is **off by default** and works with **every color theme**, not only
 ## Turn it on or off
 
 1. Open **Settings** (Cmd+,). It opens on **Appearance**.
-2. Turn on **Rounded panels**.
+2. Turn **Rounded panels** on or off.
 
 The window changes at once. Turn the switch off to get the classic look back, with panels joined by thin lines.
 
@@ -39,7 +39,7 @@ The **Islet Light** and **Islet Dark** themes come with their own frame colors, 
 
 ## Saved where
 
-The choice is saved in `~/.nibtree/settings.json` as `roundedPanels`, for example `"roundedPanels": true`. Anything other than `true` or `false` counts as off. See [Settings Files](Settings-Files.md).
+The choice is saved in `~/.nibtree/settings.json` as `roundedPanels`, for example `"roundedPanels": true`. Anything other than `true` or `false` counts as on, the default. See [Settings Files](Settings-Files.md).
 
 ## Related
 

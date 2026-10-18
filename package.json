@@ -34,8 +34,8 @@
     "ui:mcp": "bun ui/mcp/server.ts",
     "ui:themes": "bun --bun ui/web/scripts/themes.ts",
     "ui:migration": "bun ui/web/scripts/migration.ts",
-    "format": "bun --bun prettier --write \"src/**/*.{ts,svelte,css}\" \"ui/**/*.{ts,svelte,css,json}\" \"scripts/**/*.ts\"",
-    "format:check": "bun --bun prettier --check \"src/**/*.{ts,svelte,css}\" \"ui/**/*.{ts,svelte,css,json}\" \"scripts/**/*.ts\""
+    "format": "bun --bun prettier --write \"src/**/*.{ts,svelte,css}\" \"ui/**/*.{ts,svelte,css,json}\" \"scripts/**/*.ts\" \"npm/**/*.{mjs,json}\"",
+    "format:check": "bun --bun prettier --check \"src/**/*.{ts,svelte,css}\" \"ui/**/*.{ts,svelte,css,json}\" \"scripts/**/*.ts\" \"npm/**/*.{mjs,json}\""
   },
   "license": "MIT",
   "dependencies": {

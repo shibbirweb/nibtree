@@ -23,7 +23,7 @@ fn current_store() -> AppResult<Store> {
 }
 
 /// Settings > Editor > Local History. Switching on prunes once in the background.
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_configure(enabled: bool, max_days: u32, max_size_mb: u32) -> AppResult<()> {
     let root = if enabled { Some(config_dir()?.join(store::DIR_NAME)) } else { None };
     history::configure(root, Limits::new(max_days, max_size_mb));
@@ -59,7 +59,7 @@ pub fn request_bytes(requests: Vec<RecordRequest>) -> Vec<(String, Vec<u8>, Labe
 }
 
 /// External changes and Revert: one call with every snapshot, in order.
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_record(records: Vec<RecordRequest>) -> AppResult<()> {
     blocking(move || history::record(&request_bytes(records))).await
 }
@@ -84,7 +84,7 @@ pub fn file_history(store: &Store, file_path: &str) -> AppResult<FileHistory> {
     })
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_list(file_path: String) -> AppResult<FileHistory> {
     blocking(move || file_history(&current_store()?, &file_path)).await
 }
@@ -100,13 +100,13 @@ pub fn snapshot_diff(store: &Store, file_path: &str, snapshot_hash: &str, curren
     Ok(diff::from_bytes(file_path, Some(snapshot), current))
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_diff(file_path: String, snapshot_hash: String, current_text: Option<String>) -> AppResult<FileDiff> {
     blocking(move || snapshot_diff(&current_store()?, &file_path, &snapshot_hash, current_text)).await
 }
 
 /// Restore Deleted File: writes the version back; refused when a file is there again.
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_restore(file_path: String, snapshot_hash: String) -> AppResult<()> {
     blocking(move || {
         let store = current_store()?;
@@ -116,18 +116,18 @@ pub async fn local_history_restore(file_path: String, snapshot_hash: String) -> 
 }
 
 /// Recently Deleted: files under the workspace folders that have history but are gone.
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_deleted(folder_paths: Vec<String>) -> AppResult<Vec<DeletedFile>> {
     blocking(move || current_store()?.deleted_under(&folder_paths)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_usage() -> AppResult<Usage> {
     blocking(move || current_store()?.usage()).await
 }
 
 /// Clear Local History: removes every snapshot of every file.
-#[tauri::command]
+#[crate::command]
 pub async fn local_history_clear() -> AppResult<()> {
     blocking(move || {
         let store = current_store()?;

@@ -55,7 +55,7 @@
   },
   "menu": {
     "minWidth": 200, "padding": 4, "radius": "{radius.menu}", "itemPaddingX": 10, "itemPaddingY": 5,
-    "itemRadius": "{radius.small}", "itemGap": 24, "separatorInset": 6
+    "itemRadius": "{radius.small}", "itemGap": 24, "separatorInset": 6, "checkWidth": 16
   },
   "popover": {
     "offset": 2, "padding": 4, "panelPaddingY": 12, "panelPaddingX": 14, "radius": "{radius.menu}", "formPadding": 12,
@@ -201,7 +201,7 @@
   "zoomBadge": {"top": 56, "paddingY": 6, "paddingX": 14, "radius": 16},
   "patchView": {"paddingY": 6, "linePaddingX": 12, "lineHeight": "{lineHeight.relaxed}"},
   "appHeader": {
-    "height": 42, "paddingX": 8, "gap": 12, "sideGap": 4, "dividerLength": 18, "busyMaxWidth": 280, "tintWidth": 520,
+    "height": 42, "paddingX": 8, "gap": 12, "sideGap": 4, "dividerLength": 18, "busyMaxWidth": 280,
     "controlsInset": 80
   },
   "logo": {

@@ -22,10 +22,12 @@ menu. Item shapes match the app's contextMenu items.
 - `keyboard` (`boolean`, default `false`): Highlight the first item at once (opened with the keyboard).
 - `label` (`string`, default `"Menu"`): Accessible name.
 - `onclose` (`(restoreFocus: boolean) => void`, required): Close it; restoreFocus is true after Esc or a command.
+- `onstep` (`(step: 1 | -1) => void`): Left and Right go here instead of closing (MenuBar's next menu).
 
 ## Rules
 
 - Shortcut hints come from commandKeys(id), never typed by hand.
+- A command with `checked` is a check item; the menu then lines up every label after the mark's room.
 
 ## Example: Context menu
 

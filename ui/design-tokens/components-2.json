@@ -35,5 +35,8 @@
     "sectionPaddingX": 5, "sectionGap": 4, "groupHeight": "{size.treeRow}", "groupPaddingLeft": 24,
     "groupPaddingRight": 6, "groupGap": 6, "markWidth": 3, "markInset": 5
   },
-  "scrollbar": {"size": 10, "thumbRadius": 10, "thumbInset": 2}
+  "scrollbar": {"size": 10, "thumbRadius": 10, "thumbInset": 2},
+  "menuBar": {
+    "height": 30, "paddingX": 4, "gap": 0, "itemPaddingX": 8, "itemHeight": 24, "itemRadius": "{radius.small}"
+  }
 }

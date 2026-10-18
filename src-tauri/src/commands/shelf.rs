@@ -398,7 +398,7 @@ fn run_rename_shelf(repo_path: &str, shelf_id: &str, name: &str) -> AppResult<Sh
     Ok(entry)
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn shelve_changes(
     repo_path: String,
     name: String,
@@ -408,14 +408,14 @@ pub async fn shelve_changes(
     blocking(move || run_shelve(&repo_path, &name, &file_paths, keep_in_working_tree)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn list_shelf(repo_path: String) -> AppResult<Vec<ShelfEntry>> {
     blocking(move || Shelf::of(&git_repo::open(&repo_path)?).list()).await
 }
 
 /// Applies a shelved change list, or only `file_paths` of it. With `remove_from_shelf`, what
 /// applied without conflicts leaves the shelf.
-#[tauri::command]
+#[crate::command]
 pub async fn unshelve(
     repo_path: String,
     shelf_id: String,
@@ -425,18 +425,18 @@ pub async fn unshelve(
     blocking(move || run_unshelve(&repo_path, &shelf_id, file_paths.as_deref(), remove_from_shelf)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn shelf_file_diff(repo_path: String, shelf_id: String, file_path: String) -> AppResult<ShelfFileDiff> {
     blocking(move || run_shelf_file_diff(&repo_path, &shelf_id, &file_path)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn rename_shelf(repo_path: String, shelf_id: String, name: String) -> AppResult<ShelfEntry> {
     blocking(move || run_rename_shelf(&repo_path, &shelf_id, &name)).await
 }
 
 /// Deletes shelved changes for good; the UI confirms first.
-#[tauri::command]
+#[crate::command]
 pub async fn delete_shelf(repo_path: String, shelf_id: String) -> AppResult<()> {
     blocking(move || Shelf::of(&git_repo::open(&repo_path)?).delete(&shelf_id)).await
 }

@@ -5,6 +5,7 @@
 mod activity;
 mod bridge;
 /// The command line tool lives in its own crate (src-tauri/cli); `mcp::cli` keeps its old path.
+#[cfg(any(feature = "desktop", test))]
 pub use nibtree_cli as cli;
 pub mod dto;
 mod host;
@@ -13,7 +14,7 @@ mod install;
 pub(crate) mod paths;
 mod protocol;
 mod registry;
-mod token;
+pub(crate) mod token;
 mod tools;
 
 #[cfg(test)]
@@ -32,7 +33,9 @@ use crate::file_search::lock;
 use activity::ActivityLog;
 use bridge::Bridge;
 use dto::{McpActivity, McpStatus, McpToolInfo, McpUiResult, McpUiToolDef};
-pub use host::{Host, TauriHost};
+pub use host::Host;
+#[cfg(feature = "desktop")]
+pub use host::TauriHost;
 use token::McpFile;
 
 pub const DEFAULT_PORT: u16 = 48731;

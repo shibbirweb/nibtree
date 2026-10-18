@@ -23,7 +23,7 @@ flowchart LR
 
 ### The setting
 
-`roundedPanels` is a boolean preference in `settingsData.ts` (default `false`, parsed with `pickBoolean`). Settings > Appearance has a switch for it. `applyAppearance()` in `settings.svelte.ts` runs on every preference change and calls `root.toggleAttribute("data-rounded-panels", this.roundedPanels)`, next to `data-ligatures`.
+`roundedPanels` is a boolean preference in `settingsData.ts` (default `true`, parsed with `pickBoolean`). Settings > Appearance has a switch for it. `applyAppearance()` in `settings.svelte.ts` runs on every preference change and calls `root.toggleAttribute("data-rounded-panels", this.roundedPanels)`, next to `data-ligatures`.
 
 ### Gaps and corners
 
@@ -78,7 +78,7 @@ With rounded panels on, `EditorTabs.svelte` gives the library's `TabStrip` the `
 
 **The file toolbar is square at the top.** With the File toolbar at the Bottom, the editor group's clipping rounds the bar's bottom corners. At the Top the bar sits right under the tabs, inside the panel, so it stays a square band joined to the tab strip. Rounding its top corners there was tried and made the bar look like a separate box.
 
-**Off by default.** Existing users keep the classic look until they choose otherwise.
+**On by default.** New installs start with the rounded look, the one the app is designed around. Existing users keep their choice: settings.json saves every preference, so anyone who already has one keeps `"roundedPanels": false` and the classic look until they change it.
 
 ## Bugs we fixed
 

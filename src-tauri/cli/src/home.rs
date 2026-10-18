@@ -1,10 +1,25 @@
-//! Where Nibtree keeps its files (`~/.nibtree`), shared by the app and this tool so both
-//! always look in the same folder.
+//! Where Nibtree keeps its files (`~/.nibtree`, `~/.nibtree-browser` for the browser server), shared
+//! by the app and this tool so both always look in the same folder.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 
 pub const DIR_NAME: &str = ".nibtree";
+
+/// The browser server (`nibtree-browser`) keeps its own settings apart from the desktop app's.
+pub const BROWSER_DIR_NAME: &str = ".nibtree-browser";
+
+static CHOSEN_DIR_NAME: OnceLock<&'static str> = OnceLock::new();
+
+/// Picks the folder name once, at startup, before anything reads settings.
+pub fn use_dir_name(dir_name: &'static str) {
+    let _ = CHOSEN_DIR_NAME.set(dir_name);
+}
+
+pub fn dir_name() -> &'static str {
+    CHOSEN_DIR_NAME.get().copied().unwrap_or(DIR_NAME)
+}
 
 pub fn home_dir() -> Result<PathBuf, String> {
     home_from(cfg!(windows), |name| std::env::var_os(name)).ok_or_else(|| "Could not find your home folder".to_string())
@@ -18,7 +33,7 @@ pub fn home_from(windows: bool, lookup: impl Fn(&str) -> Option<OsString>) -> Op
 }
 
 pub fn config_dir_in(home: &Path) -> PathBuf {
-    home.join(DIR_NAME)
+    home.join(dir_name())
 }
 
 /// A path the way the app writes paths: on Windows `/` separators, an upper case drive and no

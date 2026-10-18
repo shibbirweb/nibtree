@@ -15,6 +15,8 @@
   import { contextMenu, type MenuItem } from "$lib/ui/menu.svelte";
   import { recentEntries, shortPath } from "./recentEntries";
   import { windowChrome } from "$lib/stores/windowChrome.svelte";
+  import PageMenuBar from "$lib/menu/PageMenuBar.svelte";
+  import { pageMenuHost } from "$lib/menu/pageMenuHost.svelte";
   import {
     openNewWindow,
     openRecent,
@@ -150,10 +152,15 @@
   </Stack>
 {/snippet}
 
+{#snippet menuRow()}
+  <PageMenuBar surface="none" />
+{/snippet}
+
 <AppHeader
   look={settings.roundedPanels ? "rounded" : "flat"}
   tint={windowChrome.tint}
   windowControls={windowChrome.controlsInBar}
+  menuBar={pageMenuHost.mode ? menuRow : undefined}
   busy={repoStore.busy ? repoStore.progress || `${repoStore.busy}...` : ""}
   busyTitle={repoStore.progress || undefined}
 >

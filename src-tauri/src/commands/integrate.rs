@@ -70,7 +70,7 @@ fn run_merge(repo_path: &str, branch_name: &str, options: &MergeOptions) -> AppR
 }
 
 /// The Merge dialog: merges `branch_name` into the current branch with the chosen options.
-#[tauri::command]
+#[crate::command]
 pub async fn merge_with_options(repo_path: String, branch_name: String, options: MergeOptions) -> AppResult<OpOutcome> {
     blocking(move || run_merge(&repo_path, &branch_name, &options)).await
 }
@@ -137,7 +137,7 @@ fn run_rebase(repo_path: &str, options: &RebaseOptions) -> AppResult<OpOutcome> 
 }
 
 /// The Rebase dialog (not interactive): `git rebase` with the chosen options.
-#[tauri::command]
+#[crate::command]
 pub async fn rebase_with_options(repo_path: String, options: RebaseOptions) -> AppResult<OpOutcome> {
     blocking(move || run_rebase(&repo_path, &options)).await
 }

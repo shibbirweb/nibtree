@@ -38,12 +38,15 @@ export const pieceDocs: ComponentDoc[] = [
       prop("look", '"flat" | "rounded"', "A line under it, or the window frame's color with rounded panels.", {
         default: '"flat"',
       }),
-      prop("tint", '"none" | "blue" | "green" | "magenta" | "cyan" | "red"', "Flat look: a soft glow from the " +
-        "left edge in the open project's color (its Welcome tile); the rounded look shows AppShell's.", {
+      prop("tint", '"none" | "blue" | "green" | "magenta" | "cyan" | "red"', "Flat look: the rounded look's " +
+        "glow from the top left corner in the open project's color (its Welcome tile), on the bar itself; the " +
+        "rounded look shows AppShell's.", {
         default: '"none"',
       }),
       prop("windowControls", "boolean", "The window's own buttons sit at its left (macOS without a title strip): " +
         "leaves room for them and lets the bar's empty space move the window.", { default: "false" }),
+      prop("menuBar", "Snippet", "A MenuBar (surface \"none\") in a row above, inside the same background and " +
+        "glow: an app without a system menu bar, such as in a browser tab."),
       prop("start", "Snippet", "Left side; shrinks and truncates first.", { required: true }),
       prop("end", "Snippet", "Right side actions."),
     ],

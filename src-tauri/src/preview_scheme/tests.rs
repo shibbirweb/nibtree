@@ -464,6 +464,7 @@ fn the_folder_registry_keeps_existing_folders_only() {
 }
 
 #[test]
+#[cfg(feature = "desktop")]
 fn the_tauri_wrapper_passes_method_path_and_range() {
     let workspace = TestDir::new();
     workspace.write("manual.pdf", b"%PDF-1.7");

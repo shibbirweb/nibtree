@@ -75,25 +75,25 @@ pub(crate) fn run_bisect_reset(repo_path: &str) -> AppResult<String> {
     Ok(cli::run(Path::new(repo_path), &["bisect", "reset"])?.text())
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn bisect_state(repo_path: String) -> AppResult<Option<BisectState>> {
     blocking(move || bisect::read(&git_repo::open(&repo_path)?)).await
 }
 
 /// Starts a bisect: with a bad commit (and good ones) git checks out the first commit to test.
-#[tauri::command]
+#[crate::command]
 pub async fn bisect_start(repo_path: String, bad_commit: Option<String>, good_commits: Vec<String>) -> AppResult<String> {
     blocking(move || run_bisect_start(&repo_path, bad_commit.as_deref(), &good_commits)).await
 }
 
 /// Marks a commit (the checked out one when None) as "good", "bad" or "skip".
-#[tauri::command]
+#[crate::command]
 pub async fn bisect_mark(repo_path: String, mark: String, commit_id: Option<String>) -> AppResult<String> {
     blocking(move || run_bisect_mark(&repo_path, &mark, commit_id.as_deref())).await
 }
 
 /// Ends the bisect and goes back to where it started.
-#[tauri::command]
+#[crate::command]
 pub async fn bisect_reset(repo_path: String) -> AppResult<String> {
     blocking(move || run_bisect_reset(&repo_path)).await
 }

@@ -36,7 +36,7 @@ const noErrors = { settings: null, state: null };
 describe("parsePreferences", () => {
   it("reads the AI settings and drops what it does not know", () => {
     const defaults = parsePreferences({}).preferences;
-    expect([defaults.aiUsagePosition, defaults.aiUsageHidden, defaults.aiAgentCommands]).toEqual(["right", [], {}]);
+    expect([defaults.aiUsagePosition, defaults.aiUsageHidden, defaults.aiAgentCommands]).toEqual(["hidden", [], {}]);
     const parsed = parsePreferences({
       aiUsagePosition: "left",
       aiUsageHidden: ["codex", "gemini", 3, "codex"],
@@ -51,7 +51,7 @@ describe("parsePreferences", () => {
     expect(parsed.aiAgentCommands).toEqual({
       claude: { command: "claude-beta", fullAutonomyArgs: "", promptStyle: "typed" },
     });
-    expect(parsePreferences({ aiUsagePosition: "top" }).preferences.aiUsagePosition).toBe("right");
+    expect(parsePreferences({ aiUsagePosition: "top" }).preferences.aiUsagePosition).toBe("hidden");
   });
 
   it("renders whitespace in selections unless another mode was picked", () => {
@@ -291,9 +291,9 @@ describe("parsePreferences", () => {
     expect(defaultPreferences.mergeLayout).toBe("columns");
     expect(parsePreferences({ mergeLayout: "stacked" }).preferences.mergeLayout).toBe("stacked");
     expect(parsePreferences({ mergeLayout: "rows" }).preferences.mergeLayout).toBe("columns");
-    expect(defaultPreferences.roundedPanels).toBe(false);
-    expect(parsePreferences({ roundedPanels: true }).preferences.roundedPanels).toBe(true);
-    expect(parsePreferences({ roundedPanels: "yes" }).preferences.roundedPanels).toBe(false);
+    expect(defaultPreferences.roundedPanels).toBe(true);
+    expect(parsePreferences({ roundedPanels: false }).preferences.roundedPanels).toBe(false);
+    expect(parsePreferences({ roundedPanels: "yes" }).preferences.roundedPanels).toBe(true);
     expect(defaultPreferences.projectColorHeader).toBe(true);
     expect(parsePreferences({ projectColorHeader: false }).preferences.projectColorHeader).toBe(false);
     expect(parsePreferences({ projectColorHeader: "no" }).preferences.projectColorHeader).toBe(true);

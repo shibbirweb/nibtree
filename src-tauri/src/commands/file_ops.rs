@@ -8,7 +8,7 @@ use crate::error::AppResult;
 use crate::file_ops::{self, FileMove};
 
 /// Creates a file or folder; `name` may hold "/" to create nested folders.
-#[tauri::command]
+#[crate::command]
 pub async fn file_create(
     workspace_roots: Vec<String>,
     parent_dir: String,
@@ -18,12 +18,12 @@ pub async fn file_create(
     blocking(move || file_ops::create_entry(&workspace_roots, &parent_dir, &name, is_dir)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn file_rename(workspace_roots: Vec<String>, entry_path: String, new_name: String) -> AppResult<String> {
     blocking(move || file_ops::rename_entry(&workspace_roots, &entry_path, &new_name)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn file_copy(
     workspace_roots: Vec<String>,
     source_paths: Vec<String>,
@@ -42,7 +42,7 @@ pub enum MoveAnswer {
 }
 
 /// Moves into `target_dir`; `dry_run` runs every check and moves nothing.
-#[tauri::command]
+#[crate::command]
 pub async fn file_move(
     workspace_roots: Vec<String>,
     source_paths: Vec<String>,
@@ -58,20 +58,20 @@ pub async fn file_move(
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn file_trash(workspace_roots: Vec<String>, entry_paths: Vec<String>) -> AppResult<()> {
     blocking(move || file_ops::trash_entries(&workspace_roots, &entry_paths, file_ops::move_to_trash)).await
 }
 
 /// Which of the absolute `file_paths` are files inside the workspace.
-#[tauri::command]
+#[crate::command]
 pub async fn files_exist(workspace_roots: Vec<String>, file_paths: Vec<String>) -> AppResult<Vec<bool>> {
     blocking(move || Ok(file_ops::existing_files(&workspace_roots, &file_paths))).await
 }
 
 /// The real path of each of the absolute `file_paths` that is a file inside the workspace,
 /// else null (the terminal's file links).
-#[tauri::command]
+#[crate::command]
 pub async fn real_files(workspace_roots: Vec<String>, file_paths: Vec<String>) -> AppResult<Vec<Option<String>>> {
     blocking(move || Ok(file_ops::real_files(&workspace_roots, &file_paths))).await
 }

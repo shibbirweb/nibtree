@@ -1,18 +1,18 @@
 //! The dialog side of askpass.rs: questions go to the windows showing the repository, answers
 //! come back with `askpass_respond`.
 
-use tauri::{AppHandle, Emitter};
+use crate::host::HostApp;
 
 use crate::askpass::{self, AskpassHooks, AskpassQuestion};
 
 /// Sends each question to the windows showing its repository (every window when none does,
 /// as for a clone), and tells all of them when it is settled.
 pub struct WindowHooks {
-    app: AppHandle,
+    app: HostApp,
 }
 
 impl WindowHooks {
-    pub fn new(app: AppHandle) -> Self {
+    pub fn new(app: HostApp) -> Self {
         Self { app }
     }
 }
@@ -29,7 +29,7 @@ impl AskpassHooks for WindowHooks {
 }
 
 /// The user answered (or cancelled, with None) a credential prompt.
-#[tauri::command]
+#[crate::command]
 pub fn askpass_respond(id: u64, answer: Option<String>) {
     askpass::respond(id, answer);
 }

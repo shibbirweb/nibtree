@@ -421,7 +421,7 @@ pub fn process_bytes(pid: u32) -> Option<u64> {
 /// Clear Cache: the pid of this window's web content process, checked to be ours. Ending it
 /// (`end_web_content`) makes Tauri reload the page in a new process, which starts with only what
 /// the page needs; a reload in the same process keeps what the old page held.
-#[cfg(target_os = "macos")]
+#[cfg(all(feature = "desktop", target_os = "macos"))]
 pub fn web_content_pid(window: &tauri::WebviewWindow) -> crate::error::AppResult<i32> {
     use std::sync::mpsc;
     use std::time::Duration;
@@ -467,7 +467,7 @@ pub fn end_web_content(pid: i32) {
     });
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(all(feature = "desktop", not(target_os = "macos")))]
 pub fn web_content_pid(_window: &tauri::WebviewWindow) -> crate::error::AppResult<i32> {
     Err(crate::error::AppError::invalid("Clear Cache is only available on macOS for now"))
 }

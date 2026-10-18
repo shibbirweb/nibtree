@@ -3,9 +3,10 @@
 //! and forgets it once the text is saved, reverted or discarded.
 
 use serde::Deserialize;
+#[cfg(feature = "desktop")]
 use tauri::ipc::Request;
 
-use super::{blocking, raw_body, raw_parts};
+use super::{blocking, raw_parts};
 use crate::config;
 use crate::error::AppResult;
 use crate::local_history::now_ms;
@@ -23,9 +24,9 @@ struct WriteArgs {
 }
 
 /// Raw body: `{ tabPath, workspaceId }` as one JSON line, then the editor's text.
-#[tauri::command]
+#[crate::command]
 pub async fn unsaved_write(request: Request<'_>) -> AppResult<()> {
-    let body = raw_body(&request)?;
+    let body = request.into_bytes();
     blocking(move || {
         let (args, text) = raw_parts::<WriteArgs>(&body)?;
         let meta = UnsavedMeta {
@@ -38,12 +39,12 @@ pub async fn unsaved_write(request: Request<'_>) -> AppResult<()> {
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn unsaved_read(tab_path: String) -> AppResult<Option<UnsavedText>> {
     blocking(move || unsaved::read(&store_dir()?, &tab_path)).await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn unsaved_remove(tab_paths: Vec<String>) -> AppResult<()> {
     blocking(move || {
         let dir = store_dir()?;
@@ -55,7 +56,7 @@ pub async fn unsaved_remove(tab_paths: Vec<String>) -> AppResult<()> {
     .await
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn unsaved_list() -> AppResult<Vec<UnsavedMeta>> {
     blocking(move || Ok(unsaved::list(&store_dir()?))).await
 }

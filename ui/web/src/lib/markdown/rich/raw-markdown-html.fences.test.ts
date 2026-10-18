@@ -16,6 +16,12 @@ describe("raw html after fences", () => {
     expect(encoded).toContain(":block-html:");
   });
 
+  it("keeps a tag inside a code span after a backtick fence", () => {
+    const codec = createRichMarkdownEditorCodec();
+    const source = "```mermaid\nflowchart LR\n```\n\nThen `nibtree@<version>` does not exist.\n";
+    expect(encodeRawMarkdownHtmlForRichEditor(source, codec)).toBe(source);
+  });
+
   it("leaves html inside a tilde fence alone", () => {
     const codec = createRichMarkdownEditorCodec();
     const source = "~~~html\n<div>code</div>\n~~~\n";

@@ -101,6 +101,12 @@ export function encodeRawMarkdownHtmlForRichEditor(content: string, codec: RichM
         } else if (activeFence === fenceChar && fenceLength >= activeFenceLength) {
           activeFence = null;
           activeFenceLength = 0;
+          // Nibtree: the closing fence line is not inline text. Scanned as code spans, its last backtick paired
+          // with the next code span's opening one, so every later span was read inside out.
+          const lineEnd = findLineEnd(normalizedContent, index);
+          result += normalizedContent.slice(index, lineEnd);
+          index = lineEnd;
+          continue;
         }
       }
     }

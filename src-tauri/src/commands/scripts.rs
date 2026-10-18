@@ -1,4 +1,4 @@
-use tauri::ipc::{Channel, InvokeResponseBody};
+#[cfg(feature = "desktop")]
 use tauri::{State, Window};
 
 use super::blocking;
@@ -11,7 +11,7 @@ use crate::node_versions::{self, NodeInstall};
 use crate::scripts::{self, ScriptSource};
 
 /// The Scripts tool window: every runnable script under the workspace folders.
-#[tauri::command]
+#[crate::command]
 pub async fn list_project_scripts(folder_paths: Vec<String>) -> AppResult<Vec<ScriptSource>> {
     // Opening or refreshing the panel also reads the shell's environment again, for runs.
     run_process::reload_login_env();
@@ -19,14 +19,14 @@ pub async fn list_project_scripts(folder_paths: Vec<String>) -> AppResult<Vec<Sc
 }
 
 /// Installed Node versions, newest first, for running a package with the version it asks for.
-#[tauri::command]
+#[crate::command]
 pub async fn list_node_versions() -> AppResult<Vec<NodeInstall>> {
     blocking(|| Ok(node_versions::installed_here())).await
 }
 
 /// Starts a script as its own process (the Run tab). Output and exit arrive like a terminal's:
 /// raw bytes on `output`, then `{ exit }`; input, resizing and acks use the terminal commands.
-#[tauri::command]
+#[crate::command]
 #[allow(clippy::too_many_arguments)]
 pub async fn run_script(
     window: Window,
@@ -37,7 +37,7 @@ pub async fn run_script(
     node_bin_dir: Option<String>,
     cols: u16,
     rows: u16,
-    output: Channel<InvokeResponseBody>,
+    output: Channel<crate::host::ChannelBody>,
 ) -> AppResult<TerminalInfo> {
     let terminals = state.terminals.clone();
     let links = state.terminal_links.clone();

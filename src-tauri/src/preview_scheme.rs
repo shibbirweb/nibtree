@@ -533,6 +533,7 @@ pub fn stat(folders: &[PathBuf], target: &Target) -> AppResult<PreviewStat> {
 }
 
 /// The Tauri side: a thin wrapper that turns the HTTP request and response into ours.
+#[cfg(feature = "desktop")]
 pub fn http_response(folders: &[PathBuf], request: &tauri::http::Request<Vec<u8>>) -> tauri::http::Response<Vec<u8>> {
     let range = request
         .headers()

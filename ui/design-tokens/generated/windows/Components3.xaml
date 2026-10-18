@@ -66,7 +66,6 @@
     <x:Double x:Key="GmAppHeaderSideGap">4</x:Double>
     <x:Double x:Key="GmAppHeaderDividerLength">18</x:Double>
     <x:Double x:Key="GmAppHeaderBusyMaxWidth">280</x:Double>
-    <x:Double x:Key="GmAppHeaderTintWidth">520</x:Double>
     <x:Double x:Key="GmAppHeaderControlsInset">80</x:Double>
     <x:Double x:Key="GmLogoSize">40</x:Double>
     <x:Double x:Key="GmLogoRadius">10</x:Double>

@@ -1,19 +1,18 @@
 use serde::Serialize;
 use serde_json::Value;
-use tauri::Emitter;
 
 use super::blocking;
 use crate::config;
 use crate::error::AppResult;
 
 /// Reads `~/.nibtree/<config_name>.json`; None when it does not exist yet.
-#[tauri::command]
+#[crate::command]
 pub async fn load_config(config_name: String) -> AppResult<Option<Value>> {
     blocking(move || config::load_in(&config::config_dir_in(&config::home_dir()?), &config_name)).await
 }
 
 /// Replaces a whole config file: only for resetting one that could not be read, and the one-time migration.
-#[tauri::command]
+#[crate::command]
 pub async fn save_config(config_name: String, value: Value) -> AppResult<()> {
     blocking(move || config::save_in(&config::config_dir_in(&config::home_dir()?), &config_name, &value)).await
 }
@@ -28,7 +27,7 @@ pub struct ConfigChanged {
 
 /// Writes what one window changed into the file as it is on disk now (see config.rs), then
 /// tells the other windows, so a setting changed in one window reaches every window.
-#[tauri::command]
+#[crate::command]
 pub async fn update_config(
     app: tauri::AppHandle,
     window: tauri::Window,
@@ -40,15 +39,13 @@ pub async fn update_config(
     let wrote = blocking(move || config::update_in(&config::config_dir_in(&config::home_dir()?), &name, &sent)).await?;
     if wrote {
         let source = window.label().to_string();
-        let _ = app.emit_filter("config-changed", ConfigChanged { config_name, patch }, |target| {
-            matches!(target, tauri::EventTarget::WebviewWindow { label } if *label != source)
-        });
+        let _ = app.emit_to_others(&source, "config-changed", ConfigChanged { config_name, patch });
     }
     Ok(())
 }
 
 /// Memory of the app and its web view helper processes, for the status bar.
-#[tauri::command]
+#[crate::command]
 pub async fn memory_usage() -> AppResult<crate::memory::MemoryUsage> {
     blocking(|| Ok(crate::memory::usage())).await
 }
@@ -56,7 +53,7 @@ pub async fn memory_usage() -> AppResult<crate::memory::MemoryUsage> {
 /// Clear Cache in the status bar: the window's page restarts in a new web content process. Its
 /// terminals keep running and wait for the new page (`stash`), but only once the restart is sure
 /// to happen, so a failure never leaves them unconnected.
-#[tauri::command]
+#[crate::command(desktop)]
 pub async fn clear_cache(
     window: tauri::WebviewWindow,
     state: tauri::State<'_, crate::state::AppState>,
@@ -76,7 +73,7 @@ pub async fn clear_cache(
 }
 
 /// The debug memory log (Settings > Automation): on or off, its interval and change threshold.
-#[tauri::command]
+#[crate::command]
 pub async fn memory_log_configure(
     state: tauri::State<'_, crate::state::AppState>,
     enabled: bool,
@@ -88,13 +85,13 @@ pub async fn memory_log_configure(
 }
 
 /// A UI event (tab, view, scrolling) logged next to the following memory reading.
-#[tauri::command]
+#[crate::command]
 pub fn memory_log_event(state: tauri::State<'_, crate::state::AppState>, label: String) {
     state.memory_log.event(&label);
 }
 
 /// The config folder, for showing in the settings dialog.
-#[tauri::command]
+#[crate::command]
 pub fn config_dir() -> AppResult<String> {
     Ok(crate::paths::to_ui(config::config_dir_in(&config::home_dir()?)))
 }
@@ -110,7 +107,7 @@ pub struct OsInfo {
     pub version: Option<String>,
 }
 
-#[tauri::command]
+#[crate::command]
 pub async fn os_info() -> AppResult<OsInfo> {
     blocking(|| Ok(current_os())).await
 }

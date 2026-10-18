@@ -1,0 +1,81 @@
+# Checks a published release of the browser version from the outside, the way people get it: release.yml runs it
+# after browser.yml published. verify-npm installs the launcher with npx on Linux, macOS and Windows, and
+# verify-docker pulls the image from ghcr.io and Docker Hub; both run scripts/release-verify.ts, which retries
+# while the registries catch up. See docs/wiki/developer/Browser-Release-Checks.md.
+name: Browser release check
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: The release tag that was published, like v0.2.0-beta.1
+        type: string
+        required: true
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The release tag to check again, like v0.2.0-beta.1
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  verify-npm:
+    name: Check the npm release on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install and run what npm serves
+        run: bun scripts/release-verify.ts npm "$(bun scripts/version.ts show)"
+
+  verify-docker:
+    name: Check the Docker release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Signed in, so a new ghcr.io package is checked even before it is made public (it starts private).
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and run what both registries serve
+        env:
+          GHCR: ghcr.io/${{ github.repository_owner }}/nibtree
+          HUB: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/nibtree
+        run: bun scripts/release-verify.ts docker "$(bun scripts/version.ts show)" "$GHCR" "$HUB"

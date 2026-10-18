@@ -1,0 +1,33 @@
+# Nibtree's browser version with Docker Compose. Put this file in the folder you want to open (or set
+# NIBTREE_WORKSPACE), then:
+#
+#   NIBTREE_TOKEN=pick-a-secret docker compose up -d
+#
+# and open http://localhost:4410/?token=pick-a-secret. Without NIBTREE_TOKEN a new random token is made on each
+# start: `docker compose logs nibtree` prints the address with it. `docker compose down` stops it.
+# See docs/wiki/developer/Docker-Image.md.
+services:
+  nibtree:
+    # `next` is the newest beta, `latest` the newest stable release, or pin a version such as 0.1.0-beta.13.
+    # Docker Hub has the same image as shibbirweb/nibtree (NIBTREE_IMAGE picks another image, as CI does).
+    image: ${NIBTREE_IMAGE:-ghcr.io/shibbirweb/nibtree:${NIBTREE_TAG:-next}}
+    # Only this machine can reach it. Drop `127.0.0.1:` to let other machines in (anyone with the token can then
+    # change your files and run commands). NIBTREE_OUTSIDE_PORT picks another port on this machine.
+    ports:
+      - "127.0.0.1:${NIBTREE_OUTSIDE_PORT:-4410}:4410"
+    environment:
+      NIBTREE_TOKEN: ${NIBTREE_TOKEN:-}
+      NIBTREE_PUBLIC_URL: http://localhost:${NIBTREE_OUTSIDE_PORT:-4410}
+    # On Linux, run `NIBTREE_USER="$(id -u):$(id -g)" docker compose up -d` so files it writes belong to you.
+    user: ${NIBTREE_USER:-1000:1000}
+    volumes:
+      - ${NIBTREE_WORKSPACE:-.}:/workspace
+      # Settings (~/.nibtree-browser) and git's config, kept between runs.
+      - nibtree-home:/home/nibtree
+      # Your git identity and SSH keys: uncomment to use them inside.
+      # - ~/.gitconfig:/home/nibtree/.gitconfig:ro
+      # - ~/.ssh:/home/nibtree/.ssh:ro
+    restart: unless-stopped
+
+volumes:
+  nibtree-home:

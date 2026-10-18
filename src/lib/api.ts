@@ -33,6 +33,7 @@ import type {
   Eol,
   FileContent,
   FolderListing,
+  BrowseListing,
   FileDiff,
   HeadFile,
   HeadVersion,
@@ -512,6 +513,8 @@ export const api = {
     repoRoots: string[],
     known: Record<string, string> | null = null,
   ) => invoke<FolderListing[]>("list_directories", { rootPath, dirPaths, repoRoots, known }),
+  /** One folder's entries anywhere on the app's machine (null: the home folder), for the browser app's picker. */
+  browseFolder: (folderPath: string | null) => invoke<BrowseListing>("browse_folder", { folderPath }),
   /** With the `knownVersion` of the text already shown, an unchanged file answers `unchanged` without its text. */
   readWorktreeFile: (repoPath: string, filePath: string, knownVersion: string | null = null) =>
     invoke<FileContent>("read_worktree_file", { repoPath, filePath, knownVersion }),

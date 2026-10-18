@@ -581,6 +581,23 @@ export interface DirEntry {
   isRepo: boolean;
 }
 
+/** One folder anywhere on the app's machine, for the browser app's folder and file picker (`browse_folder`). */
+export interface BrowseListing {
+  folderPath: string;
+  /** Null at a root (`/`, `C:/`). */
+  parentPath: string | null;
+  homePath: string;
+  /** Folders first, then files, by name. */
+  entries: BrowseEntry[];
+}
+
+export interface BrowseEntry {
+  name: string;
+  isDir: boolean;
+  /** A dot name, hidden until asked. */
+  hidden: boolean;
+}
+
 /** One folder of a `list_directories` answer. */
 export interface FolderListing {
   /** As asked: relative to the workspace folder, "" for the folder itself. */

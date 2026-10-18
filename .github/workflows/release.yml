@@ -13,6 +13,10 @@
 # The version comes from src-tauri/Cargo.toml, never from the tag: a tag that disagreed with the code
 # would ship an app reporting the wrong version. So the tag, the pre-release flag and the code must agree.
 #
+# The browser version (npx nibtree) is built for every platform and published by browser.yml: to npm (betas under
+# `next`, stable versions under `latest`; the NPM_TOKEN secret, else a dry run) and as a Docker image to ghcr.io
+# and, with the DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets, Docker Hub.
+#
 # The Windows installer is built only when the repository variable WINDOWS_RELEASES is "true" (Settings,
 # Secrets and variables, Actions, Variables), so betas do not offer it before Windows support is finished.
 #
@@ -205,3 +209,34 @@ jobs:
           tauriScript: bun run tauri
           args: --config src-tauri/tauri.windows-release.conf.json
           tagName: ${{ needs.version.outputs.tag }}
+
+  browser:
+    name: Publish the browser version (npm and Docker)
+    needs: [version, test]
+    if: ${{ !cancelled() && needs.version.result == 'success' && contains(fromJSON('["success", "skipped"]'), needs.test.result) }}
+    # The Docker image goes to ghcr.io with the built-in token, which needs packages: write.
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/browser.yml
+    with:
+      tag: ${{ needs.version.outputs.tag }}
+      publish: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  browser-verify:
+    name: Check the published browser version
+    needs: [version, browser]
+    # Also after a half-failed publish: whatever did reach npm or Docker gets checked.
+    if: ${{ !cancelled() && needs.version.result == 'success' && needs.browser.result != 'skipped' }}
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/browser-verify.yml
+    with:
+      tag: ${{ needs.version.outputs.tag }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

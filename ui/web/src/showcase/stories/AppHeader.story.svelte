@@ -4,6 +4,7 @@
   import Card from "$ui/components/Card.svelte";
   import Divider from "$ui/components/Divider.svelte";
   import IconButton from "$ui/components/IconButton.svelte";
+  import MenuBar from "$ui/components/MenuBar.svelte";
   import Stack from "$ui/components/Stack.svelte";
   import Switch from "$ui/components/Switch.svelte";
   import Text from "$ui/components/Text.svelte";
@@ -51,6 +52,24 @@
       </Button>
       <Button variant="ghost" icon="branch" trailingIcon="chevron-down">
         <Text>feature/queue-email</Text>
+      </Button>
+    {/snippet}
+  </AppHeader>
+</Card>
+<Card label="Menu bar and project color (browser tab)">
+  <AppHeader tint="cyan">
+    {#snippet menuBar()}
+      <MenuBar
+        surface="none"
+        menus={[
+          { label: "File", items: [{ label: "Open Folder...", action: () => undefined }] },
+          { label: "View", items: [{ label: "Word Wrap", action: () => undefined, checked: true }] },
+        ]}
+      />
+    {/snippet}
+    {#snippet start()}
+      <Button variant="ghost" icon="folder" trailingIcon="chevron-down">
+        <Text weight="semibold">browser-demo</Text>
       </Button>
     {/snippet}
   </AppHeader>

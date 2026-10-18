@@ -135,6 +135,7 @@ export const componentTokens1 = {
     itemRadius: 4,
     itemGap: 24,
     separatorInset: 6,
+    checkWidth: 16,
   },
   popover: {
     offset: 2,
