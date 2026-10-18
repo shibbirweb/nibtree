@@ -1,0 +1,76 @@
+[
+  {
+    "id": "tag-tones-fill",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "main" },
+        { "component": "Tag", "text": "primary" },
+        { "component": "Tag", "text": "neutral", "props": { "tone": "neutral", "variant": "fill" } },
+        { "component": "Tag", "text": "ahead", "props": { "tone": "accent" } },
+        { "component": "Tag", "text": "gone", "props": { "tone": "danger" } },
+        { "component": "Tag", "text": "clean", "props": { "tone": "success" } },
+        { "component": "Tag", "text": "dirty", "props": { "tone": "warning" } }
+      ]
+    }
+  },
+  {
+    "id": "tag-tones-outline",
+    "width": 400,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Tag", "text": "submodule", "props": { "variant": "outline" } },
+        { "component": "Tag", "text": "accent", "props": { "variant": "outline", "tone": "accent" } },
+        { "component": "Tag", "text": "danger", "props": { "variant": "outline", "tone": "danger" } },
+        { "component": "Tag", "text": "success", "props": { "variant": "outline", "tone": "success" } },
+        { "component": "Tag", "text": "warning", "props": { "variant": "outline", "tone": "warning" } }
+      ]
+    }
+  },
+  {
+    "id": "tag-small",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "model.bin" },
+        { "component": "Tag", "text": "LFS", "props": { "size": "small" } },
+        { "component": "Tag", "text": "new", "props": { "size": "small", "tone": "accent" } },
+        { "component": "Tag", "text": "kind", "props": { "size": "small", "variant": "outline" } },
+        { "component": "Tag", "text": "big", "props": { "size": "normal", "tone": "warning" } }
+      ]
+    }
+  },
+  {
+    "id": "tag-column-stretched",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Tag", "text": "primary" },
+        { "component": "Tag", "text": "submodule", "props": { "variant": "outline", "tone": "accent" } },
+        { "component": "Tag", "text": "LFS", "props": { "size": "small" } }
+      ]
+    }
+  },
+  {
+    "id": "tag-row-stretched",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Worktrees", "props": { "size": "heading" } },
+        { "component": "Tag", "text": "primary", "props": { "title": "Main worktree" } },
+        { "component": "Tag", "text": "LFS", "props": { "size": "small" } },
+        { "component": "Tag", "text": "kind", "props": { "size": "small", "variant": "outline" } }
+      ]
+    }
+  }
+]

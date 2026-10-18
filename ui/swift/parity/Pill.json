@@ -1,0 +1,72 @@
+[
+  {
+    "id": "pill-tones-fill",
+    "width": 440,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Pill", "text": "unsaved" },
+        { "component": "Pill", "text": "neutral", "props": { "tone": "neutral", "variant": "fill" } },
+        { "component": "Pill", "text": "ahead", "props": { "tone": "accent" } },
+        { "component": "Pill", "text": "clean", "props": { "tone": "success" } },
+        { "component": "Pill", "text": "merging", "props": { "tone": "warning", "strong": true } },
+        { "component": "Pill", "text": "conflict", "props": { "tone": "danger" } },
+        { "component": "Pill", "text": "write", "props": { "tone": "selected" } }
+      ]
+    }
+  },
+  {
+    "id": "pill-border",
+    "width": 440,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Pill", "text": "read-only", "props": { "variant": "border" } },
+        { "component": "Pill", "text": "taken", "props": { "variant": "border", "tone": "danger" } },
+        { "component": "Pill", "text": "new", "props": { "variant": "border", "tone": "accent", "strong": true } },
+        { "component": "Pill", "text": "ok", "props": { "variant": "border", "tone": "success" } },
+        { "component": "Pill", "text": "slow", "props": { "variant": "border", "tone": "warning" } },
+        { "component": "Pill", "text": "on", "props": { "variant": "border", "tone": "selected" } }
+      ]
+    }
+  },
+  {
+    "id": "pill-outline",
+    "width": 440,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Pill", "text": "+60 MB", "props": { "variant": "outline", "tone": "warning" } },
+        { "component": "Pill", "text": "+4 MB", "props": { "variant": "outline" } },
+        { "component": "Pill", "text": "beta", "props": { "variant": "outline", "tone": "accent", "strong": true } },
+        { "component": "Pill", "text": "fast", "props": { "variant": "outline", "tone": "success" } },
+        { "component": "Pill", "text": "off", "props": { "variant": "outline", "tone": "danger" } },
+        { "component": "Pill", "text": "row", "props": { "variant": "outline", "tone": "selected" } }
+      ]
+    }
+  },
+  {
+    "id": "pill-stretched",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Pill", "text": "unsaved", "props": { "title": "Not saved yet" } },
+        { "component": "Pill", "text": "+60 MB", "props": { "variant": "outline", "tone": "warning" } },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm" },
+          "children": [
+            { "component": "Text", "text": "Worktrees", "props": { "size": "heading" } },
+            { "component": "Pill", "text": "merging", "props": { "tone": "warning" } },
+            { "component": "Pill", "text": "read-only", "props": { "variant": "border" } }
+          ]
+        }
+      ]
+    }
+  }
+]

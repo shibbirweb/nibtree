@@ -8,9 +8,25 @@ enum FeedbackNode: Sendable {
     case mark(text: String, size: NMark.Size)
     /// The web's `title` is `.help` in SwiftUI; a separate case keeps untitled marks free of it.
     case titledMark(text: String, size: NMark.Size, title: String)
+    case avatar(text: String, shape: NAvatar.Shape, color: NAvatar.Color, label: String?)
+    case badge(count: Int, max: Int, tone: NBadge.Tone, size: NBadge.Size, label: String?)
+    case meter(MeterProps)
+    /// The web's `title` is `.help` in SwiftUI.
+    case titledMeter(MeterProps, title: String)
+    case pill(text: String, tone: NPill.Tone, strong: Bool, variant: NPill.Variant)
+    case titledPill(text: String, tone: NPill.Tone, strong: Bool, variant: NPill.Variant, title: String)
+    case tag(text: String, tone: NTag.Tone, variant: NTag.Variant, size: NTag.Size)
+    case titledTag(text: String, tone: NTag.Tone, variant: NTag.Variant, size: NTag.Size, title: String)
     case progressBar(value: Double, label: String, tone: NProgressBar.Tone)
     case spinner(label: String, size: NSpinner.Size, delayed: Bool)
     case statusDot(tone: NStatusDot.Tone, pulse: Bool, size: NStatusDot.Size, label: String?)
+
+    struct MeterProps: Sendable {
+        let fraction: Double
+        let label, value, detail: String
+        let variant: NMeter.Variant
+        let tone: NMeter.Tone
+    }
 
     init?(_ node: ScenarioNode) {
         switch node.component {
@@ -22,6 +38,46 @@ enum FeedbackNode: Sendable {
                 self = .titledMark(text: text, size: size, title: title)
             } else {
                 self = .mark(text: text, size: size)
+            }
+        case "Avatar":
+            self = .avatar(
+                text: node.string("text") ?? "", shape: node.string("shape").flatMap(NAvatar.Shape.init) ?? .circle,
+                color: node.string("color").flatMap(NAvatar.Color.init) ?? .accent, label: node.string("label"))
+        case "Badge":
+            self = .badge(
+                count: Int(node.number("count") ?? 0), max: Int(node.number("max") ?? 99),
+                tone: node.string("tone").flatMap(NBadge.Tone.init) ?? .accent,
+                size: node.string("size").flatMap(NBadge.Size.init) ?? .normal, label: node.string("label"))
+        case "Meter":
+            let props = MeterProps(
+                fraction: node.number("fraction") ?? 0, label: node.string("label") ?? "",
+                value: node.string("value") ?? "", detail: node.string("detail") ?? "",
+                variant: node.string("variant").flatMap(NMeter.Variant.init) ?? .memory,
+                tone: node.string("tone").flatMap(NMeter.Tone.init) ?? .accent)
+            if let title = node.string("title") {
+                self = .titledMeter(props, title: title)
+            } else {
+                self = .meter(props)
+            }
+        case "Pill":
+            let (text, strong) = (node.text ?? "", node.flag("strong"))
+            let tone = node.string("tone").flatMap(NPill.Tone.init) ?? .neutral
+            let variant = node.string("variant").flatMap(NPill.Variant.init) ?? .fill
+            if let title = node.string("title") {
+                self = .titledPill(text: text, tone: tone, strong: strong, variant: variant, title: title)
+            } else {
+                self = .pill(text: text, tone: tone, strong: strong, variant: variant)
+            }
+        case "Tag":
+            let (tone, variant, size) = (
+                node.string("tone").flatMap(NTag.Tone.init) ?? .neutral,
+                node.string("variant").flatMap(NTag.Variant.init) ?? .fill,
+                node.string("size").flatMap(NTag.Size.init) ?? .normal
+            )
+            if let title = node.string("title") {
+                self = .titledTag(text: node.text ?? "", tone: tone, variant: variant, size: size, title: title)
+            } else {
+                self = .tag(text: node.text ?? "", tone: tone, variant: variant, size: size)
             }
         case "ProgressBar":
             self = .progressBar(
@@ -52,6 +108,27 @@ extension FeedbackNode {
             NMark(text: text, size: size)
         case .titledMark(let text, let size, let title):
             NMark(text: text, size: size).help(title)
+        case .avatar(let text, let shape, let color, let label):
+            NAvatar(text: text, shape: shape, color: color, label: label)
+        case .badge(let count, let max, let tone, let size, let label):
+            NBadge(count: count, max: max, tone: tone, size: size, label: label)
+        case .meter(let props):
+            NMeter(
+                fraction: props.fraction, label: props.label, value: props.value, detail: props.detail,
+                variant: props.variant, tone: props.tone)
+        case .titledMeter(let props, let title):
+            NMeter(
+                fraction: props.fraction, label: props.label, value: props.value, detail: props.detail,
+                variant: props.variant, tone: props.tone
+            ).help(title)
+        case .pill(let text, let tone, let strong, let variant):
+            NPill(text, tone: tone, strong: strong, variant: variant)
+        case .titledPill(let text, let tone, let strong, let variant, let title):
+            NPill(text, tone: tone, strong: strong, variant: variant).help(title)
+        case .tag(let text, let tone, let variant, let size):
+            NTag(text, tone: tone, variant: variant, size: size)
+        case .titledTag(let text, let tone, let variant, let size, let title):
+            NTag(text, tone: tone, variant: variant, size: size).help(title)
         case .progressBar(let value, let label, let tone):
             NProgressBar(value: value, label: label, tone: tone)
         case .spinner(let label, let size, let delayed):

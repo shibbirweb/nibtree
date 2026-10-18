@@ -1,0 +1,72 @@
+[
+  {
+    "id": "meter-memory",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "md", "padding": "md" },
+      "children": [
+        { "component": "Meter", "props": { "fraction": 0.42, "label": "Nibtree", "value": "126 MB" } },
+        { "component": "Meter", "props": { "fraction": 0.9, "label": "WebKit", "value": "412 MB", "tone": "danger" } },
+        { "component": "Meter", "props": { "fraction": 0, "label": "Git", "variant": "memory", "tone": "accent" } },
+        { "component": "Meter", "props": { "fraction": 1.4, "value": "2 GB", "title": "nibtree (pid 4120)" } }
+      ]
+    }
+  },
+  {
+    "id": "meter-usage",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "md", "padding": "md" },
+      "children": [
+        {
+          "component": "Meter",
+          "props": { "fraction": 0.12, "label": "Session", "value": "12%", "variant": "usage" }
+        },
+        {
+          "component": "Meter",
+          "props": {
+            "fraction": 0.81,
+            "label": "Week",
+            "value": "81%",
+            "variant": "usage",
+            "tone": "warning",
+            "detail": "Resets on Monday at 9:00, when the new week of usage starts again"
+          }
+        },
+        {
+          "component": "Meter",
+          "props": { "fraction": 0.005, "label": "Opus", "value": "100%", "variant": "usage", "tone": "danger" }
+        }
+      ]
+    }
+  },
+  {
+    "id": "meter-mini-row",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Meter", "props": { "fraction": 0.3, "variant": "mini", "label": "Memory" } },
+        { "component": "Meter", "props": { "fraction": 0, "variant": "mini", "tone": "warning" } },
+        { "component": "Meter", "props": { "fraction": 0.7, "label": "Disk", "value": "70%" } },
+        { "component": "Text", "text": "30%", "props": { "tone": "dim" } }
+      ]
+    }
+  },
+  {
+    "id": "meter-detail-row",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Meter", "props": { "fraction": 0.5, "variant": "mini", "detail": "Half" } },
+        { "component": "Meter", "props": { "fraction": 0.25, "variant": "usage", "detail": "A quarter used" } },
+        { "component": "Text", "text": "Tall", "props": { "size": "heading" } }
+      ]
+    }
+  }
+]

@@ -28,6 +28,59 @@ extension Stories {
                 }
             }
         },
+        Story("Avatar", group: "Feedback") {
+            NStack(direction: .row, gap: .md, align: .center) {
+                NAvatar(text: "MS", label: "MD. Shibbir Ahmed")
+                NAvatar(text: "N", shape: .tile)
+                NAvatar(text: "GM", shape: .tile, color: .blue)
+                NAvatar(text: "WS", shape: .tile, color: .green)
+                NAvatar(text: "UI", shape: .tile, color: .magenta)
+            }
+        },
+        Story("Badge", group: "Feedback") {
+            NStack(direction: .row, gap: .md, align: .center) {
+                NBadge(count: 3, label: "3 changes")
+                NBadge(count: 120, tone: .danger)
+                NBadge(count: 2, tone: .warning, size: .small)
+                NBadge(count: 14, tone: .quiet, size: .large)
+                NBadge(count: 5, tone: .neutral)
+            }
+        },
+        Story("Meter", group: "Feedback") {
+            NStack(gap: .md) {
+                NMeter(fraction: 0.42, label: "Nibtree", value: "126 MB")
+                NMeter(fraction: 0.81, label: "Session", value: "81%", detail: "Resets in 2 h", variant: .usage,
+                    tone: .warning)
+                NStack(direction: .row, gap: .sm, align: .center) {
+                    NMeter(fraction: 0.3, variant: .mini).help("Memory")
+                    NText("30%", tone: .dim)
+                }
+            }
+            .frame(width: 240)
+        },
+        Story("Pill", group: "Feedback") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                NPill("unsaved")
+                NPill("merging", tone: .warning, strong: true)
+                NPill("read-only", tone: .danger, variant: .border).help("The file cannot be written")
+                NPill("+60 MB", tone: .warning, variant: .outline)
+            }
+        },
+        Story("Tag", group: "Feedback") {
+            NStack(gap: .sm) {
+                NStack(direction: .row, gap: .sm, align: .center) {
+                    NText("main")
+                    NTag("primary")
+                    NTag("ahead", tone: .accent)
+                    NTag("gone", tone: .danger).help("The folder was removed")
+                }
+                NStack(direction: .row, gap: .sm, align: .center) {
+                    NText("vendor/lib")
+                    NTag("submodule", variant: .outline)
+                    NTag("LFS", size: .small)
+                }
+            }
+        },
         Story("ProgressBar", group: "Feedback") {
             NStack(gap: .sm) {
                 NProgressBar(value: 0.62, label: "Nibtree memory")

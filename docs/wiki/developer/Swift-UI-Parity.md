@@ -18,7 +18,7 @@ flowchart LR
   C --> R["ui/swift/.parity: pictures, diffs, report.json"]
 ```
 
-A scenario is a component tree with props and a width, in `parity/<Name>.json` (a long list splits into `<Name>.<part>.json`, such as `Text.values.json`). A component that fills its parent (a frame, a split) gets a `height`, and one that takes snippets gets `slots` (SplitPane's `first` and `second`), which a small adapter in `ui/web/src/native/adapters/` passes on the web side. `scripts/parity.ts` draws each one in WebKit and with SwiftUI (`ImageRenderer`), in light and dark at 2x, and times both sides. A scenario passes only when all of these hold:
+A scenario is a component tree with props and a width, in `parity/<Name>.json` (a long list splits into `<Name>.<part>.json`, such as `Text.values.json`). A component that fills its parent (a frame, a split) gets a `height`, and one that takes snippets gets `slots` (SplitPane's `first` and `second`), which a small adapter in `ui/web/src/native/adapters/` passes on the web side. Badge's adapter gives a `corner` badge a positioned spot of no size, the way a button pins it and the Swift side draws it. `scripts/parity.ts` draws each one in WebKit and with SwiftUI (`ImageRenderer`), in light and dark at 2x, and times both sides. A scenario passes only when all of these hold:
 
 - **Match:** the share of pixels within 24 of 255 per channel, at least 99% twice: at the same spot, and at the same spot or one device pixel away (half a point). A different size fails outright.
 - **Speed:** the time to build, lay out and draw 200 copies (`NIBTREE_PARITY_COUNT` changes it), best of 7 runs after 2 warm-ups, on both sides. Swift must be faster.
@@ -35,6 +35,7 @@ A run takes about four minutes. `bun run ui:swift:parity text-body stack-scroll`
 - **Weights.** The system font is a variable font; CSS weights are exact points on its weight axis (600), where AppKit's named weights sit a little apart (590), so fonts are made at the CSS weight.
 - **Line boxes.** A line is WebKit's height (the line height times the size, or the rounded ascent and descent), with the baseline where CSS puts it and on a whole device pixel.
 - **Fractions.** SwiftUI rounds a view to device pixels; WebKit draws text at fractional positions. The text's layout sees its exact position and the drawing moves back by what the rounding took away.
+- **Wrap at the layout's width.** A canvas's own size is rounded to device pixels too, so a text that wraps (a meter's detail) breaks at the width its layout gave, or it could break a line WebKit keeps whole.
 - **No font smoothing,** like `-webkit-font-smoothing: antialiased` (`NTypography.matchWebTextRendering()` at launch).
 
 Selectable text keeps a SwiftUI `Text`, which needs a real text view.
