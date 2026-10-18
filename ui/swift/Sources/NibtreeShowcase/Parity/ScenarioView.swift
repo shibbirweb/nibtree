@@ -11,6 +11,7 @@ indirect enum ResolvedNode: Sendable {
     case actions(ActionsNode)
     case feedback(FeedbackNode)
     case editor(EditorNode)
+    case forms(FormsNode)
     /// A node with a forced interaction state: its own node, drawn with `nibtreeForcedState` set.
     case stated(NInteractionState, ResolvedNode)
     case unknown
@@ -65,15 +66,20 @@ indirect enum ResolvedNode: Sendable {
                     line: node.string("line").flatMap(NStackLine.init(rawValue:)) ?? .none),
                 ResolvedNode.list(node.children))
         case "Text":
-            self = .text(
-                TextProps(
-                    content: node.text ?? "",
-                    variant: node.string("variant").flatMap(NText.Variant.init(rawValue:)) ?? .body,
-                    tone: node.string("tone").flatMap(NText.Tone.init(rawValue:)),
-                    size: node.string("size").flatMap(NText.Size.init(rawValue:)),
-                    weight: node.string("weight").flatMap(NText.Weight.init(rawValue:)),
-                    mono: node.flag("mono"), truncate: node.flag("truncate"), selectable: node.flag("selectable"),
-                    tabular: node.flag("tabular"), strike: node.flag("strike")))
+            let props = TextProps(
+                content: node.text ?? "",
+                variant: node.string("variant").flatMap(NText.Variant.init(rawValue:)) ?? .body,
+                tone: node.string("tone").flatMap(NText.Tone.init(rawValue:)),
+                size: node.string("size").flatMap(NText.Size.init(rawValue:)),
+                weight: node.string("weight").flatMap(NText.Weight.init(rawValue:)),
+                mono: node.flag("mono"), truncate: node.flag("truncate"), selectable: node.flag("selectable"),
+                tabular: node.flag("tabular"), strike: node.flag("strike"))
+            // A Time in a Text takes the Text's style, as the web's inline span inherits it.
+            if let child = node.children?.first, case .time(let time, _)? = LayoutNode(child) {
+                self = .layout(.time(time, words: props))
+            } else {
+                self = .text(props)
+            }
         default:
             self = ResolvedNode(group: node)
         }
@@ -89,6 +95,8 @@ indirect enum ResolvedNode: Sendable {
             self = .feedback(feedback)
         } else if let editor = EditorNode(node) {
             self = .editor(editor)
+        } else if let forms = FormsNode(node) {
+            self = .forms(forms)
         } else {
             self = .unknown
         }
@@ -127,6 +135,8 @@ struct ScenarioView: View {
         case .feedback(let inner):
             inner.view
         case .editor(let inner):
+            inner.view
+        case .forms(let inner):
             inner.view
         case .stated(let state, let inner):
             ScenarioView(node: inner).environment(\.nibtreeForcedState, state)

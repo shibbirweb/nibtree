@@ -25,12 +25,15 @@
 {#snippet drawn()}
   {#if Adapter}
     <Adapter {node} Render={Self} />
-  {:else if Found}
+  {:else if Found && (node.text !== undefined || node.children)}
     <Found {...node.props ?? {}}>
       {#if node.text !== undefined}{node.text}{:else}{#each node.children ?? [] as child, index (index)}<Self
             node={child}
           />{/each}{/if}
     </Found>
+  {:else if Found}
+    <!-- No children snippet at all, so a component shows its own content (a Checkbox its label). -->
+    <Found {...node.props ?? {}} />
   {/if}
 {/snippet}
 

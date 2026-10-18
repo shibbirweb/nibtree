@@ -44,6 +44,8 @@ describe("props", () => {
     expect(enumCases(source, "NBoxSide")).toEqual(["left", "right"]);
     expect(enumCases(source, "Tone")).toEqual(["default", "dim", "loud"]);
     expect(enumCases(source, "Missing")).toBeNull();
+    const kinds = 'enum Kind: String {\n  case sidebarLeft = "sidebar-left"\n  case single, perRepo = "per-repo"\n}';
+    expect(enumCases(kinds, "Kind")).toEqual(["sidebar-left", "single", "per-repo"]);
   });
 
   it("reads labelled init props with their values; shared presets need the prop only", () => {

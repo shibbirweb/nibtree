@@ -9,7 +9,16 @@ enum LayoutNode: Sendable {
     case splitPane(SplitPaneProps, first: [ResolvedNode], second: [ResolvedNode]?)
     case divider(NDividerDirection, strong: Bool)
     case spacer
+    case treeLine(NTreeLine.Position)
+    /// A Time; `words` is the Text it sits in, whose style its words take.
+    case time(TimeProps, words: ResolvedNode.TextProps?)
     case card(CardProps, children: [ResolvedNode])
+
+    struct TimeProps: Sendable {
+        let time: Date
+        let format: NTimeFormat
+        let live: Bool
+    }
 
     struct CardProps: Sendable {
         let label: String?
@@ -72,6 +81,15 @@ enum LayoutNode: Sendable {
                 strong: node.flag("strong", default: true))
         case "Spacer":
             self = .spacer
+        case "Time":
+            self = .time(
+                TimeProps(
+                    time: Date(timeIntervalSince1970: (node.number("time") ?? 0) / 1000),
+                    format: node.string("format").flatMap(NTimeFormat.init) ?? .ago,
+                    live: node.flag("live", default: true)),
+                words: nil)
+        case "TreeLine":
+            self = .treeLine(node.string("position").flatMap(NTreeLine.Position.init) ?? .middle)
         case "Card":
             self = .card(
                 CardProps(
@@ -119,6 +137,18 @@ extension LayoutNode {
             NDivider(direction: direction, strong: strong)
         case .spacer:
             NSpacer()
+        case .treeLine(let position):
+            NTreeLine(position: position)
+        case .time(let props, let words):
+            if let words {
+                NTime(time: props.time, format: props.format, live: props.live) {
+                    NText(
+                        $0, variant: words.variant, tone: words.tone, size: words.size, weight: words.weight,
+                        mono: words.mono, truncate: words.truncate, tabular: true, strike: words.strike)
+                }
+            } else {
+                NTime(time: props.time, format: props.format, live: props.live)
+            }
         case .card(let props, let children):
             NCard(label: props.label, padded: props.padded, selected: props.selected, dim: props.dim) {
                 ScenarioChildren(nodes: children)

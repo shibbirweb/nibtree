@@ -107,5 +107,21 @@ extension Stories {
                 NStatusDot(tone: .success, size: .small)
             }
         },
+        Story("StatusLetter", group: "Feedback") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                ForEach(NStatusLetter.Kind.allCases, id: \.self) { NStatusLetter(kind: $0).help($0.label) }
+                NStatusLetter(kind: nil)
+                NText("main.rs")
+            }
+        },
+        Story("SymbolBadge", group: "Feedback") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                NSymbolBadge(letter: "C", tone: .type).help("Class")
+                NSymbolBadge(letter: "I", tone: .interface)
+                NSymbolBadge(letter: "F", tone: .function)
+                NSymbolBadge(letter: "K", tone: .constant)
+                NText("parseConfig")
+            }
+        },
     ]
 }

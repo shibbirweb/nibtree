@@ -1,0 +1,60 @@
+[
+  {
+    "id": "tree-line-group",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "padding": "md" },
+      "children": [
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "TreeLine", "props": { "position": "first" } },
+            { "component": "Text", "text": "zsh" }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "TreeLine", "props": { "position": "middle" } },
+            { "component": "Text", "text": "bun run dev" }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": { "direction": "row", "gap": "sm", "align": "center" },
+          "children": [
+            { "component": "TreeLine", "props": { "position": "last" } },
+            { "component": "Text", "text": "git log" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "tree-line-tall-row",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "TreeLine", "props": { "position": "middle" } },
+        { "component": "Text", "text": "Title", "props": { "variant": "display" } }
+      ]
+    }
+  },
+  {
+    "id": "tree-line-column",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "TreeLine", "props": { "position": "first" } },
+        { "component": "Text", "text": "zsh" }
+      ]
+    }
+  }
+]

@@ -22,6 +22,9 @@ enum FeedbackNode: Sendable {
     case statusDot(tone: NStatusDot.Tone, size: NStatusDot.Size, label: String?)
     /// The web's `pulse` is the caller's `.nibtreePulse()`; a separate case keeps still dots free of it.
     case pulsingDot(tone: NStatusDot.Tone, size: NStatusDot.Size, label: String?)
+    case statusLetter(kind: NStatusLetter.Kind?)
+    case symbolBadge(letter: String, tone: NSymbolBadge.Tone)
+    case titledSymbolBadge(letter: String, tone: NSymbolBadge.Tone, title: String)
 
     struct MeterProps: Sendable {
         let fraction: Double
@@ -99,6 +102,16 @@ enum FeedbackNode: Sendable {
             } else {
                 self = .statusDot(tone: tone, size: size, label: label)
             }
+        case "StatusLetter":
+            self = .statusLetter(kind: node.string("kind").flatMap(NStatusLetter.Kind.init))
+        case "SymbolBadge":
+            let letter = node.string("letter") ?? ""
+            let tone = node.string("tone").flatMap(NSymbolBadge.Tone.init) ?? .type
+            if let title = node.string("title") {
+                self = .titledSymbolBadge(letter: letter, tone: tone, title: title)
+            } else {
+                self = .symbolBadge(letter: letter, tone: tone)
+            }
         default:
             return nil
         }
@@ -145,6 +158,12 @@ extension FeedbackNode {
             NStatusDot(tone: tone, size: size, label: label)
         case .pulsingDot(let tone, let size, let label):
             NStatusDot(tone: tone, size: size, label: label).nibtreePulse()
+        case .statusLetter(let kind):
+            NStatusLetter(kind: kind)
+        case .symbolBadge(let letter, let tone):
+            NSymbolBadge(letter: letter, tone: tone)
+        case .titledSymbolBadge(let letter, let tone, let title):
+            NSymbolBadge(letter: letter, tone: tone).help(title)
         }
     }
 }

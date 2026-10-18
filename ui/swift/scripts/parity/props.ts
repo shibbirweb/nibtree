@@ -26,20 +26,24 @@ function block(source: string, open: number): string {
   return source.slice(open);
 }
 
-/** The cases of `enum <name>: String` in the source, or null when it is not defined there. */
+/** The web values of `enum <name>: String` in the source (raw values where given), or null when it is not there. */
 export function enumCases(source: string, name: string): string[] | null {
   const found = new RegExp(`enum ${name}\\s*:\\s*String[^{]*\\{`).exec(source);
   if (!found) {
     return null;
   }
   const body = block(source, found.index + found[0].length - 1);
-  return body
-    .slice(1, -1)
-    .split(/\n|;/)
-    .map((line) => /^\s*case\s+([^.].*)$/.exec(line)?.[1] ?? "")
-    .flatMap((list) => list.split(","))
-    .map((value) => value.replaceAll("`", "").trim())
-    .filter((value) => /^\w+$/.test(value));
+  return (
+    body
+      .slice(1, -1)
+      .split(/\n|;/)
+      .map((line) => /^\s*case\s+([^.].*)$/.exec(line)?.[1] ?? "")
+      .flatMap((list) => list.split(","))
+      .map((value) => value.replaceAll("`", "").trim())
+      // A case with a raw value (`sidebarLeft = "sidebar-left"`) is the web's value.
+      .map((value) => /^\w+\s*=\s*"([^"]+)"$/.exec(value)?.[1] ?? value)
+      .filter((value) => /^[\w-]+$/.test(value))
+  );
 }
 
 /**

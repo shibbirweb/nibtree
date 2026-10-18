@@ -24,7 +24,7 @@ enum NIconImages {
             rgba = Self.pack(color)
         }
 
-        private static func pack(_ color: CGColor) -> UInt32 {
+        static func pack(_ color: CGColor) -> UInt32 {
             guard let parts = color.components, parts.count >= 3 else {
                 return 0
             }
@@ -62,7 +62,19 @@ enum NIconImages {
     }
 
     private static func draw(_ key: Key, color: CGColor) -> CGImage? {
-        let pixels = Int((key.points * key.scale).rounded(.up))
+        bitmap(points: key.points, scale: key.scale) { cg in
+            cg.addPath(NIconOutlines.path(key.name))
+            cg.setStrokeColor(color)
+            cg.setLineWidth(key.lineWidth)
+            cg.setLineCap(.round)
+            cg.setLineJoin(.round)
+            cg.strokePath()
+        }
+    }
+
+    /// A square bitmap `points` wide at `scale`, painted on a 24-point grid whose y runs down like SVG's.
+    static func bitmap(points: CGFloat, scale: CGFloat, paint: (CGContext) -> Void) -> CGImage? {
+        let pixels = Int((points * scale).rounded(.up))
         guard pixels > 0, let space = CGColorSpace(name: CGColorSpace.sRGB),
             let cg = CGContext(
                 data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0, space: space,
@@ -70,15 +82,10 @@ enum NIconImages {
         else {
             return nil
         }
-        // The grid's y runs down like SVG's; a bitmap's runs up.
+        // A bitmap's y runs up.
         cg.translateBy(x: 0, y: CGFloat(pixels))
-        cg.scaleBy(x: key.points * key.scale / 24, y: -key.points * key.scale / 24)
-        cg.addPath(NIconOutlines.path(key.name))
-        cg.setStrokeColor(color)
-        cg.setLineWidth(key.lineWidth)
-        cg.setLineCap(.round)
-        cg.setLineJoin(.round)
-        cg.strokePath()
+        cg.scaleBy(x: points * scale / 24, y: -points * scale / 24)
+        paint(cg)
         return cg.makeImage()
     }
 }

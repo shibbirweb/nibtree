@@ -1,0 +1,46 @@
+[
+  {
+    "id": "time-ago-in-text",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "Committed" },
+        {
+          "component": "Text",
+          "props": { "tone": "dim", "variant": "small" },
+          "children": [{ "component": "Time", "props": { "time": 1741003200000, "format": "ago", "live": false } }]
+        }
+      ]
+    }
+  },
+  {
+    "id": "time-age-until",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "align": "center", "padding": "md" },
+      "children": [
+        {
+          "component": "Text",
+          "children": [{ "component": "Time", "props": { "time": 4102444800000, "format": "age" } }]
+        },
+        {
+          "component": "Text",
+          "props": { "tone": "dim" },
+          "children": [{ "component": "Time", "props": { "time": 1741003200000, "format": "until", "live": true } }]
+        }
+      ]
+    }
+  },
+  {
+    "id": "time-alone",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "padding": "md" },
+      "children": [{ "component": "Time", "props": { "time": 1741003200000 } }]
+    }
+  }
+]

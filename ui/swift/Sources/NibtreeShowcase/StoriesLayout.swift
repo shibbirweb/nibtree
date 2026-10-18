@@ -21,6 +21,25 @@ extension Stories {
                 }
             }
         },
+        Story("TreeLine", group: "Layout") {
+            NStack {
+                ForEach(NTreeLine.Position.allCases, id: \.self) { position in
+                    NStack(direction: .row, gap: .sm, align: .center) {
+                        NTreeLine(position: position)
+                        NText("zsh \(position.rawValue)")
+                    }
+                }
+            }
+        },
+        Story("Time", group: "Layout") {
+            NStack(gap: .xs) {
+                NTime(time: Date().addingTimeInterval(-300)).help(NTimeText.fullDate(Date()))
+                NTime(time: Date().addingTimeInterval(-7200), format: .age) { NText($0, tone: .dim, tabular: true) }
+                NTime(time: Date().addingTimeInterval(12_000), format: .until) {
+                    NText("Resets \($0)", tone: .dim, tabular: true)
+                }
+            }
+        },
     ]
 }
 

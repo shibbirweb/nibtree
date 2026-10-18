@@ -1,0 +1,41 @@
+[
+  {
+    "id": "symbol-badge-row",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "SymbolBadge", "props": { "letter": "C", "tone": "type" } },
+        { "component": "SymbolBadge", "props": { "letter": "I", "tone": "interface" } },
+        { "component": "SymbolBadge", "props": { "letter": "F", "tone": "function" } },
+        { "component": "SymbolBadge", "props": { "letter": "K", "tone": "constant" } },
+        { "component": "Text", "text": "parseConfig" }
+      ]
+    }
+  },
+  {
+    "id": "symbol-badge-column-stretched",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "xs", "padding": "md" },
+      "children": [
+        { "component": "SymbolBadge", "props": { "letter": "M", "tone": "function" } },
+        { "component": "SymbolBadge", "props": { "letter": "WW", "tone": "type" } }
+      ]
+    }
+  },
+  {
+    "id": "symbol-badge-row-stretched",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "SymbolBadge", "props": { "letter": "E", "tone": "constant", "title": "Enum member" } },
+        { "component": "Text", "text": "Title", "props": { "variant": "display" } }
+      ]
+    }
+  }
+]

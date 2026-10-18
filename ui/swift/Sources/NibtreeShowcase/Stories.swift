@@ -21,7 +21,7 @@ struct Story: Identifiable, Sendable {
 /// Sources/NibtreeUI/Components.
 @MainActor
 enum Stories {
-    static let all: [Story] = basics + layout + feedback
+    static let all: [Story] = basics + layout + feedback + forms
 
     static let basics: [Story] = [
         Story("Stack", group: "Layout") {
@@ -76,6 +76,13 @@ enum Stories {
                 NStack(direction: .row, gap: .sm, align: .center) {
                     ForEach(NIconSize.allCases, id: \.self) { NIcon(.settings, size: $0, tone: .dim) }
                 }
+            }
+        },
+        Story("LayoutIcon", group: "Actions") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                ForEach(NLayoutIcon.Kind.allCases, id: \.self) { NLayoutIcon(kind: $0) }
+                NLayoutIcon(kind: .sidebarLeft, active: true)
+                NLayoutIcon(kind: .sidebarRight, active: true, size: .xxlarge)
             }
         },
         Story("Text", group: "Content") {

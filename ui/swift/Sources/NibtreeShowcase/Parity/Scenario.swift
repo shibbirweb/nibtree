@@ -62,10 +62,14 @@ enum PropValue: Decodable, Sendable {
     case number(Double)
     case bool(Bool)
     case object([String: String])
+    /// A JSON null, such as StatusLetter's kind for a conflict.
+    case null
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let value = try? container.decode(Bool.self) {
+        if container.decodeNil() {
+            self = .null
+        } else if let value = try? container.decode(Bool.self) {
             self = .bool(value)
         } else if let value = try? container.decode(Double.self) {
             self = .number(value)

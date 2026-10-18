@@ -31,6 +31,10 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
 - No `if` in a component's body for an option most uses leave off: each one cost a row of six `NStatusDot`s 3 to
   5 ms. An animation is the caller's modifier too: a running dot is `NStatusDot(...).nibtreePulse()`, so the
   dots that stay still pay neither the branch nor the pulse's state (8% on a row of dots).
+- No layout when nothing shows it. A StatusLetter is one canvas in a fixed frame: a row stretches the web's span,
+  but it draws nothing there, and dropping the layout made a row of letters 8% faster.
+- One `accessibilityRepresentation` (a real `Toggle` for `NSwitch`) instead of five accessibility modifiers: 5%
+  faster on a row of switches, and VoiceOver reads a switch.
 - No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
   is one: an empty `.help` cost as much as a whole `NMark`, and choosing inside the component cost almost as much.
 
