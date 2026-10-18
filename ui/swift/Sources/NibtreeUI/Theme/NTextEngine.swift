@@ -65,9 +65,7 @@ public enum NTextEngine {
         var lines: [CTLine] = [full]
         if let limit, fullWidth > limit + 0.01 {
             if truncate {
-                let dots = CTLineCreateWithAttributedString(
-                    NSAttributedString(string: "\u{2026}", attributes: string.attributes(at: 0, effectiveRange: nil)))
-                lines = [CTLineCreateTruncatedLine(full, Double(limit), .end, dots) ?? full]
+                lines = [truncated(string, full: full, limit: limit)]
             } else {
                 lines = wrapped(string, width: limit)
             }
@@ -79,6 +77,21 @@ public enum NTextEngine {
         }
         layouts[key] = layout
         return layout
+    }
+
+    /// The line cut to `limit` with an ellipsis. Like WebKit (and CSS), the first character always stays, with the
+    /// ellipsis after it even when that overflows: the box around the text clips what does not fit.
+    private static func truncated(_ string: NSAttributedString, full: CTLine, limit: CGFloat) -> CTLine {
+        let attributes = string.attributes(at: 0, effectiveRange: nil)
+        let dots = CTLineCreateWithAttributedString(NSAttributedString(string: "\u{2026}", attributes: attributes))
+        let first = (string.string as NSString).rangeOfComposedCharacterSequence(at: 0)
+        let head = NSMutableAttributedString(attributedString: string.attributedSubstring(from: first))
+        head.append(NSAttributedString(string: "\u{2026}", attributes: attributes))
+        let shortest = CTLineCreateWithAttributedString(head)
+        if CGFloat(CTLineGetTypographicBounds(shortest, nil, nil, nil)) > limit {
+            return shortest
+        }
+        return CTLineCreateTruncatedLine(full, Double(limit), .end, dots) ?? full
     }
 
     private static func wrapped(_ string: NSAttributedString, width: CGFloat) -> [CTLine] {
@@ -95,9 +108,12 @@ public enum NTextEngine {
 
     /// Draws `layout` in a context whose origin is the text's top left, one line per `line.height`, each on its
     /// WebKit baseline, without font smoothing (like `-webkit-font-smoothing: antialiased`).
-    /// `strike` is the line-through's color (ui/web draws it in the faint text color), or nil for none.
+    /// `strike` is the line-through's color (ui/web draws it in the faint text color), or nil for none. With
+    /// `centeredIn`, each line is centered in that width like CSS `text-align: center` (a wrapped line's trailing
+    /// space hangs outside).
     static func draw(
-        _ layout: Layout, line: NLineBox, color: CGColor, strike: CGColor?, scale: CGFloat, in context: CGContext
+        _ layout: Layout, line: NLineBox, color: CGColor, strike: CGColor?, scale: CGFloat, in context: CGContext,
+        centeredIn: CGFloat? = nil
     ) {
         context.setShouldSmoothFonts(false)
         context.setFillColor(color)
@@ -106,8 +122,13 @@ public enum NTextEngine {
             // Baselines sit on whole device pixels, as in WebKit.
             let exact = CGFloat(index) * line.height + line.baseline
             let baseline = (exact * max(1, scale)).rounded() / max(1, scale)
+            var left: CGFloat = 0
+            if let centeredIn {
+                let width = CTLineGetTypographicBounds(ctLine, nil, nil, nil) - CTLineGetTrailingWhitespaceWidth(ctLine)
+                left = (centeredIn - CGFloat(width)) / 2
+            }
             context.saveGState()
-            context.translateBy(x: 0, y: baseline)
+            context.translateBy(x: left, y: baseline)
             context.scaleBy(x: 1, y: -1)
             context.textPosition = .zero
             CTLineDraw(ctLine, context)
@@ -116,7 +137,7 @@ public enum NTextEngine {
                 let width = CGFloat(CTLineGetTypographicBounds(ctLine, nil, nil, nil))
                 context.setFillColor(strike)
                 let top = ((baseline - line.strikeOffset) * max(1, scale)).rounded() / max(1, scale)
-                context.fill(CGRect(x: 0, y: top, width: width, height: 1))
+                context.fill(CGRect(x: left, y: top, width: width, height: 1))
                 context.setFillColor(color)
             }
         }

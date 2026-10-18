@@ -1,3 +1,4 @@
+import NibtreeTokens
 import SwiftUI
 
 private struct StillKey: EnvironmentKey {
@@ -29,6 +30,20 @@ private struct NPulse: ViewModifier {
         content
             .opacity(started && !still ? 0.3 : 1)
             .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: started)
+            .onAppear { started = true }
+    }
+}
+
+/// Fades the view in after a moment, like the web's `appear` animation on a `delayed` view, so quick work does not
+/// flash it; shown at once under `nibtreeStill`.
+struct NDelayedAppear: ViewModifier {
+    @State private var started = false
+    @Environment(\.nibtreeStill) private var still
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(started || still ? 1 : 0)
+            .animation(NSpinner.ease.delay(GMMotion.appearDelay), value: started)
             .onAppear { started = true }
     }
 }

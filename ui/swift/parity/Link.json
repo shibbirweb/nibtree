@@ -1,0 +1,33 @@
+[
+  {
+    "id": "link-tones",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        { "component": "Link", "props": { "tone": "accent" }, "text": "All settings" },
+        { "component": "Link", "props": { "tone": "dim", "title": "Older releases" }, "text": "Show older releases" },
+        { "component": "Link", "props": { "tone": "dim", "icon": "external-link" }, "text": "Open the docs" },
+        { "component": "Link", "props": { "tone": "dim", "expanded": false }, "text": "Earlier versions" },
+        { "component": "Link", "props": { "expanded": true }, "text": "Hide details" },
+        { "component": "Link", "props": { "disabled": true }, "text": "Locked" }
+      ]
+    }
+  },
+  {
+    "id": "link-sizes-row",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "md", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Link", "props": { "size": "inherit" }, "text": "Normal" },
+        { "component": "Link", "props": { "size": "small" }, "text": "Small" },
+        { "component": "Link", "props": { "mono": true }, "text": "a1b2c3d" },
+        { "component": "Link", "props": { "size": "small", "mono": true, "tone": "dim" }, "text": "e4f5a6b" },
+        { "component": "Link", "props": { "size": "small", "icon": "settings" }, "text": "Settings" }
+      ]
+    }
+  }
+]

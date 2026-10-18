@@ -59,10 +59,12 @@ public struct NSpinner: View {
 /// CSS's round box with a border: the track color all round but the top quarter, between the corners' 45 degree
 /// joins, in the accent color.
 enum NSpinnerRing {
-    static func draw(size: CGFloat, in cg: CGContext, track: CGColor, head: CGColor) {
+    static func draw(
+        size: CGFloat, in cg: CGContext, track: CGColor, head: CGColor, border: CGFloat = GMSpinnerTokens.border
+    ) {
         let center = CGPoint(x: size / 2, y: size / 2)
-        let middle = (size - GMSpinnerTokens.border) / 2
-        cg.setLineWidth(GMSpinnerTokens.border)
+        let middle = (size - border) / 2
+        cg.setLineWidth(border)
         // y grows downward, so the top is at -90 degrees.
         let (start, end) = (-CGFloat.pi * 3 / 4, -CGFloat.pi / 4)
         cg.setStrokeColor(track)

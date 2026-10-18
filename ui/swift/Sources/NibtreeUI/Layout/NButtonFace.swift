@@ -29,7 +29,7 @@ struct NButtonFace: View {
         let box = CGRect(origin: .zero, size: size)
         let outer = CGPath(roundedRect: box, cornerWidth: radius, cornerHeight: radius, transform: nil)
         let resting = look.pressed ? look.colors.pressedBackground : look.colors.background
-        let background = hovering ? look.colors.hover : resting
+        let background = hovering ? look.colors.hover ?? resting : resting
         if let background {
             cg.addPath(outer)
             cg.setFillColor(palette.cgColor(background))
@@ -77,6 +77,9 @@ struct NButtonFace: View {
         }
         if !look.labelled, !look.words.text.isEmpty {
             text(look.words, x: left + parts.words, size: size, phase: phase, color: color, scale: scale, in: cg)
+            if hovering, look.underlineOnHover {
+                underline(look.words, x: left + parts.words, size: size, phase: phase, color: color, in: cg)
+            }
         }
         if let count = look.count {
             let tone = look.countFollowsText ? color : palette.cgColor(count.tone)
@@ -106,6 +109,17 @@ struct NButtonFace: View {
         cg.scaleBy(x: 1, y: -1)
         cg.draw(image, in: CGRect(origin: .zero, size: spot.size))
         cg.restoreGState()
+    }
+
+    /// The words' underline, a point thick, where the font puts it below the baseline.
+    @MainActor
+    private static func underline(
+        _ spec: NTextSpec, x: CGFloat, size: CGSize, phase: CGPoint, color: CGColor, in cg: CGContext
+    ) {
+        let font = NTypography.nsFont(spec.font)
+        let top = (size.height - spec.line.height) / 2 + phase.y + spec.line.baseline - font.underlinePosition
+        cg.setFillColor(color)
+        cg.fill(CGRect(x: x + phase.x, y: top.rounded(), width: NButtonLook.lines(spec).width, height: 1))
     }
 
     @MainActor

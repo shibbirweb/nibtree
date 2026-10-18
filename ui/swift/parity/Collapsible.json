@@ -1,0 +1,61 @@
+[
+  {
+    "id": "collapsible-groups",
+    "width": 280,
+    "node": {
+      "component": "Stack",
+      "children": [
+        {
+          "component": "Collapsible",
+          "props": { "title": "Staged", "open": true, "count": 2 },
+          "children": [
+            {
+              "component": "Stack",
+              "props": { "paddingX": "lg" },
+              "children": [
+                { "component": "Text", "props": { "size": "small" }, "text": "src/app.ts" },
+                { "component": "Text", "props": { "size": "small" }, "text": "README.md" }
+              ]
+            }
+          ]
+        },
+        {
+          "component": "Collapsible",
+          "props": { "title": "Changes", "open": false, "count": 14 },
+          "children": [{ "component": "Text", "text": "hidden" }]
+        },
+        {
+          "component": "Collapsible",
+          "props": { "title": "Untracked", "nested": true, "dim": true },
+          "children": [{ "component": "Text", "props": { "tone": "dim" }, "text": "notes.txt" }]
+        }
+      ]
+    }
+  },
+  {
+    "id": "collapsible-actions",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "children": [
+        {
+          "component": "Collapsible",
+          "props": { "title": "Merge Changes", "count": 3 },
+          "slots": {
+            "actions": [
+              { "component": "IconButton", "props": { "icon": "plus", "label": "Stage all", "size": "row" } },
+              { "component": "Button", "props": { "size": "mini" }, "text": "Resolve..." }
+            ]
+          },
+          "children": [
+            {
+              "component": "Stack",
+              "props": { "paddingX": "lg" },
+              "children": [{ "component": "Text", "props": { "size": "small" }, "text": "conflict.ts" }]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -92,3 +92,17 @@ struct ButtonStory: View {
         .frame(width: 520)
     }
 }
+
+struct LinkStory: View {
+    @State private var older = false
+
+    var body: some View {
+        NStack(direction: .row, gap: .md, align: .center) {
+            NLink("All settings") {}
+            NLink("Earlier versions", tone: .dim, expanded: older) { older.toggle() }
+            NLink("Docs", tone: .dim, icon: .externalLink) {}
+            NLink("a1b2c3d", size: .small, mono: true) {}
+            NLink("Locked", disabled: true) {}
+        }
+    }
+}

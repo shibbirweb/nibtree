@@ -23,6 +23,34 @@ enum FeedbackNode: Sendable {
     /// The web's `pulse` is the caller's `.nibtreePulse()`; a separate case keeps still dots free of it.
     case pulsingDot(tone: NStatusDot.Tone, size: NStatusDot.Size, label: String?)
     case statusLetter(kind: NStatusLetter.Kind?)
+    case statusIcon(state: NStatusIcon.State, label: String)
+    case notice(NoticeProps)
+    /// A plain message with its `action` slot.
+    case noticeAction(NoticeProps, action: [ResolvedNode])
+    /// A message of views (the web's children).
+    case noticeWith(NoticeProps, message: [ResolvedNode])
+
+    case emptyState(EmptyStateProps, action: [ResolvedNode]?)
+
+    struct EmptyStateProps: Sendable {
+        let title: String
+        let hint: String
+        let icon: GMIconName?
+        let variant: NEmptyStateVariant
+        let iconStyle: NEmptyStateIconStyle
+        let iconTone: NEmptyStateIconTone
+        let strong: Bool
+        let titleSize: NEmptyStateTitleSize
+        let titleTone: NEmptyStateTitleTone
+        let delayed: Bool
+    }
+
+    struct NoticeProps: Sendable {
+        let text: String
+        let tone: NNoticeTone
+        let variant: NNoticeVariant
+        let icon: GMIconName?
+    }
     case symbolBadge(letter: String, tone: NSymbolBadge.Tone)
     case titledSymbolBadge(letter: String, tone: NSymbolBadge.Tone, title: String)
 
@@ -104,6 +132,35 @@ enum FeedbackNode: Sendable {
             }
         case "StatusLetter":
             self = .statusLetter(kind: node.string("kind").flatMap(NStatusLetter.Kind.init))
+        case "EmptyState":
+            let props = EmptyStateProps(
+                title: node.string("title") ?? "", hint: node.string("hint") ?? "",
+                icon: node.string("icon").flatMap(GMIconName.init),
+                variant: node.string("variant").flatMap(NEmptyStateVariant.init) ?? .area,
+                iconStyle: node.string("iconStyle").flatMap(NEmptyStateIconStyle.init) ?? .plain,
+                iconTone: node.string("iconTone").flatMap(NEmptyStateIconTone.init) ?? .inherit,
+                strong: node.flag("strong"),
+                titleSize: node.string("titleSize").flatMap(NEmptyStateTitleSize.init) ?? .normal,
+                titleTone: node.string("titleTone").flatMap(NEmptyStateTitleTone.init) ?? .default,
+                delayed: node.flag("delayed"))
+            self = .emptyState(props, action: node.slots?["action"].map { ResolvedNode.list($0) })
+        case "Notice":
+            let props = NoticeProps(
+                text: node.text ?? "", tone: node.string("tone").flatMap(NNoticeTone.init) ?? .info,
+                variant: node.string("variant").flatMap(NNoticeVariant.init) ?? .card,
+                icon: node.string("icon").flatMap(GMIconName.init))
+            if let action = node.slots?["action"] {
+                self = .noticeAction(props, action: ResolvedNode.list(action))
+            } else if let children = node.children, !children.isEmpty {
+                self = .noticeWith(props, message: ResolvedNode.list(children))
+            } else {
+                self = .notice(props)
+            }
+        case "StatusIcon":
+            guard let state = node.string("state").flatMap(NStatusIcon.State.init) else {
+                return nil
+            }
+            self = .statusIcon(state: state, label: node.string("label") ?? "")
         case "SymbolBadge":
             let letter = node.string("letter") ?? ""
             let tone = node.string("tone").flatMap(NSymbolBadge.Tone.init) ?? .type
@@ -160,6 +217,33 @@ extension FeedbackNode {
             NStatusDot(tone: tone, size: size, label: label).nibtreePulse()
         case .statusLetter(let kind):
             NStatusLetter(kind: kind)
+        case .emptyState(let props, let action):
+            if let action {
+                NEmptyState(
+                    title: props.title, hint: props.hint, icon: props.icon, variant: props.variant,
+                    iconStyle: props.iconStyle, iconTone: props.iconTone, strong: props.strong,
+                    titleSize: props.titleSize, titleTone: props.titleTone, delayed: props.delayed
+                ) {
+                    ScenarioChildren(nodes: action)
+                }
+            } else {
+                NEmptyState(
+                    title: props.title, hint: props.hint, icon: props.icon, variant: props.variant,
+                    iconStyle: props.iconStyle, iconTone: props.iconTone, strong: props.strong,
+                    titleSize: props.titleSize, titleTone: props.titleTone, delayed: props.delayed)
+            }
+        case .notice(let props):
+            NNotice(props.text, tone: props.tone, variant: props.variant, icon: props.icon)
+        case .noticeAction(let props, let action):
+            NNotice(props.text, tone: props.tone, variant: props.variant, icon: props.icon) {
+                ScenarioChildren(nodes: action)
+            }
+        case .noticeWith(let props, let message):
+            NNotice(tone: props.tone, variant: props.variant, icon: props.icon) {
+                ScenarioChildren(nodes: message)
+            }
+        case .statusIcon(let state, let label):
+            NStatusIcon(state: state, label: label)
         case .symbolBadge(let letter, let tone):
             NSymbolBadge(letter: letter, tone: tone)
         case .titledSymbolBadge(let letter, let tone, let title):

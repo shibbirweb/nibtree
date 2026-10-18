@@ -1,0 +1,121 @@
+[
+  {
+    "id": "empty-state-area",
+    "width": 320,
+    "node": {
+      "component": "EmptyState",
+      "props": {
+        "title": "No stashes",
+        "hint": "Stash your changes to set them aside and come back to them later.",
+        "icon": "stash",
+        "variant": "area",
+        "iconStyle": "plain",
+        "iconTone": "inherit",
+        "titleSize": "normal",
+        "titleTone": "default"
+      },
+      "slots": { "action": [{ "component": "Button", "props": { "size": "small" }, "text": "Stash changes" }] }
+    }
+  },
+  {
+    "id": "empty-state-panels",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm", "padding": "md" },
+      "children": [
+        {
+          "component": "EmptyState",
+          "props": {
+            "title": "No remotes",
+            "hint": "Add one to push.",
+            "icon": "cloud",
+            "variant": "panel",
+            "iconTone": "faint"
+          }
+        },
+        {
+          "component": "EmptyState",
+          "props": {
+            "title": "Set up signing",
+            "hint": "Sign commits with a key.",
+            "variant": "notice",
+            "titleSize": "large"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "empty-state-circles",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm" },
+      "children": [
+        {
+          "component": "EmptyState",
+          "props": {
+            "title": "All committed",
+            "icon": "check",
+            "variant": "pane",
+            "iconStyle": "circle",
+            "iconTone": "success"
+          }
+        },
+        {
+          "component": "EmptyState",
+          "props": {
+            "title": "Every conflict resolved",
+            "icon": "check",
+            "iconStyle": "large-circle",
+            "iconTone": "success",
+            "strong": true
+          }
+        },
+        {
+          "component": "EmptyState",
+          "props": { "title": "No repository", "icon": "folder", "iconStyle": "circle", "iconTone": "accent" }
+        }
+      ]
+    }
+  },
+  {
+    "id": "empty-state-titles",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "sm" },
+      "children": [
+        { "component": "EmptyState", "props": { "title": "Loading diff...", "titleTone": "dim", "delayed": true } },
+        {
+          "component": "EmptyState",
+          "props": {
+            "title": "Could not load the file",
+            "titleTone": "danger",
+            "titleSize": "large",
+            "icon": "alert",
+            "iconTone": "accent"
+          }
+        },
+        {
+          "component": "EmptyState",
+          "props": { "title": "Saved", "icon": "check", "variant": "pane", "iconTone": "success" }
+        }
+      ]
+    }
+  },
+  {
+    "id": "empty-state-grows",
+    "width": 300,
+    "height": 260,
+    "node": {
+      "component": "Stack",
+      "props": { "grow": true },
+      "children": [
+        { "component": "Text", "props": { "size": "small", "tone": "dim" }, "text": "Changes" },
+        { "component": "EmptyState", "props": { "title": "Nothing to commit", "hint": "Your working tree is clean." } }
+      ]
+    }
+  }
+]

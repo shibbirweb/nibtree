@@ -6,10 +6,35 @@ import SwiftUI
 enum ActionsNode: Sendable {
     case icon(GMIconName, NIconSize, NIconStroke, NText.Tone?)
     case layoutIcon(NLayoutIcon.Kind, active: Bool, NIconSize)
+    /// FileIcon (a Feedback component), kept beside Icon.
+    case fileIcon(NFileIconView?, NIconSize, plain: Bool)
     case button(ButtonProps)
     case buttonWith(ButtonProps, children: [ResolvedNode])
     case iconButton(IconButtonProps)
     case iconButtonWith(IconButtonProps, children: [ResolvedNode])
+    case link(LinkProps)
+    case chip(ChipProps)
+
+    struct ChipProps: Sendable {
+        let text: String
+        let variant: NChip.Variant
+        let tone: NChip.Tone
+        let icon: GMIconName?
+        let status: NStatusIcon.State?
+        let fontFamily: String?
+        /// The web's `onclick`, which a scenario's JSON cannot hold.
+        let pressable: Bool
+    }
+
+    struct LinkProps: Sendable {
+        let text: String
+        let tone: NLink.Tone
+        let size: NLink.Size
+        let mono: Bool
+        let icon: GMIconName?
+        let expanded: Bool?
+        let disabled: Bool
+    }
 
     struct IconButtonProps: Sendable {
         let icon: GMIconName?
@@ -51,6 +76,10 @@ enum ActionsNode: Sendable {
                 name, node.string("size").flatMap(NIconSize.init) ?? .large,
                 node.string("stroke").flatMap(NIconStroke.init) ?? .normal,
                 node.string("tone").flatMap(NText.Tone.init))
+        case "FileIcon":
+            self = .fileIcon(
+                node.object("view").flatMap(Self.fileIconView), node.string("size").flatMap(NIconSize.init) ?? .normal,
+                plain: node.props?["plain"] == nil ? true : node.flag("plain"))
         case "LayoutIcon":
             guard let kind = node.string("kind").flatMap(NLayoutIcon.Kind.init) else {
                 return nil
@@ -87,6 +116,24 @@ enum ActionsNode: Sendable {
             } else {
                 self = .iconButton(props)
             }
+        case "Link":
+            self = .link(
+                LinkProps(
+                    text: node.text ?? "", tone: node.string("tone").flatMap(NLink.Tone.init) ?? .accent,
+                    size: node.string("size").flatMap(NLink.Size.init) ?? .inherit, mono: node.flag("mono"),
+                    icon: node.string("icon").flatMap(GMIconName.init),
+                    expanded: node.props?["expanded"] == nil ? nil : node.flag("expanded"),
+                    disabled: node.flag("disabled")))
+        case "Chip":
+            self = .chip(
+                ChipProps(
+                    text: node.string("text") ?? "",
+                    variant: node.string("variant").flatMap(NChip.Variant.init) ?? .filter,
+                    tone: node.string("tone").flatMap(NChip.Tone.init) ?? .neutral,
+                    icon: node.string("icon").flatMap(GMIconName.init),
+                    status: node.string("status").flatMap(NStatusIcon.State.init),
+                    fontFamily: node.string("fontFamily"),
+                    pressable: node.flag("pressable")))
         default:
             return nil
         }
@@ -100,6 +147,8 @@ extension ActionsNode {
         switch self {
         case .icon(let name, let size, let stroke, let tone):
             NIcon(name, size: size, stroke: stroke, tone: tone)
+        case .fileIcon(let view, let size, let plain):
+            NFileIcon(view: view, size: size, plain: plain)
         case .layoutIcon(let kind, let active, let size):
             NLayoutIcon(kind: kind, active: active, size: size)
         case .button(let props):
@@ -134,6 +183,38 @@ extension ActionsNode {
             } label: {
                 ScenarioChildren(nodes: children)
             }
+        case .link(let props):
+            NLink(
+                props.text, tone: props.tone, size: props.size, mono: props.mono, icon: props.icon,
+                expanded: props.expanded, disabled: props.disabled
+            ) {}
+        case .chip(let props):
+            NChip(
+                props.text, variant: props.variant, tone: props.tone, icon: props.icon, status: props.status,
+                fontFamily: props.fontFamily, action: props.pressable ? {} : nil)
         }
+    }
+}
+
+extension ActionsNode {
+    /// The app's icon sets, at the repository's static/file-icons.
+    private static let fileIcons = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent().appendingPathComponent("../../../../../../static/file-icons").standardized
+
+    private static let maskTones: [String: GMColorToken] = [
+        "gray": .textDim, "blue": .termBlue, "cyan": .termCyan, "green": .success, "yellow": .termYellow,
+        "orange": .warning, "red": .danger, "purple": .termMagenta, "accent": .accent,
+    ]
+
+    /// A scenario's `{ kind: "image", icon }` (Material) or `{ kind: "mask", glyph, tone }` (Minimal).
+    static func fileIconView(_ view: [String: String]) -> NFileIconView? {
+        if view["kind"] == "image", let icon = view["icon"] {
+            return .image(fileIcons.appendingPathComponent("material/\(icon).svg"))
+        }
+        if view["kind"] == "mask", let glyph = view["glyph"] {
+            let tone = maskTones[view["tone"] ?? ""] ?? .textDim
+            return .mask(fileIcons.appendingPathComponent("minimal/\(glyph).svg"), tone: tone)
+        }
+        return nil
     }
 }

@@ -12,16 +12,21 @@ public enum NTypography {
         return GMFontFamilyMono.names.first { installed.contains($0) }
     }()
 
-    /// One font: a size, a weight and whether it is the code font.
+    /// One font: a size, a weight and whether it is the code font, or a family named by data (a font pick).
     public struct FontKey: Hashable, Sendable {
         public let size: CGFloat
         public let weight: Font.Weight
         public let mono: Bool
+        public let family: String?
 
-        public init(_ style: GMTextStyle, size: CGFloat? = nil, weight: Font.Weight? = nil, mono: Bool = false) {
+        public init(
+            _ style: GMTextStyle, size: CGFloat? = nil, weight: Font.Weight? = nil, mono: Bool = false,
+            family: String? = nil
+        ) {
             self.size = size ?? style.size
             self.weight = weight ?? style.weight
             self.mono = mono || style.family.first == GMFontFamilyMono.names.first
+            self.family = family
         }
     }
 
@@ -43,7 +48,9 @@ public enum NTypography {
         }
         let weight = appKitWeights[key.weight] ?? .regular
         let font: NSFont
-        if key.mono, let family = monoFamily, let named = NSFont(name: family, size: key.size) {
+        if let named = key.family.flatMap({ familyFont($0, size: key.size, weight: weight) }) {
+            font = named
+        } else if key.mono, let family = monoFamily, let named = NSFont(name: family, size: key.size) {
             font = weight >= .semibold ? NSFontManager.shared.convert(named, toHaveTrait: .boldFontMask) : named
         } else if key.mono {
             font = NSFont.monospacedSystemFont(ofSize: key.size, weight: weight)
@@ -52,6 +59,14 @@ public enum NTypography {
         }
         fonts[key] = font
         return font
+    }
+
+    /// The first installed family of a CSS `font-family` list such as `"JetBrains Mono", monospace`.
+    private static func familyFont(_ list: String, size: CGFloat, weight: NSFont.Weight) -> NSFont? {
+        let names = list.split(separator: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: "\"' ")) }
+        let bold = weight >= .semibold ? 9 : 5
+        return names.lazy.compactMap { NSFontManager.shared.font(withFamily: $0, traits: [], weight: bold, size: size) }
+            .first
     }
 
     private static let appKitWeights: [Font.Weight: NSFont.Weight] = [

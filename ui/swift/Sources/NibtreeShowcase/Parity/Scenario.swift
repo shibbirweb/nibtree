@@ -48,6 +48,19 @@ struct ScenarioNode: Decodable, Sendable {
         return nil
     }
 
+    /// A list prop, such as Breadcrumbs' crumbs.
+    func list(_ name: String) -> [PropValue]? {
+        if case .list(let value) = props?[name] {
+            return value
+        }
+        return nil
+    }
+
+    /// An object prop with values other than words, such as Breadcrumbs' `at` or a crumb.
+    func record(_ name: String) -> [String: PropValue]? {
+        props?[name]?.record
+    }
+
     func flag(_ name: String, default fallback: Bool = false) -> Bool {
         if case .bool(let value) = props?[name] {
             return value
@@ -57,13 +70,39 @@ struct ScenarioNode: Decodable, Sendable {
 }
 
 /// A prop's JSON value.
-enum PropValue: Decodable, Sendable {
+indirect enum PropValue: Decodable, Sendable {
     case string(String)
     case number(Double)
     case bool(Bool)
     case object([String: String])
+    /// An object with numbers, flags or objects in it.
+    case nested([String: PropValue])
+    case list([PropValue])
     /// A JSON null, such as StatusLetter's kind for a conflict.
     case null
+
+    var text: String? {
+        if case .string(let value) = self {
+            return value
+        }
+        return nil
+    }
+
+    var numberValue: Double? {
+        if case .number(let value) = self {
+            return value
+        }
+        return nil
+    }
+
+    /// Any object, its words as `.string`s.
+    var record: [String: PropValue]? {
+        switch self {
+        case .object(let value): value.mapValues { .string($0) }
+        case .nested(let value): value
+        default: nil
+        }
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -75,6 +114,10 @@ enum PropValue: Decodable, Sendable {
             self = .number(value)
         } else if let value = try? container.decode([String: String].self) {
             self = .object(value)
+        } else if let value = try? container.decode([String: PropValue].self) {
+            self = .nested(value)
+        } else if let value = try? container.decode([PropValue].self) {
+            self = .list(value)
         } else {
             self = .string(try container.decode(String.self))
         }

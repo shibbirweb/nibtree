@@ -121,8 +121,10 @@ struct NStackLayout: Layout {
         if growing > 0 {
             // flex: 1 1 0: growing children start from nothing and share what the others leave.
             let fixed = zip(sizes, grows).reduce(0) { $0 + ($1.1 ? 0 : main($1.0)) }
-            let share = max(0, main(box.size) - fixed - gaps) / CGFloat(growing)
-            sizes = zip(sizes, grows).map { $0.1 ? size(main: share, cross: cross($0.0)) : $0.0 }
+            let shares = shares(free: max(0, main(box.size) - fixed - gaps), sizes: sizes, grows: grows)
+            sizes = zip(sizes, shares).map { child, share in
+                share.map { size(main: $0, cross: cross(child)) } ?? child
+            }
         }
         let used = sizes.reduce(0) { $0 + main($1) } + gaps
         let free = max(0, main(box.size) - used)
@@ -156,5 +158,28 @@ struct NStackLayout: Layout {
             subview.place(at: point, anchor: .topLeading, proposal: placed)
             position += main(childSize) + spacing + extra
         }
+    }
+
+    /// Each growing child's length: an even share of `free`, but never less than a column child's content (CSS's
+    /// `min-height: auto`), whose extra comes out of the others' shares. A row's children may shrink below their
+    /// measured width (they wrap or cut their words), so a row shares evenly.
+    private func shares(free: CGFloat, sizes: [CGSize], grows: [Bool]) -> [CGFloat?] {
+        var shares: [CGFloat?] = grows.map { _ in nil }
+        var open = grows.indices.filter { grows[$0] }
+        var left = free
+        while !open.isEmpty {
+            let share = left / CGFloat(open.count)
+            let tall = axis == .vertical ? open.filter { main(sizes[$0]) > share } : []
+            if tall.isEmpty {
+                open.forEach { shares[$0] = share }
+                break
+            }
+            for index in tall {
+                shares[index] = main(sizes[index])
+                left = max(0, left - main(sizes[index]))
+            }
+            open.removeAll { tall.contains($0) }
+        }
+        return shares
     }
 }

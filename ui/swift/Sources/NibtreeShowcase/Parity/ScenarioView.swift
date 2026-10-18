@@ -12,6 +12,7 @@ indirect enum ResolvedNode: Sendable {
     case feedback(FeedbackNode)
     case editor(EditorNode)
     case forms(FormsNode)
+    case navigation(NavigationNode)
     /// A node with a forced interaction state: its own node, drawn with `nibtreeForcedState` set.
     case stated(NInteractionState, ResolvedNode)
     case unknown
@@ -97,6 +98,8 @@ indirect enum ResolvedNode: Sendable {
             self = .editor(editor)
         } else if let forms = FormsNode(node) {
             self = .forms(forms)
+        } else if let navigation = NavigationNode(node) {
+            self = .navigation(navigation)
         } else {
             self = .unknown
         }
@@ -137,6 +140,8 @@ struct ScenarioView: View {
         case .editor(let inner):
             inner.view
         case .forms(let inner):
+            inner.view
+        case .navigation(let inner):
             inner.view
         case .stated(let state, let inner):
             ScenarioView(node: inner).environment(\.nibtreeForcedState, state)

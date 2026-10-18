@@ -114,6 +114,30 @@ extension Stories {
                 NText("main.rs")
             }
         },
+        Story("EmptyState", group: "Feedback") {
+            NStack(direction: .row, gap: .md) {
+                NEmptyState(title: "No stashes", hint: "Stash changes to set them aside.", icon: .stash) {
+                    NButton("Stash changes", size: .small) {}
+                }
+                NEmptyState(
+                    title: "All committed", icon: .check, variant: .pane, iconStyle: .circle, iconTone: .success)
+                NEmptyState(title: "Set up signing", hint: "Sign commits with a key.", variant: .notice)
+            }
+            .frame(width: 720)
+        },
+        Story("FileIcon", group: "Feedback") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                NFileIcon(view: nil)
+                NFileIcon(view: ActionsNode.fileIconView(["kind": "image", "icon": "typescript"]))
+                NFileIcon(view: ActionsNode.fileIconView(["kind": "mask", "glyph": "code", "tone": "blue"]))
+            }
+        },
+        Story("Notice", group: "Feedback") { NoticeStory() },
+        Story("StatusIcon", group: "Feedback") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                ForEach(NStatusIcon.State.allCases, id: \.self) { NStatusIcon(state: $0, label: $0.rawValue) }
+            }
+        },
         Story("SymbolBadge", group: "Feedback") {
             NStack(direction: .row, gap: .sm, align: .center) {
                 NSymbolBadge(letter: "C", tone: .type).help("Class")
@@ -124,4 +148,18 @@ extension Stories {
             }
         },
     ]
+}
+
+struct NoticeStory: View {
+    var body: some View {
+        NStack(gap: .sm) {
+            NNotice("Stash applied", tone: .success)
+            NNotice("app.ts changed on disk.", tone: .warning) {
+                NButton("Reload", size: .small) {}
+            }
+            NNotice("Merging feature into main", variant: .banner)
+            NNotice("Push was rejected", tone: .danger, variant: .banner)
+        }
+        .frame(width: 420)
+    }
 }

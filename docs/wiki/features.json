@@ -141,6 +141,7 @@
     { "page": "developer/Swift-UI-States.md", "summary": "Hover, pressed, focus and dragging drawn on demand in both libraries, and every prop value of a component at once." },
     { "page": "developer/Swift-UI-Speed.md", "summary": "Why each Swift component draws faster than its web twin, how the gate times both, and the harness's own cost." },
     { "page": "developer/Swift-UI-Icons.md", "summary": "How the web icons become Swift outlines, why NIcon draws a kept bitmap, and Divider and Spacer." },
+    { "page": "developer/Swift-UI-WebKit.md", "summary": "WebKit's own drawing and layout rules the Swift components copy: dashed borders, flex shrinking, ellipses and fixed bars." },
     { "page": "developer/UI-Library-Migration.md", "summary": "How the app uses the library as a local package and moves onto it, screen by screen." },
     { "page": "developer/Contributing.md", "summary": "Code style, commits, pull requests and the docs checklist." }
   ],

@@ -8,7 +8,8 @@ struct NButtonLook: Sendable {
         let background: GMColorToken?
         let border: GMColorToken?
         let text: GMColorToken
-        let hover: GMColorToken
+        /// The background under the pointer, or none (a link's).
+        let hover: GMColorToken?
         /// The words and glyphs under the pointer, when they change (a dim icon button brightens).
         var hoverText: GMColorToken?
         var pressedBackground = GMColorToken.selected
@@ -47,6 +48,8 @@ struct NButtonLook: Sendable {
     var countFollowsText = false
     /// A label view after the count (an icon button's children), not in the words' place.
     var labelLast = false
+    /// The words underlined under the pointer, as a link's.
+    var underlineOnHover = false
     /// Where the layout put the content, for the canvas: a label view's width is known only there.
     let placed = NButtonPlaced()
 

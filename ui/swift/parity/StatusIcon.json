@@ -1,0 +1,31 @@
+[
+  {
+    "id": "status-icon-states",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "sm", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "StatusIcon", "props": { "state": "starting", "label": "Starting" } },
+        { "component": "StatusIcon", "props": { "state": "working", "label": "Working" } },
+        { "component": "StatusIcon", "props": { "state": "waiting", "label": "Needs you" } },
+        { "component": "StatusIcon", "props": { "state": "done", "label": "Done" } },
+        { "component": "StatusIcon", "props": { "state": "exited", "label": "Exited" } },
+        { "component": "StatusIcon", "props": { "state": "idle", "label": "Idle" } }
+      ]
+    }
+  },
+  {
+    "id": "status-icon-column",
+    "width": 160,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "xs", "padding": "md" },
+      "children": [
+        { "component": "StatusIcon", "props": { "state": "waiting", "label": "Needs you" } },
+        { "component": "StatusIcon", "props": { "state": "done", "label": "Done" } },
+        { "component": "StatusIcon", "props": { "state": "idle", "label": "Idle" } }
+      ]
+    }
+  }
+]

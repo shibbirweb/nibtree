@@ -41,7 +41,9 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
 - No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
   is one: an empty `.help` cost as much as a whole `NMark`, and choosing inside the component cost almost as much.
   When the tooltip is the component's own (an `NIconButton`'s label), it is made only while the pointer is over the
-  button, which already tracks hover for its color: a tooltip on every icon button cost a fifth of its time.
+  button, which already tracks hover for its color: a tooltip on every icon button cost a fifth of its time. A
+  StatusIcon's tooltip is its label: a `.help` on every mark cost a row of them a third of its time, so it too is
+  made only while hovered (`NHoverHelp`), which costs about half that.
 
 The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title
 strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles. There are no
