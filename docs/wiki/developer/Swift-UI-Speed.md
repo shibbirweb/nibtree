@@ -29,7 +29,8 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
 - Colors cached per theme, and no environment reads in `NText` (a canvas reads the palette while drawing).
 - A scroll view only when the content overflows.
 - No `if` in a component's body for an option most uses leave off: each one cost a row of six `NStatusDot`s 3 to
-  5 ms. Animations are the exception, as they need it (a pulsing dot has its own modifier with its state).
+  5 ms. An animation is the caller's modifier too: a running dot is `NStatusDot(...).nibtreePulse()`, so the
+  dots that stay still pay neither the branch nor the pulse's state (8% on a row of dots).
 - No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
   is one: an empty `.help` cost as much as a whole `NMark`, and choosing inside the component cost almost as much.
 

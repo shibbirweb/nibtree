@@ -19,7 +19,9 @@ enum FeedbackNode: Sendable {
     case titledTag(text: String, tone: NTag.Tone, variant: NTag.Variant, size: NTag.Size, title: String)
     case progressBar(value: Double, label: String, tone: NProgressBar.Tone)
     case spinner(label: String, size: NSpinner.Size, delayed: Bool)
-    case statusDot(tone: NStatusDot.Tone, pulse: Bool, size: NStatusDot.Size, label: String?)
+    case statusDot(tone: NStatusDot.Tone, size: NStatusDot.Size, label: String?)
+    /// The web's `pulse` is the caller's `.nibtreePulse()`; a separate case keeps still dots free of it.
+    case pulsingDot(tone: NStatusDot.Tone, size: NStatusDot.Size, label: String?)
 
     struct MeterProps: Sendable {
         let fraction: Double
@@ -88,9 +90,15 @@ enum FeedbackNode: Sendable {
                 label: node.string("label") ?? "Loading",
                 size: node.string("size").flatMap(NSpinner.Size.init) ?? .normal, delayed: node.flag("delayed"))
         case "StatusDot":
-            self = .statusDot(
-                tone: node.string("tone").flatMap(NStatusDot.Tone.init) ?? .neutral, pulse: node.flag("pulse"),
-                size: node.string("size").flatMap(NStatusDot.Size.init) ?? .normal, label: node.string("label"))
+            let (tone, size, label) = (
+                node.string("tone").flatMap(NStatusDot.Tone.init) ?? .neutral,
+                node.string("size").flatMap(NStatusDot.Size.init) ?? .normal, node.string("label")
+            )
+            if node.flag("pulse") {
+                self = .pulsingDot(tone: tone, size: size, label: label)
+            } else {
+                self = .statusDot(tone: tone, size: size, label: label)
+            }
         default:
             return nil
         }
@@ -133,8 +141,10 @@ extension FeedbackNode {
             NProgressBar(value: value, label: label, tone: tone)
         case .spinner(let label, let size, let delayed):
             NSpinner(label: label, size: size, delayed: delayed)
-        case .statusDot(let tone, let pulse, let size, let label):
-            NStatusDot(tone: tone, pulse: pulse, size: size, label: label)
+        case .statusDot(let tone, let size, let label):
+            NStatusDot(tone: tone, size: size, label: label)
+        case .pulsingDot(let tone, let size, let label):
+            NStatusDot(tone: tone, size: size, label: label).nibtreePulse()
         }
     }
 }

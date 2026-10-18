@@ -102,7 +102,7 @@ extension Stories {
         Story("StatusDot", group: "Feedback") {
             NStack(direction: .row, gap: .md, align: .center) {
                 ForEach(NStatusDot.Tone.allCases, id: \.self) { NStatusDot(tone: $0) }
-                NStatusDot(tone: .accent, pulse: true, label: "Running").help("Running")
+                NStatusDot(tone: .accent, label: "Running").nibtreePulse().help("Running")
                 NStatusDot(size: .small)
                 NStatusDot(tone: .success, size: .small)
             }

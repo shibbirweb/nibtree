@@ -12,3 +12,23 @@ extension EnvironmentValues {
         set { self[StillKey.self] = newValue }
     }
 }
+
+extension View {
+    /// Fades the view to 0.3 and back each second, eased both ways, like a running StatusDot's `pulse` on the web; at
+    /// rest under `nibtreeStill`. Only views that pulse carry it, so still ones pay nothing.
+    public func nibtreePulse() -> some View {
+        modifier(NPulse())
+    }
+}
+
+private struct NPulse: ViewModifier {
+    @State private var started = false
+    @Environment(\.nibtreeStill) private var still
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(started && !still ? 0.3 : 1)
+            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: started)
+            .onAppear { started = true }
+    }
+}

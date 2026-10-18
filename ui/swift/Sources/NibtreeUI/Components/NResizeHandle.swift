@@ -21,10 +21,9 @@ public struct NResizeHandle: View {
     private let onresize: (Double) -> Void
     private let oncommit: ((Double) -> Void)?
 
-    @State private var hovering = false
+    /// Pointed at, and the size when a drag started: one state, as each one costs every handle a node.
+    @State private var pointer = NHandlePointer()
     @Environment(\.nibtreeForcedState) private var forced
-    @State private var startSize: Double?
-    @Environment(\.nibtreePalette) private var palette
 
     /// `size`, `max`, `min` and `defaultSize` are points (data: a panel's dragged size and its limits).
     public init(
@@ -56,29 +55,32 @@ public struct NResizeHandle: View {
 
     private var lowest: Double { min ?? preset.min }
     private var horizontal: Bool { side == .top || side == .bottom }
-    private var active: Bool { hovering || startSize != nil || forced.showsHandle }
+    private var active: Bool { pointer.hovering || pointer.startSize != nil || forced.showsHandle }
 
     public var body: some View {
-        let thickness = active ? GMResizeHandleTokens.activeLine : GMResizeHandleTokens.line
-        // One point in the layout; the bar and the pointer's area are drawn over the panels on both sides.
-        Color.clear
-            .frame(width: horizontal ? nil : 1, height: horizontal ? 1 : nil)
-            .overlay {
-                Rectangle()
-                    .fill(active ? palette.color(.accent) : .clear)
-                    .frame(width: horizontal ? nil : thickness, height: horizontal ? thickness : nil)
-                    .frame(
-                        width: horizontal ? nil : GMResizeHandleTokens.hitArea,
-                        height: horizontal ? GMResizeHandleTokens.hitArea : nil
-                    )
-                    .contentShape(Rectangle())
-                    .onHover { inside in
-                        hovering = inside
-                        inside ? (horizontal ? NSCursor.resizeUpDown : NSCursor.resizeLeftRight).push() : NSCursor.pop()
-                    }
-                    .gesture(drag)
-                    .onTapGesture(count: 2) { commit(defaultSize ?? preset.defaultSize) }
+        let (active, horizontal) = (active, horizontal)
+        // One point in the layout; the pointer's area and the bar are drawn over the panels on both sides.
+        NHandleArea(horizontal: horizontal) {
+            Canvas(opaque: false, rendersAsynchronously: false) { context, box in
+                guard active else {
+                    return
+                }
+                let (thickness, area) = (GMResizeHandleTokens.activeLine, GMResizeHandleTokens.hitArea)
+                let bar = horizontal
+                    ? CGRect(x: 0, y: (area - thickness) / 2, width: box.width, height: thickness)
+                    : CGRect(x: (area - thickness) / 2, y: 0, width: thickness, height: box.height)
+                MainActor.assumeIsolated {
+                    context.fill(Path(bar), with: .color(context.environment.nibtreePalette.color(.accent)))
+                }
             }
+            .contentShape(Rectangle())
+            .onHover { inside in
+                pointer.hovering = inside
+                inside ? (horizontal ? NSCursor.resizeUpDown : NSCursor.resizeLeftRight).push() : NSCursor.pop()
+            }
+            .gesture(drag)
+            .onTapGesture(count: 2) { commit(defaultSize ?? preset.defaultSize) }
+        }
             .zIndex(1)
             .accessibilityElement()
             .accessibilityLabel(label)
@@ -99,13 +101,13 @@ public struct NResizeHandle: View {
     private var drag: some Gesture {
         DragGesture(minimumDistance: 1, coordinateSpace: .global)
             .onChanged { drag in
-                let start = startSize ?? size
-                startSize = start
+                let start = pointer.startSize ?? size
+                pointer.startSize = start
                 let delta = horizontal ? drag.translation.height : drag.translation.width
                 onresize(NSplitMath.draggedSize(side, start: start, delta: delta, min: lowest, max: maxSize()))
             }
             .onEnded { _ in
-                startSize = nil
+                pointer.startSize = nil
                 oncommit?(size)
             }
     }
@@ -113,5 +115,29 @@ public struct NResizeHandle: View {
     private func commit(_ next: Double) {
         onresize(next)
         oncommit?(next)
+    }
+}
+
+struct NHandlePointer {
+    var hovering = false
+    var startSize: Double?
+}
+
+/// One point across the axis in the layout, the full length along it; its child, the pointer's area, is
+/// `GMResizeHandleTokens.hitArea` across and centered on that point, over the panels on both sides.
+private struct NHandleArea: Layout {
+    let horizontal: Bool
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        horizontal
+            ? CGSize(width: proposal.width ?? 0, height: 1) : CGSize(width: 1, height: proposal.height ?? 0)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let area = GMResizeHandleTokens.hitArea
+        let rect = horizontal
+            ? CGRect(x: bounds.minX, y: bounds.midY - area / 2, width: bounds.width, height: area)
+            : CGRect(x: bounds.midX - area / 2, y: bounds.minY, width: area, height: bounds.height)
+        subviews.first?.place(at: rect.origin, anchor: .topLeading, proposal: ProposedViewSize(rect.size))
     }
 }
