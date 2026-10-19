@@ -87,7 +87,10 @@ on npm.
   `packages: write` (`release.yml`, `beta-publish.yml` and `stable-publish.yml` do). The first push creates
   the package as private: open it under the account's Packages, Package settings, and make it public once.
 - **Docker Hub** needs the secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` (an access token with read and
-  write). Without them the release fails, so the image never quietly skips a registry.
+  write, plus delete for the page below). Without them the release fails, so the image never quietly skips a
+  registry.
+- **The Docker Hub page** is `docker/README.md`: after the push, `peter-evans/dockerhub-description` sends it and
+  the short description to Docker Hub. Its links are full URLs, since Docker Hub cannot follow relative ones.
 
 After the push, `verify-docker` pulls the version and its moving tag from both registries, checks both
 architectures are there and runs `--version`. See [Browser Release Checks](Browser-Release-Checks.md).
@@ -97,6 +100,7 @@ architectures are there and runs `--version`. See [Browser Release Checks](Brows
 | File | What it does |
 | --- | --- |
 | `docker/Dockerfile` | the image |
+| `docker/README.md` | the image's page on Docker Hub |
 | `scripts/docker-context.ts` | the build context from the Linux packages |
 | `scripts/dockerImage.ts`, `scripts/docker-tags.ts` | architectures and tags (tested) |
 | `scripts/browser-smoke.ts` | the smoke test, `--docker` mode |

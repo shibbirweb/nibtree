@@ -9,9 +9,9 @@
 # mode, published to npm (betas under `next`, stable versions under `latest`) and the image is pushed for both
 # architectures to ghcr.io/<owner>/nibtree (the built-in token) and Docker Hub as <DOCKERHUB_USERNAME>/nibtree,
 # as the exact version plus the same moving tag; release.yml then runs browser-verify.yml, which installs and runs
-# what was published. A release fails when NPM_TOKEN, DOCKERHUB_USERNAME or DOCKERHUB_TOKEN is
-# missing. Versions npm already has are skipped and pushing the same tags again is harmless, so "Re-run failed
-# jobs" finishes a release that broke halfway.
+# what was published. npm signs in by trusted publishing, with no token; a release fails when
+# DOCKERHUB_USERNAME or DOCKERHUB_TOKEN is missing. Versions npm already has are skipped and pushing the same tags
+# again is harmless, so "Re-run failed jobs" finishes a release that broke halfway.
 #
 # browser-rehearsal.yml calls it with `publish: true` and `dry_run: true` on every push to develop: the whole
 # release path, with `bun publish --dry-run` and a Docker build that is not pushed.
@@ -38,8 +38,6 @@ on:
         type: boolean
         default: false
     secrets:
-      NPM_TOKEN:
-        required: false
       DOCKERHUB_USERNAME:
         required: false
       DOCKERHUB_TOKEN:
@@ -146,6 +144,10 @@ jobs:
     needs: platform
     if: ${{ inputs.publish }}
     runs-on: ubuntu-latest
+    # npm's trusted publishing signs in with GitHub's OIDC token, so every caller grants id-token: write too.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -155,6 +157,12 @@ jobs:
         with:
           bun-version: latest
 
+      # The only npm CLI in the repository: trusted publishing needs npm 11.5.1 or later on Node 22.14 or later.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --global npm@11.21.1
+
       # Every platform packed the same launcher; one copy is kept.
       - uses: actions/download-artifact@v4
         with:
@@ -162,16 +170,13 @@ jobs:
           path: npm-packages
           merge-multiple: true
 
+      # No token: npm swaps the job's OIDC token for a one-time one, and fails when no trusted publisher matches.
       - name: Publish
         env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           if [ "$DRY_RUN" = "true" ]; then
             bun scripts/npm-package.ts publish --dir npm-packages --dry-run
-          elif [ -z "$NPM_CONFIG_TOKEN" ]; then
-            echo "::error::There is no NPM_TOKEN secret, so nothing can be published to npm. See browser.yml."
-            exit 1
           else
             bun scripts/npm-package.ts publish --dir npm-packages
           fi
@@ -291,3 +296,16 @@ jobs:
           done < <(bun scripts/docker-tags.ts tags "$version" "$GHCR" $HUB)
           docker buildx build --platform "$(bun scripts/docker-tags.ts platforms)" \
             --build-arg VERSION="$version" "${tags[@]}" $PUSH docker-context
+
+      # Docker Hub shows docker/README.md as the image's page. Changing it needs DOCKERHUB_TOKEN's read, write and
+      # delete scope. After a failure here, "Re-run failed jobs" pushes the same image again and retries the page.
+      - name: Update the Docker Hub page
+        if: ${{ !inputs.dry_run }}
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/nibtree
+          short-description: >-
+            Nibtree in your browser: a Git client with a 3-way merge tool, blame, history and a terminal
+          readme-filepath: docker/README.md
