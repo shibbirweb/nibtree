@@ -115,8 +115,12 @@ by mistake. `scripts/npm-package.ts` now gives a dry run a placeholder token whe
 happy, and a placeholder could not publish even if the dry-run flag were lost. Since then npm publishes instead of
 bun (trusted publishing), and `npm publish --dry-run` needs no token, so the placeholder is gone.
 
-**The beta.14 npm checks failed, though every package was on npm.** `npm publish` returned at 02:23, but npm
-listed the platform packages two or three minutes later and the launcher after 11 minutes, while each check gave up
-after five. npm processes a new version in the background, longer with provenance. The checks now share one
-half-hour limit and try every 30 seconds: a slow registry costs only waiting, and a release that never shows up
-still fails.
+**The npm checks failed on every release, though the packages worked.** Two things went wrong:
+
+- **npx ran from the checkout.** The repository's own `package.json` is also named `nibtree`, at the very
+  version being checked, so npx took the repository for the package and found no command in it: "could not
+  determine executable to run". No wait could fix that. npx now runs in a new empty folder, as it does for people.
+- **npm listed beta.14's launcher 11 minutes after `npm publish` returned**, while each check gave up after
+  five. npm processes a new version in the background, longer with provenance. The checks now share one half-hour
+  limit and try every 30 seconds: a slow registry costs only waiting, and a release that never shows up still
+  fails.

@@ -11,6 +11,9 @@
  * A registry takes a while to serve a new version everywhere, so the checks keep retrying for up to half an hour.
  */
 import { execFileSync } from "node:child_process";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { packageName, PLATFORMS } from "../npm/nibtree/lib/platforms.mjs";
 import { dockerPlatforms, dockerTags, imagePlatforms } from "./dockerImage";
 import { distTag, MAIN_PACKAGE } from "./npmPackages";
@@ -20,9 +23,9 @@ import { distTag, MAIN_PACKAGE } from "./npmPackages";
 const GIVE_UP_AT = Date.now() + 30 * 60_000;
 const WAIT_MS = 30_000;
 
-function run(program: string, args: string[]): string {
+function run(program: string, args: string[], cwd?: string): string {
   // npx is npx.cmd on Windows, which only a shell finds.
-  return execFileSync(program, args, { encoding: "utf8", shell: process.platform === "win32" }).trim();
+  return execFileSync(program, args, { encoding: "utf8", shell: process.platform === "win32", cwd }).trim();
 }
 
 async function retry(label: string, check: () => Promise<void> | void): Promise<void> {
@@ -63,9 +66,12 @@ async function npm(version: string): Promise<void> {
     const response = await fetch(`https://registry.npmjs.org/-/package/${MAIN_PACKAGE}/dist-tags`);
     expect(String(((await response.json()) as Record<string, string>)[tag]), version, `the ${tag} tag`);
   });
+  // Never from the checkout: its package.json is also named nibtree at this very version, so npx would take the
+  // repository for the package and find no command in it ("could not determine executable to run").
+  const outside = mkdtempSync(join(tmpdir(), "nibtree-npx-"));
   for (const spec of [version, tag]) {
     await retry(`npx nibtree@${spec} starts ${version}`, () => {
-      expect(run("npx", ["--yes", `${MAIN_PACKAGE}@${spec}`, "--version"]), `nibtree ${version}`, "--version");
+      expect(run("npx", ["--yes", `${MAIN_PACKAGE}@${spec}`, "--version"], outside), `nibtree ${version}`, "--version");
     });
   }
 }
