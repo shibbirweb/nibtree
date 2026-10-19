@@ -8,15 +8,17 @@
  *     bun scripts/release-verify.ts docker <version> <repository ...>
  *         each repository has <version> for amd64 and arm64, and `docker run` of it and of the moving tag prints it
  *
- * A registry takes a little while to serve a new version everywhere, so each check retries for a few minutes.
+ * A registry takes a while to serve a new version everywhere, so the checks keep retrying for up to half an hour.
  */
 import { execFileSync } from "node:child_process";
 import { packageName, PLATFORMS } from "../npm/nibtree/lib/platforms.mjs";
 import { dockerPlatforms, dockerTags, imagePlatforms } from "./dockerImage";
 import { distTag, MAIN_PACKAGE } from "./npmPackages";
 
-const ATTEMPTS = 15;
-const WAIT_MS = 20_000;
+// npm lists a version from seconds to over ten minutes after `npm publish` returns (beta.14's launcher took 11), so
+// the checks share one half-hour limit: the first one waits out the registry, the rest then pass at once.
+const GIVE_UP_AT = Date.now() + 30 * 60_000;
+const WAIT_MS = 30_000;
 
 function run(program: string, args: string[]): string {
   // npx is npx.cmd on Windows, which only a shell finds.
@@ -31,10 +33,10 @@ async function retry(label: string, check: () => Promise<void> | void): Promise<
       return;
     } catch (err) {
       const message = err instanceof Error ? err.message.split("\n")[0] : String(err);
-      if (attempt >= ATTEMPTS) {
-        throw new Error(`${label}: ${message}`);
+      if (Date.now() + WAIT_MS > GIVE_UP_AT) {
+        throw new Error(`${label}: ${message} (gave up after ${attempt} tries)`);
       }
-      console.log(`waiting (${attempt}/${ATTEMPTS}): ${label}: ${message}`);
+      console.log(`waiting (try ${attempt}): ${label}: ${message}`);
       await new Promise((done) => setTimeout(done, WAIT_MS));
     }
   }
