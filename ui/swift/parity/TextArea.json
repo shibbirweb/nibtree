@@ -1,0 +1,150 @@
+[
+  {
+    "id": "text-area-rows",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "small",
+            "rows": "small"
+          }
+        },
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "normal",
+            "rows": "normal",
+            "height": "rows"
+          }
+        },
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "",
+            "placeholder": "Five rows",
+            "rows": "large"
+          }
+        },
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "eight",
+            "rows": "xlarge"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-area-heights",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "Fix the login redirect\n\nThe cookie was read before the redirect, so it looked logged out.",
+            "height": "tall",
+            "resize": "none"
+          }
+        },
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "Short and invalid",
+            "height": "short",
+            "invalid": true
+          }
+        },
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "feat: {summary}\n\n{body}",
+            "mono": true,
+            "height": "short"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-area-resize",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "Drag the corner",
+            "resize": "vertical"
+          }
+        },
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "Disabled",
+            "disabled": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-area-tools",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "TextArea",
+          "props": {
+            "value": "A message long enough to wrap before it reaches the tools in the corner",
+            "height": "tall"
+          },
+          "slots": {
+            "tools": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "history",
+                  "label": "Message History",
+                  "size": "small"
+                }
+              },
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "book",
+                  "label": "Templates",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

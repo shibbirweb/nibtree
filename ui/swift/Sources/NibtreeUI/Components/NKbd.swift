@@ -114,6 +114,14 @@ private struct NKbdFrame: Layout {
         return max(offer, natural)
     }
 
+    /// The key's text baseline, so a row lined up on baselines (a list row's shortcut) puts it where CSS does.
+    func explicitAlignment(
+        of guide: VerticalAlignment, in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews,
+        cache: inout ()
+    ) -> CGFloat? {
+        guide == .firstTextBaseline || guide == .lastTextBaseline ? bounds.minY + NKbdCap.top + spec.line.baseline : nil
+    }
+
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         _ = natural()
         spec.state.origin = bounds.origin

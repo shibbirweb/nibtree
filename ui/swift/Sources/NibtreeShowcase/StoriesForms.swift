@@ -4,6 +4,39 @@ import SwiftUI
 /// Stories of the Forms group: controls that hold a value, each story with its own state to try.
 extension Stories {
     static let forms: [Story] = [
+        Story("Input", group: "Forms") {
+            NStack(gap: .sm) {
+                NInput(value: .constant("feature/login"))
+                NInput(value: .constant(""), placeholder: "Branch name")
+                NInput(value: .constant("a1b2c3d"), mono: true, width: .small)
+            }
+            .frame(width: 300)
+        },
+        Story("RadioGroup", group: "Forms") {
+            NRadioGroup(
+                options: [
+                    NRadioOption(value: "soft", label: "Soft", description: "Keep your changes staged."),
+                    NRadioOption(value: "hard", label: "Hard", description: "Throw your changes away.", danger: true),
+                ], value: .constant("soft"), label: "Reset mode")
+        },
+        Story("TextArea", group: "Forms") {
+            NTextArea(value: .constant("Fix the login redirect"), height: .tall) {
+                NIconButton(icon: .history, label: "Message History", size: .small) {}
+            }
+            .frame(width: 320)
+        },
+        Story("Field", group: "Forms") {
+            NField(label: "Branch name", hint: "Letters, digits and dashes.") {
+                NInput(value: .constant("feature/login"))
+            }
+            .frame(width: 300)
+        },
+        Story("Fieldset", group: "Forms") {
+            NFieldset(legend: "Integrate the incoming changes with") {
+                NCheckbox(checked: .constant(true), label: "Merge")
+                NCheckbox(checked: .constant(false), label: "Rebase")
+            }
+        },
         Story("Switch", group: "Forms") { SwitchStory() },
         Story("Checkbox", group: "Forms") { CheckboxStory() },
         Story("Slider", group: "Forms") { SliderStory() },

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "panel-header-actions",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "PanelHeader",
+          "props": {
+            "title": "Changes",
+            "count": 12
+          },
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "refresh",
+                  "label": "Refresh",
+                  "size": "compact"
+                }
+              },
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "more",
+                  "label": "More",
+                  "size": "compact"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "panel-header-plain",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "PanelHeader",
+          "props": {
+            "title": "Files"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "panel-header-narrow",
+    "width": 150,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "PanelHeader",
+          "props": {
+            "title": "Terminal sessions",
+            "count": 3
+          },
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "plus",
+                  "label": "New",
+                  "size": "compact"
+                }
+              },
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "x",
+                  "label": "Close",
+                  "size": "compact"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

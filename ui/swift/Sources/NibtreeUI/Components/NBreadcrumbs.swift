@@ -81,48 +81,10 @@ public struct NBreadcrumbs: View {
     @ViewBuilder private var bar: some View {
         let frame = NBreadcrumbsFrame(look: look) { NBreadcrumbsFace(look: look, hovered: hovered) }
         if look.boxed {
-            frame.background { NBreadcrumbsBox() }
+            frame.background { NPopupBox(radius: GMRadius.control) }
         } else {
             frame
         }
-    }
-}
-
-/// A floating bar's box: the panel color in a bordered rounded rectangle with the popup shadow, drawn in a canvas
-/// larger than the bar so the shadow is not cut off.
-private struct NBreadcrumbsBox: View {
-    private static let reach = GMShadows.popup.blur + abs(GMShadows.popup.y)
-
-    var body: some View {
-        Canvas(opaque: false, rendersAsynchronously: false) { context, size in
-            let palette = context.environment.nibtreePalette
-            let shadow = GMShadows.popup
-            let shade = palette.isDark ? shadow.dark : shadow.light
-            let reach = Self.reach
-            let box = CGRect(x: reach, y: reach, width: size.width - 2 * reach, height: size.height - 2 * reach)
-            let radius = GMRadius.control
-            context.withCGContext { cg in
-                let outline = CGPath(roundedRect: box, cornerWidth: radius, cornerHeight: radius, transform: nil)
-                cg.saveGState()
-                cg.setShadow(
-                    offset: CGSize(width: shadow.x, height: shadow.y), blur: shadow.blur,
-                    color: CGColor(
-                        srgbRed: shade.red / 255, green: shade.green / 255, blue: shade.blue / 255, alpha: shade.alpha))
-                cg.addPath(outline)
-                cg.setFillColor(palette.cgColor(.panel))
-                cg.fillPath()
-                cg.restoreGState()
-                let border = NBreadcrumbsLook.cssBorder
-                let inner = radius - border
-                cg.addPath(outline)
-                cg.addPath(
-                    CGPath(roundedRect: box.insetBy(dx: border, dy: border), cornerWidth: inner, cornerHeight: inner,
-                        transform: nil))
-                cg.setFillColor(palette.cgColor(.borderStrong))
-                cg.fillPath(using: .evenOdd)
-            }
-        }
-        .padding(-Self.reach)
     }
 }
 

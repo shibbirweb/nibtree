@@ -1,0 +1,94 @@
+[
+  {
+    "id": "setting-row-side",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "SettingRow",
+          "props": {
+            "title": "Sign commits",
+            "hint": "Add `--signoff` to every commit you make with Nibtree."
+          },
+          "children": [
+            {
+              "component": "Switch",
+              "props": {
+                "label": "Sign commits",
+                "checked": true
+              }
+            }
+          ]
+        },
+        {
+          "component": "SettingRow",
+          "props": {
+            "title": "Show line numbers in the editor",
+            "titleMatches": [[5, 9]],
+            "nested": true
+          },
+          "children": [
+            {
+              "component": "Switch",
+              "props": {
+                "label": "Line numbers",
+                "checked": false
+              }
+            }
+          ]
+        },
+        {
+          "component": "SettingRow",
+          "props": {
+            "title": "Default branch",
+            "plain": true
+          },
+          "children": [
+            {
+              "component": "Input",
+              "props": {
+                "value": "main",
+                "width": "small"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "setting-row-stacked",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "SettingRow",
+          "props": {
+            "title": "Clone into",
+            "hint": "Where new clones go.",
+            "stacked": true
+          },
+          "children": [
+            {
+              "component": "Input",
+              "props": {
+                "value": "~/code",
+                "width": "fill"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

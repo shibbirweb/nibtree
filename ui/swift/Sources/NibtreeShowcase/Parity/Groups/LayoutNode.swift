@@ -13,6 +13,25 @@ enum LayoutNode: Sendable {
     /// A Time; `words` is the Text it sits in, whose style its words take.
     case time(TimeProps, words: ResolvedNode.TextProps?)
     case card(CardProps, children: [ResolvedNode])
+    case grid(GridProps, children: [ResolvedNode])
+    case pane(PaneProps, children: [ResolvedNode])
+    case panelHeader(title: String, count: Int?, actions: [ResolvedNode]?)
+    /// `values` is the `value` slot drawn for each item (its `$value` text replaced), by label.
+    case descriptionList(items: [NDescriptionItem], label: String?, values: [String: [ResolvedNode]]?)
+
+    struct PaneProps: Sendable {
+        let label: String
+        let width: NColumnWidth
+        let side: NPaneSide
+        let line: NPaneLine
+    }
+
+    struct GridProps: Sendable {
+        let columns: NGridColumns
+        let minColumn: NColumnWidth
+        let gap: NSpacing
+        let label: String?
+    }
 
     struct TimeProps: Sendable {
         let time: Date
@@ -90,6 +109,40 @@ enum LayoutNode: Sendable {
                 words: nil)
         case "TreeLine":
             self = .treeLine(node.string("position").flatMap(NTreeLine.Position.init) ?? .middle)
+        case "Grid":
+            self = .grid(
+                GridProps(
+                    columns: node.string("columns").flatMap(NGridColumns.init) ?? .auto,
+                    minColumn: node.string("minColumn").flatMap(NColumnWidth.init) ?? .medium,
+                    gap: node.string("gap").flatMap(NSpacing.init) ?? .lg, label: node.string("label")),
+                children: ResolvedNode.list(node.children))
+        case "DescriptionList":
+            let items = (node.list("items") ?? []).compactMap { entry -> NDescriptionItem? in
+                guard let item = entry.record else {
+                    return nil
+                }
+                let mono = if case .bool(true)? = item["mono"] { true } else { false }
+                return NDescriptionItem(
+                    label: item["label"]?.text ?? "", value: item["value"]?.text ?? "", mono: mono)
+            }
+            let values = node.slots?["value"].map { template in
+                Dictionary(
+                    items.map { item in
+                        (item.label, ResolvedNode.list(template.map { $0.replacing("$value", with: item.value) }))
+                    }, uniquingKeysWith: { first, _ in first })
+            }
+            self = .descriptionList(items: items, label: node.string("label"), values: values)
+        case "PanelHeader":
+            self = .panelHeader(
+                title: node.string("title") ?? "", count: node.number("count").map { Int($0) },
+                actions: node.slots?["actions"].map { ResolvedNode.list($0) })
+        case "Pane":
+            self = .pane(
+                PaneProps(
+                    label: node.string("label") ?? "", width: node.string("width").flatMap(NColumnWidth.init) ?? .large,
+                    side: node.string("side").flatMap(NPaneSide.init) ?? .left,
+                    line: node.string("line").flatMap(NPaneLine.init) ?? .strong),
+                children: ResolvedNode.list(node.children))
         case "Card":
             self = .card(
                 CardProps(
@@ -148,6 +201,28 @@ extension LayoutNode {
                 }
             } else {
                 NTime(time: props.time, format: props.format, live: props.live)
+            }
+        case .grid(let props, let children):
+            NGrid(columns: props.columns, minColumn: props.minColumn, gap: props.gap, label: props.label) {
+                ScenarioChildren(nodes: children)
+            }
+        case .descriptionList(let items, let label, let values):
+            if let values {
+                NDescriptionList(items: items, label: label) { item in
+                    ScenarioChildren(nodes: values[item.label] ?? [])
+                }
+            } else {
+                NDescriptionList(items: items, label: label)
+            }
+        case .panelHeader(let title, let count, let actions):
+            if let actions {
+                NPanelHeader(title: title, count: count) { ScenarioChildren(nodes: actions) }
+            } else {
+                NPanelHeader(title: title, count: count)
+            }
+        case .pane(let props, let children):
+            NPane(label: props.label, width: props.width, side: props.side, line: props.line) {
+                ScenarioChildren(nodes: children)
             }
         case .card(let props, let children):
             NCard(label: props.label, padded: props.padded, selected: props.selected, dim: props.dim) {

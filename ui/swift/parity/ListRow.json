@@ -1,0 +1,87 @@
+[
+  {
+    "id": "list-row-quick-pick",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "sm"
+      },
+      "children": [
+        {
+          "component": "ListRow",
+          "props": {
+            "label": "CartItems.svelte",
+            "description": "src/lib/components"
+          }
+        },
+        {
+          "component": "ListRow",
+          "props": {
+            "label": "Open Folder",
+            "description": "File",
+            "icon": "folder",
+            "highlighted": true
+          },
+          "slots": {
+            "trailing": [
+              {
+                "component": "Kbd",
+                "props": {
+                  "keys": "CmdOrCtrl+O"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "ListRow",
+          "props": {
+            "label": "Disabled command",
+            "disabled": true
+          }
+        },
+        {
+          "component": "ListRow",
+          "props": {
+            "label": "Commit",
+            "icon": "commit"
+          },
+          "slots": {
+            "trailing": [
+              {
+                "component": "Text",
+                "text": "12",
+                "props": {
+                  "tone": "dim",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "list-row-narrow",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "sm"
+      },
+      "children": [
+        {
+          "component": "ListRow",
+          "props": {
+            "label": "a-really-long-file-name.svelte",
+            "description": "src/lib/components/deep/folder"
+          }
+        }
+      ]
+    }
+  }
+]

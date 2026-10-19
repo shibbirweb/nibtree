@@ -53,6 +53,10 @@ enum FeedbackNode: Sendable {
     }
     case symbolBadge(letter: String, tone: NSymbolBadge.Tone)
     case titledSymbolBadge(letter: String, tone: NSymbolBadge.Tone, title: String)
+    case refLabel(kind: NRefLabel.Kind, label: String, title: String?, icon: GMIconName?)
+    case dragGhost(text: String, x: Double, y: Double)
+    case cornerCard(message: String, action: [ResolvedNode]?)
+    case logo(size: NLogo.Size, label: String)
 
     struct MeterProps: Sendable {
         let fraction: Double
@@ -169,6 +173,18 @@ enum FeedbackNode: Sendable {
             } else {
                 self = .symbolBadge(letter: letter, tone: tone)
             }
+        case "Logo":
+            self = .logo(
+                size: node.string("size").flatMap(NLogo.Size.init) ?? .normal, label: node.string("label") ?? "Nibtree")
+        case "CornerCard":
+            self = .cornerCard(
+                message: node.string("message") ?? "", action: node.slots?["action"].map { ResolvedNode.list($0) })
+        case "DragGhost":
+            self = .dragGhost(text: node.string("text") ?? "", x: node.number("x") ?? 0, y: node.number("y") ?? 0)
+        case "RefLabel":
+            self = .refLabel(
+                kind: node.string("kind").flatMap(NRefLabel.Kind.init) ?? .local, label: node.string("label") ?? "",
+                title: node.string("title"), icon: node.string("icon").flatMap(GMIconName.init))
         default:
             return nil
         }
@@ -248,6 +264,18 @@ extension FeedbackNode {
             NSymbolBadge(letter: letter, tone: tone)
         case .titledSymbolBadge(let letter, let tone, let title):
             NSymbolBadge(letter: letter, tone: tone).help(title)
+        case .logo(let size, let label):
+            NLogo(size: size, label: label)
+        case .cornerCard(let message, let action):
+            if let action {
+                NCornerCard(message: message) { ScenarioChildren(nodes: action) }
+            } else {
+                NCornerCard(message: message)
+            }
+        case .dragGhost(let text, let x, let y):
+            NDragGhost(text: text, x: x, y: y)
+        case .refLabel(let kind, let label, let title, let icon):
+            NRefLabel(kind: kind, label: label, title: title, icon: icon)
         }
     }
 }

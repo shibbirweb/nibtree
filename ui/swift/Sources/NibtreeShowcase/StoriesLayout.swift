@@ -8,6 +8,48 @@ extension Stories {
         Story("ResizeHandle", group: "Layout") { SplitPaneStory(direction: .column) },
         Story("SplitPane", group: "Layout") { SplitPaneStory(direction: .row) },
         Story("MergeStackFrame", group: "Editor") { MergeStackStory() },
+        Story("ZoomBar", group: "Editor") {
+            NStack(direction: .row, gap: .xs, align: .center) {
+                NZoomBar(zoom: .constant(nil), fitted: 0.42)
+            }
+        },
+        Story("HighlightText", group: "Editor") {
+            NStack(gap: .xs) {
+                NHighlightText(text: "CartItems.svelte", ranges: [0..<4, 8..<9])
+                NHighlightText(text: "const total = items.reduce(sum)", ranges: [6..<11], variant: .mark)
+                NHighlightText(text: "Show line numbers", ranges: [5..<9], variant: .search)
+            }
+        },
+        Story("Grid", group: "Layout") {
+            NGrid(columns: .three, gap: .sm) {
+                ForEach(["main", "dev", "release", "hotfix", "docs"], id: \.self) { NTag($0) }
+            }
+            .frame(width: 360)
+        },
+        Story("DescriptionList", group: "Layout") {
+            NDescriptionList(items: [
+                NDescriptionItem(label: "Author", value: "Ada Lovelace"),
+                NDescriptionItem(label: "Parents", value: "a1b2c3d", mono: true),
+            ])
+            .frame(width: 300)
+        },
+        Story("PanelHeader", group: "Layout") {
+            NPanelHeader(title: "Changes", count: 12) {
+                NIconButton(icon: .refresh, label: "Refresh", size: .compact) {}
+                NIconButton(icon: .more, label: "More", size: .compact) {}
+            }
+            .frame(width: 320)
+        },
+        Story("Pane", group: "Layout") {
+            NStack(direction: .row, gap: .none) {
+                NPane(label: "Versions", width: .small) {
+                    NStack(paddingX: .lg, paddingY: .xs) { NText("Today 10:24") }
+                    NStack(paddingX: .lg, paddingY: .xs) { NText("Yesterday") }
+                }
+                NStack(padding: .md, grow: true) { NText("The version's text") }
+            }
+            .frame(width: 420, height: 140)
+        },
         Story("Card", group: "Layout") {
             NStack(gap: .sm) {
                 NCard(label: "main worktree", padded: true, selected: true) {

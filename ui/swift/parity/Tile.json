@@ -1,0 +1,59 @@
+[
+  {
+    "id": "tile-row",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "lg",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Tile",
+          "props": {
+            "icon": "folder",
+            "label": "Open"
+          }
+        },
+        {
+          "component": "Tile",
+          "props": {
+            "icon": "cloud-download",
+            "label": "Clone",
+            "title": "Clone a repository"
+          }
+        },
+        {
+          "component": "Tile",
+          "props": {
+            "icon": "plus",
+            "label": "New repository here"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "tile-column",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Tile",
+          "props": {
+            "icon": "book",
+            "label": "Docs"
+          }
+        }
+      ]
+    }
+  }
+]

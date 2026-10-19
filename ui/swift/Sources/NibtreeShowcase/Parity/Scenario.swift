@@ -27,6 +27,13 @@ struct ScenarioNode: Decodable, Sendable {
     /// Drawn as if hovered, pressed, focused or dragged (`nibtreeForcedState`).
     let state: String?
 
+    /// The node with `placeholder` in its text and its children's replaced, for a slot that is a template per item.
+    func replacing(_ placeholder: String, with value: String) -> ScenarioNode {
+        ScenarioNode(
+            component: component, props: props, text: text?.replacingOccurrences(of: placeholder, with: value),
+            children: children?.map { $0.replacing(placeholder, with: value) }, slots: slots, state: state)
+    }
+
     func number(_ name: String) -> Double? {
         if case .number(let value) = props?[name] {
             return value

@@ -112,7 +112,8 @@ private struct NSliderFace: View {
         let (fraction, disabled, words, valueWidth) = (fraction, disabled, words, valueWidth)
         Canvas(opaque: false, rendersAsynchronously: false) { context, size in
             MainActor.assumeIsolated {
-                Self.draw(context, size, fraction: fraction, disabled: disabled)
+                // A disabled group (a fieldset) disables the slider too, as WebKit does.
+                Self.draw(context, size, fraction: fraction, disabled: disabled || !context.environment.isEnabled)
                 let layout = words.state.layout ?? words.layout(width: nil)
                 words.state.layout = layout
                 let palette = context.environment.nibtreePalette

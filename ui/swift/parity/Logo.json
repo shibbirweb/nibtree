@@ -1,0 +1,63 @@
+[
+  {
+    "id": "logo-sizes",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "lg",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Logo",
+          "props": {
+            "size": "normal"
+          }
+        },
+        {
+          "component": "Logo",
+          "props": {
+            "size": "medium"
+          }
+        },
+        {
+          "component": "Logo",
+          "props": {
+            "size": "large",
+            "label": "Nibtree"
+          }
+        },
+        {
+          "component": "Logo",
+          "props": {
+            "size": "soft"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "logo-column",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Logo",
+          "props": {}
+        },
+        {
+          "component": "Text",
+          "text": "Nibtree"
+        }
+      ]
+    }
+  }
+]

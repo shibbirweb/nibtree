@@ -1,0 +1,128 @@
+[
+  {
+    "id": "highlight-strong",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "CartItems.svelte",
+            "ranges": [
+              [0, 4],
+              [8, 9]
+            ],
+            "variant": "strong"
+          }
+        },
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "src/lib/cart.ts",
+            "ranges": [[8, 12]]
+          }
+        },
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "no matches",
+            "ranges": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "highlight-mark",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "const total = items.reduce(sum)",
+            "ranges": [
+              [6, 11],
+              [14, 19]
+            ],
+            "variant": "mark"
+          }
+        },
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "overlapping ranges merge",
+            "ranges": [
+              [12, 18],
+              [0, 4],
+              [2, 8]
+            ],
+            "variant": "mark"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "highlight-search",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "xs"
+      },
+      "children": [
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "Show line numbers in the editor",
+            "ranges": [[5, 9]],
+            "variant": "search"
+          }
+        },
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "Clip past the end",
+            "ranges": [[10, 40]],
+            "variant": "search"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "highlight-wraps",
+    "width": 200,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "HighlightText",
+          "props": {
+            "text": "A long result line that wraps onto more than one line here",
+            "ranges": [
+              [2, 6],
+              [30, 37]
+            ],
+            "variant": "mark"
+          }
+        }
+      ]
+    }
+  }
+]

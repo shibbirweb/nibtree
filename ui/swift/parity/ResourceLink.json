@@ -1,0 +1,92 @@
+[
+  {
+    "id": "resource-link-plain",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "ResourceLink",
+          "props": {
+            "icon": "book",
+            "title": "Read the docs",
+            "description": "Learn how branches, merges and rebases work in Nibtree.",
+            "variant": "plain"
+          }
+        },
+        {
+          "component": "ResourceLink",
+          "props": {
+            "icon": "keyboard",
+            "title": "Keyboard shortcuts"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "resource-link-card",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "ResourceLink",
+          "props": {
+            "icon": "bug",
+            "title": "Report a problem",
+            "description": "Opens a new issue on GitHub.",
+            "variant": "card"
+          }
+        },
+        {
+          "component": "ResourceLink",
+          "props": {
+            "icon": "star",
+            "title": "Star on GitHub",
+            "variant": "card"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "resource-link-row",
+    "width": 560,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "ResourceLink",
+          "props": {
+            "icon": "book",
+            "title": "Docs",
+            "description": "Guides"
+          }
+        },
+        {
+          "component": "ResourceLink",
+          "props": {
+            "icon": "coffee",
+            "title": "Sponsor",
+            "variant": "card"
+          }
+        }
+      ]
+    }
+  }
+]

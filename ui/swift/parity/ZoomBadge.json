@@ -1,0 +1,26 @@
+[
+  {
+    "id": "zoom-badge-open",
+    "width": 320,
+    "height": 110,
+    "node": {
+      "component": "ZoomBadge",
+      "props": {
+        "text": "125%",
+        "open": true
+      }
+    }
+  },
+  {
+    "id": "zoom-badge-closed",
+    "width": 320,
+    "height": 60,
+    "node": {
+      "component": "ZoomBadge",
+      "props": {
+        "text": "100%",
+        "open": false
+      }
+    }
+  }
+]

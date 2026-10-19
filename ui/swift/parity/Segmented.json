@@ -1,0 +1,142 @@
+[
+  {
+    "id": "segmented-pill",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Segmented",
+          "props": {
+            "variant": "pill",
+            "size": "normal",
+            "options": [
+              {
+                "value": "light",
+                "label": "Light"
+              },
+              {
+                "value": "dark",
+                "label": "Dark"
+              },
+              {
+                "value": "system",
+                "label": "System",
+                "icon": "sun"
+              }
+            ],
+            "value": "dark",
+            "label": "Choice"
+          }
+        },
+        {
+          "component": "Segmented",
+          "props": {
+            "size": "small",
+            "options": [
+              {
+                "value": "a",
+                "icon": "split-view",
+                "title": "Side by side"
+              },
+              {
+                "value": "b",
+                "icon": "split-rows",
+                "title": "Stacked"
+              },
+              {
+                "value": "c",
+                "icon": "editor-only",
+                "title": "Editor only",
+                "disabled": true
+              }
+            ],
+            "value": "b",
+            "label": "Choice"
+          }
+        },
+        {
+          "component": "Segmented",
+          "props": {
+            "disabled": true,
+            "options": [
+              {
+                "value": "light",
+                "label": "Light"
+              },
+              {
+                "value": "dark",
+                "label": "Dark"
+              },
+              {
+                "value": "system",
+                "label": "System",
+                "icon": "sun"
+              }
+            ],
+            "value": "light",
+            "label": "Choice"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "segmented-joined-split",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Segmented",
+          "props": {
+            "variant": "joined",
+            "options": [
+              {
+                "value": "public",
+                "label": "Public"
+              },
+              {
+                "value": "secret",
+                "label": "Secret"
+              }
+            ],
+            "value": "secret",
+            "label": "Choice"
+          }
+        },
+        {
+          "component": "Segmented",
+          "props": {
+            "variant": "split",
+            "options": [
+              {
+                "value": "off",
+                "label": "Off"
+              },
+              {
+                "value": "gpg",
+                "label": "GPG"
+              },
+              {
+                "value": "ssh",
+                "label": "SSH"
+              }
+            ],
+            "value": "gpg",
+            "label": "Choice"
+          }
+        }
+      ]
+    }
+  }
+]

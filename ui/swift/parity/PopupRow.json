@@ -1,0 +1,88 @@
+[
+  {
+    "id": "popup-row-items",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "sm"
+      },
+      "children": [
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "main",
+            "icon": "branch",
+            "hint": "origin/main",
+            "current": true,
+            "variant": "item"
+          }
+        },
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "feature/login",
+            "icon": "branch",
+            "hint": "2 ahead",
+            "highlighted": true,
+            "chevron": true
+          }
+        },
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "a-very-long-branch-name-that-does-not-fit",
+            "hint": "a long hint that is cut too",
+            "chevron": true
+          }
+        },
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "No icon",
+            "disabled": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "popup-row-actions",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "sm"
+      },
+      "children": [
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "New branch",
+            "icon": "plus",
+            "variant": "action"
+          }
+        },
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "Fetch",
+            "variant": "action",
+            "highlighted": true
+          }
+        },
+        {
+          "component": "PopupRow",
+          "props": {
+            "label": "Delete",
+            "icon": "trash",
+            "variant": "action",
+            "disabled": true
+          }
+        }
+      ]
+    }
+  }
+]

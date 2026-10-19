@@ -1,0 +1,61 @@
+[
+  {
+    "id": "search-toggles",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "SearchToggles",
+          "props": {
+            "options": {
+              "matchCase": false,
+              "wholeWords": false,
+              "regex": false
+            }
+          }
+        },
+        {
+          "component": "SearchToggles",
+          "props": {
+            "titles": {
+              "matchCase": "Match Case, on"
+            },
+            "options": {
+              "matchCase": true,
+              "wholeWords": false,
+              "regex": true
+            }
+          }
+        },
+        {
+          "component": "SearchToggles",
+          "props": {
+            "compact": true,
+            "options": {
+              "matchCase": false,
+              "wholeWords": true,
+              "regex": false
+            }
+          }
+        },
+        {
+          "component": "SearchToggles",
+          "props": {
+            "compact": false,
+            "options": {
+              "matchCase": true,
+              "wholeWords": true,
+              "regex": true
+            }
+          }
+        }
+      ]
+    }
+  }
+]

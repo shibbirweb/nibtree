@@ -1,0 +1,111 @@
+[
+  {
+    "id": "dialog-head-normal",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "lg"
+      },
+      "children": [
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Delete branch",
+            "subtitle": "feature/login has commits that are not merged anywhere.",
+            "icon": "trash",
+            "iconTone": "danger",
+            "size": "normal"
+          }
+        },
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Clone a repository",
+            "closable": true
+          }
+        },
+        {
+          "component": "Text",
+          "text": "Body"
+        }
+      ]
+    }
+  },
+  {
+    "id": "dialog-head-tones",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "lg"
+      },
+      "children": [
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Accent",
+            "icon": "info",
+            "iconTone": "accent"
+          }
+        },
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Success",
+            "icon": "circle-check",
+            "iconTone": "success"
+          }
+        },
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Warning",
+            "icon": "alert",
+            "iconTone": "warning"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "dialog-head-panel",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "none"
+      },
+      "children": [
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Create a pull request",
+            "size": "panel",
+            "closable": true
+          }
+        },
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Publish branch",
+            "subtitle": "Pushes feature/login to origin and tracks it.",
+            "icon": "cloud-upload",
+            "size": "panel"
+          }
+        },
+        {
+          "component": "DialogHead",
+          "props": {
+            "title": "Settings",
+            "size": "content",
+            "closable": true
+          }
+        }
+      ]
+    }
+  }
+]

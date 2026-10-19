@@ -1,0 +1,28 @@
+[
+  {
+    "id": "drag-ghost-files",
+    "width": 300,
+    "height": 80,
+    "node": {
+      "component": "DragGhost",
+      "props": {
+        "text": "3 files",
+        "x": 20,
+        "y": 12
+      }
+    }
+  },
+  {
+    "id": "drag-ghost-long",
+    "width": 420,
+    "height": 70,
+    "node": {
+      "component": "DragGhost",
+      "props": {
+        "text": "src/lib/components/a-very-long-folder-name/with-a-long-file-name.svelte",
+        "x": 6.5,
+        "y": 4
+      }
+    }
+  }
+]

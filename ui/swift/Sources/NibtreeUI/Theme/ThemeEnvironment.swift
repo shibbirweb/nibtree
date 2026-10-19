@@ -21,6 +21,16 @@ extension EnvironmentValues {
         get { self[CurrentColorKey.self] }
         set { self[CurrentColorKey.self] = newValue }
     }
+
+    /// The background of the row a component sits on, like the web's `--row-bg`: a ref label mixes its own over it.
+    public var nibtreeRowBackground: GMColorToken {
+        get { self[RowBackgroundKey.self] }
+        set { self[RowBackgroundKey.self] = newValue }
+    }
+}
+
+private struct RowBackgroundKey: EnvironmentKey {
+    static let defaultValue = GMColorToken.panel
 }
 
 /// Picks the light or the dark theme from the view's appearance, like the app's two Color theme settings.

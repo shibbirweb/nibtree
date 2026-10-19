@@ -1,0 +1,111 @@
+[
+  {
+    "id": "status-bar-flat",
+    "width": 520,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "StatusBar",
+          "props": {
+            "label": "Status bar",
+            "look": "flat"
+          },
+          "slots": {
+            "start": [
+              {
+                "component": "StatusItem",
+                "props": {
+                  "icon": "folder-git",
+                  "text": "nibtree",
+                  "pressable": true
+                }
+              },
+              {
+                "component": "StatusItem",
+                "props": {
+                  "icon": "branch",
+                  "text": "main",
+                  "limit": "branch",
+                  "pressable": true
+                }
+              }
+            ],
+            "end": [
+              {
+                "component": "StatusItem",
+                "props": {
+                  "text": "214 MB",
+                  "variant": "quiet"
+                }
+              },
+              {
+                "component": "StatusItem",
+                "props": {
+                  "icon": "bell",
+                  "pressable": true,
+                  "label": "Notifications"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "status-bar-rounded-narrow",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "StatusBar",
+          "props": {
+            "look": "rounded"
+          },
+          "slots": {
+            "start": [
+              {
+                "component": "StatusItem",
+                "props": {
+                  "icon": "folder-git",
+                  "text": "a-long-repository-name"
+                }
+              },
+              {
+                "component": "StatusItem",
+                "props": {
+                  "icon": "branch",
+                  "text": "feature/login"
+                }
+              }
+            ],
+            "end": [
+              {
+                "component": "StatusItem",
+                "props": {
+                  "text": "98 MB",
+                  "variant": "quiet"
+                }
+              },
+              {
+                "component": "StatusItem",
+                "props": {
+                  "icon": "bell",
+                  "label": "Notifications"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

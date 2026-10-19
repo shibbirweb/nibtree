@@ -1,0 +1,232 @@
+[
+  {
+    "id": "grid-two",
+    "width": 400,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Grid",
+          "props": {
+            "columns": "two",
+            "gap": "md"
+          },
+          "children": [
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "One"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "A longer card whose words wrap onto a second line"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Three"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Four"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "grid-three-six",
+    "width": 480,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "md"
+      },
+      "children": [
+        {
+          "component": "Grid",
+          "props": {
+            "columns": "three",
+            "gap": "sm"
+          },
+          "children": [
+            {
+              "component": "Tag",
+              "text": "main"
+            },
+            {
+              "component": "Tag",
+              "text": "dev"
+            },
+            {
+              "component": "Tag",
+              "text": "release"
+            },
+            {
+              "component": "Tag",
+              "text": "hotfix"
+            },
+            {
+              "component": "Tag",
+              "text": "docs"
+            }
+          ]
+        },
+        {
+          "component": "Grid",
+          "props": {
+            "columns": "six",
+            "gap": "xs"
+          },
+          "children": [
+            {
+              "component": "Tag",
+              "text": "a"
+            },
+            {
+              "component": "Tag",
+              "text": "b"
+            },
+            {
+              "component": "Tag",
+              "text": "c"
+            },
+            {
+              "component": "Tag",
+              "text": "d"
+            },
+            {
+              "component": "Tag",
+              "text": "e"
+            },
+            {
+              "component": "Tag",
+              "text": "f"
+            },
+            {
+              "component": "Tag",
+              "text": "g"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "grid-four-tight",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Grid",
+          "props": {
+            "columns": "four",
+            "gap": "none",
+            "label": "Swatches"
+          },
+          "children": [
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "1"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "2"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "3"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "4"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "5"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

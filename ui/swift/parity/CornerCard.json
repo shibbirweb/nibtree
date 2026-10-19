@@ -1,0 +1,35 @@
+[
+  {
+    "id": "corner-card-restart",
+    "width": 420,
+    "height": 120,
+    "node": {
+      "component": "CornerCard",
+      "props": {
+        "message": "The agent ended"
+      },
+      "slots": {
+        "action": [
+          {
+            "component": "Button",
+            "text": "Restart",
+            "props": {
+              "size": "small"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "corner-card-message",
+    "width": 360,
+    "height": 90,
+    "node": {
+      "component": "CornerCard",
+      "props": {
+        "message": "Copied to the clipboard"
+      }
+    }
+  }
+]

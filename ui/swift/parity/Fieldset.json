@@ -1,0 +1,114 @@
+[
+  {
+    "id": "fieldset-faint",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Fieldset",
+          "props": {
+            "legend": "Integrate the incoming changes with",
+            "legendTone": "faint"
+          },
+          "children": [
+            {
+              "component": "Checkbox",
+              "props": {
+                "label": "Merge",
+                "checked": true
+              }
+            },
+            {
+              "component": "Checkbox",
+              "props": {
+                "label": "Rebase"
+              }
+            },
+            {
+              "component": "Checkbox",
+              "props": {
+                "label": "Fast-forward only"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "fieldset-dim",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Fieldset",
+          "props": {
+            "legend": "GPG sign",
+            "legendTone": "dim"
+          },
+          "children": [
+            {
+              "component": "Switch",
+              "props": {
+                "label": "Sign this commit",
+                "checked": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "fieldset-disabled",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Fieldset",
+          "props": {
+            "legend": "Options",
+            "disabled": true
+          },
+          "children": [
+            {
+              "component": "Checkbox",
+              "props": {
+                "label": "Prune",
+                "checked": true
+              }
+            },
+            {
+              "component": "Switch",
+              "props": {
+                "label": "Fetch first",
+                "checked": true
+              }
+            },
+            {
+              "component": "Slider",
+              "props": {
+                "label": "Depth",
+                "value": 3,
+                "min": 0,
+                "max": 10
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

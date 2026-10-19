@@ -1,0 +1,239 @@
+[
+  {
+    "id": "status-item-tones",
+    "width": 460,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "StatusItem",
+          "props": {
+            "icon": "branch",
+            "text": "main",
+            "tone": "default",
+            "variant": "default"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "2 ahead",
+            "icon": "arrow-up",
+            "tone": "accent"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Conflicts",
+            "icon": "alert",
+            "tone": "warning"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Push failed",
+            "tone": "danger"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "status-item-quiet",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Keep awake",
+            "variant": "quiet"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Awake",
+            "icon": "sun",
+            "variant": "quiet",
+            "active": true
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "icon": "bell",
+            "variant": "quiet",
+            "label": "Notifications"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "status-item-buttons",
+    "width": 520,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Fetch",
+            "icon": "sync",
+            "pressable": true
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Open",
+            "icon": "bell",
+            "pressable": true,
+            "open": true
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Busy",
+            "icon": "refresh",
+            "pressable": true,
+            "disabled": true
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Fetching",
+            "icon": "sync",
+            "pressable": true,
+            "disabled": true,
+            "spin": true
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "icon": "sync",
+            "spin": true,
+            "label": "Syncing"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "status-item-limits",
+    "width": 760,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "StatusItem",
+          "props": {
+            "icon": "branch",
+            "text": "feature/a-really-long-branch-name-that-goes-on-and-on-past-the-limit",
+            "limit": "branch"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Rebasing feature/login onto main, step 3 of 12, waiting on conflicts in app.ts and more",
+            "limit": "operation"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Not limited at all",
+            "limit": "none"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "status-item-slots",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "StatusItem",
+          "props": {
+            "icon": "bell",
+            "label": "Notifications"
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Memory",
+            "label": "Memory in use"
+          },
+          "slots": {
+            "trailing": [
+              {
+                "component": "Badge",
+                "props": {
+                  "count": 3,
+                  "tone": "neutral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "StatusItem",
+          "props": {
+            "text": "Agents"
+          },
+          "slots": {
+            "leading": [
+              {
+                "component": "StatusDot",
+                "props": {
+                  "tone": "success"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

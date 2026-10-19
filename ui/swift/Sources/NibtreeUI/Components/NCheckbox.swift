@@ -165,7 +165,9 @@ struct NCheckboxBox: View {
         Canvas(opaque: false, rendersAsynchronously: false) { context, size in
             MainActor.assumeIsolated {
                 guard disabled else {
-                    Self.draw(context, size, mark: mark, words: words, strength: 1)
+                    // In a disabled group (a fieldset) WebKit fades the box, but not the words.
+                    let strength = context.environment.isEnabled ? 1 : Self.disabledOpacity
+                    Self.draw(context, size, mark: mark, words: words, strength: strength)
                     return
                 }
                 // The web dims the whole label, box and words together, as one layer.

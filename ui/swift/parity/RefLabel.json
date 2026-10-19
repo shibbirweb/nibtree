@@ -1,0 +1,82 @@
+[
+  {
+    "id": "reflabel-kinds",
+    "width": 640,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "RefLabel", "props": { "kind": "head", "label": "main" } },
+        { "component": "RefLabel", "props": { "kind": "local", "label": "feature/login" } },
+        { "component": "RefLabel", "props": { "kind": "remote", "label": "origin/main" } },
+        { "component": "RefLabel", "props": { "kind": "tag", "label": "v1.0" } },
+        { "component": "RefLabel", "props": { "kind": "more", "label": "+3", "title": "dev, staging, v0.9" } },
+        { "component": "RefLabel", "props": { "kind": "bisect-bad", "label": "bad" } },
+        { "component": "RefLabel", "props": { "kind": "bisect-good", "label": "good" } },
+        { "component": "RefLabel", "props": { "kind": "bisect-skip", "label": "skip" } },
+        { "component": "RefLabel", "props": { "kind": "bisect-current", "label": "current" } }
+      ]
+    }
+  },
+  {
+    "id": "reflabel-icons",
+    "width": 480,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        { "component": "Text", "text": "a1b2c3d" },
+        { "component": "RefLabel", "props": { "kind": "head", "label": "main", "icon": "branch" } },
+        { "component": "RefLabel", "props": { "kind": "remote", "label": "origin/main", "icon": "cloud" } },
+        { "component": "RefLabel", "props": { "kind": "tag", "label": "v2.3.1", "icon": "tag" } },
+        { "component": "RefLabel", "props": { "kind": "more", "label": "4", "icon": "more" } }
+      ]
+    }
+  },
+  {
+    "id": "reflabel-long-row",
+    "width": 520,
+    "node": {
+      "component": "Stack",
+      "props": { "direction": "row", "gap": "xs", "align": "center", "padding": "md" },
+      "children": [
+        {
+          "component": "RefLabel",
+          "props": { "kind": "local", "label": "feature/a-very-long-branch-name-that-gets-cut" }
+        },
+        {
+          "component": "RefLabel",
+          "props": { "kind": "remote", "label": "upstream/release/2026-autumn-hotfixes-and-more", "icon": "cloud" }
+        }
+      ]
+    }
+  },
+  {
+    "id": "reflabel-column-stretched",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "xs", "padding": "md" },
+      "children": [
+        { "component": "RefLabel", "props": { "kind": "head", "label": "main" } },
+        { "component": "RefLabel", "props": { "kind": "tag", "label": "v1.0", "icon": "tag" } },
+        {
+          "component": "RefLabel",
+          "props": { "kind": "local", "label": "feature/a-very-long-branch-name-that-gets-cut" }
+        }
+      ]
+    }
+  },
+  {
+    "id": "reflabel-column-narrow",
+    "width": 110,
+    "node": {
+      "component": "Stack",
+      "props": { "gap": "xs", "padding": "sm" },
+      "children": [
+        { "component": "RefLabel", "props": { "kind": "remote", "label": "origin/feature/login" } },
+        { "component": "RefLabel", "props": { "kind": "bisect-current", "label": "current", "icon": "locate" } }
+      ]
+    }
+  }
+]

@@ -63,12 +63,21 @@ extension NIconButton {
             label
                 .environment(\.nibtreeCurrentColor, look.colors.text)
                 .layoutValue(key: NButtonPart.self, value: .label)
-            if look.spinning || hovering {
-                NIconButtonExtras(look: look, tooltip: hovering ? tooltip : nil)
+            if look.spinning {
+                NButtonExtras(look: look, spinning: true, badge: nil)
             }
         }
         .opacity(disabled ? look.disabledOpacity : 1)
-        .onHover { hovering = $0 }
+        .onHover { inside in
+            hovering = inside
+            // The tooltip is AppKit's own on the view under the pointer: a `.help` on every icon button cost a fifth
+            // of its time.
+            if inside {
+                NHoverHelpHost.show(tooltip)
+            } else {
+                NHoverHelpHost.hide(tooltip)
+            }
+        }
         .onTapGesture(perform: press)
         .accessibilityRepresentation {
             Button(name, action: press)
@@ -82,21 +91,5 @@ extension NIconButton {
             return
         }
         action()
-    }
-}
-
-/// A spinning icon, and the tooltip: made only while the pointer is over the button, as a tooltip on every icon button
-/// cost a fifth of its time.
-private struct NIconButtonExtras: View {
-    let look: NButtonLook
-    let tooltip: String?
-
-    var body: some View {
-        if look.spinning {
-            NButtonExtras(look: look, spinning: true, badge: nil)
-        }
-        if let tooltip {
-            Color.clear.help(tooltip).layoutValue(key: NButtonPart.self, value: .face)
-        }
     }
 }

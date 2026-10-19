@@ -14,6 +14,18 @@ enum ActionsNode: Sendable {
     case iconButtonWith(IconButtonProps, children: [ResolvedNode])
     case link(LinkProps)
     case chip(ChipProps)
+    /// The web's `title` is `.help` in SwiftUI.
+    case tile(icon: GMIconName, label: String, title: String?)
+    case toggleButton(ToggleButtonProps)
+
+    struct ToggleButtonProps: Sendable {
+        let pressed: Bool
+        let label, text: String
+        let icon: GMIconName?
+        let variant: NToggleButtonVariant
+        let disabled: Bool
+        let title: String?
+    }
 
     struct ChipProps: Sendable {
         let text: String
@@ -134,6 +146,17 @@ enum ActionsNode: Sendable {
                     status: node.string("status").flatMap(NStatusIcon.State.init),
                     fontFamily: node.string("fontFamily"),
                     pressable: node.flag("pressable")))
+        case "ToggleButton":
+            self = .toggleButton(
+                ToggleButtonProps(
+                    pressed: node.flag("pressed"), label: node.string("label") ?? "", text: node.string("text") ?? "",
+                    icon: node.string("icon").flatMap(GMIconName.init),
+                    variant: node.string("variant").flatMap(NToggleButtonVariant.init) ?? .plain,
+                    disabled: node.flag("disabled"), title: node.string("title")))
+        case "Tile":
+            self = .tile(
+                icon: node.string("icon").flatMap(GMIconName.init) ?? .folder, label: node.string("label") ?? "",
+                title: node.string("title"))
         default:
             return nil
         }
@@ -192,6 +215,16 @@ extension ActionsNode {
             NChip(
                 props.text, variant: props.variant, tone: props.tone, icon: props.icon, status: props.status,
                 fontFamily: props.fontFamily, action: props.pressable ? {} : nil)
+        case .toggleButton(let props):
+            NToggleButton(
+                pressed: .constant(props.pressed), label: props.label, text: props.text, icon: props.icon,
+                variant: props.variant, disabled: props.disabled, title: props.title)
+        case .tile(let icon, let label, let title):
+            if let title {
+                NTile(icon: icon, label: label) {}.help(title)
+            } else {
+                NTile(icon: icon, label: label) {}
+            }
         }
     }
 }

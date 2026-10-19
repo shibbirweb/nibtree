@@ -26,10 +26,20 @@ SwiftUI's cost is mostly the number of views in its graph, so components keep it
 - A control's words in the control's own canvas. `NCheckbox` with a plain label is one layout and one canvas that
   draws the box and the words; a stack, a box canvas and an `NText` took a column of six checkboxes from 100 ms to
   227 ms, where the web took 164.
-- No tooltip inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when there
-  is one: an empty `.help` cost as much as a whole `NMark`. When the tooltip is the component's own (an
-  `NIconButton`'s or a StatusIcon's label), it is made only while the pointer is over it (`NHoverHelp`): a `.help` on
-  every mark cost a row of them a third of its time.
+- No tooltip view inside a component. A web `title` is SwiftUI's own `.help("...")`, added by the caller only when
+  there is one: an empty `.help` cost as much as a whole `NMark`. When the tooltip is the component's own (an
+  `NIconButton`'s name, a StatusIcon's label, a RefLabel's name), only a hover watch is built: while the pointer is
+  over it, `NHoverHelp` gives the AppKit view under the pointer the text as its tooltip, and AppKit shows it. A
+  `.help` on every mark cost a row of them a third of its time, and one made only while hovered still cost a row of
+  ref labels a fifth.
+
+- Fields at rest are drawings. An `NInput` or `NTextArea` is one canvas until it is clicked or typed into, then
+  SwiftUI's own field until the focus leaves. A focus watch on every field cost a column of five more than the web's
+  whole column, so the keyboard reaches a field with Tab and the first key it types starts editing.
+- A list of texts is one canvas. A DescriptionList draws every label and value itself and turns its values into
+  selectable text only once the pointer is over it, at half the web's time.
+- Laid-out lines are shared. HighlightText and SectionTitle keep their Core Text lines by text, as `NTextEngine` does,
+  which halved a list of highlighted names.
 
 The frames go further. `NMergeStackFrame` is one layout and one canvas: `NMergeStackGeometry` works out every title
 strip, pane and line once, the canvas draws them and the layout places the texts, editors and handles. There are no
@@ -43,7 +53,7 @@ handles are adjusted with VoiceOver's increment and decrement instead of the web
 | File | What it does |
 | --- | --- |
 | `ui/swift/Sources/NibtreeUI/Components/` | One `N<Name>.swift` per component, each kept to few views |
-| `ui/swift/Sources/NibtreeUI/Theme/NHoverHelp.swift` | A component's own tooltip, made only while pointed at |
+| `ui/swift/Sources/NibtreeUI/Theme/NHoverHelp.swift` | A component's own tooltip, AppKit's while pointed at |
 | `ui/swift/Sources/NibtreeUI/Layout/NMergeStackLayout.swift` | A merge frame's strips, panes and lines |
 
 ## Keeping this page in sync

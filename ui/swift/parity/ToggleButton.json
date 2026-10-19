@@ -1,0 +1,221 @@
+[
+  {
+    "id": "toggle-plain-outline",
+    "width": 520,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Collapse",
+                "text": "Collapse unchanged",
+                "variant": "plain"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Wrap",
+                "text": "Wrap",
+                "pressed": true
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Whitespace",
+                "icon": "pilcrow"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Whitespace",
+                "icon": "pilcrow",
+                "pressed": true
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Ours",
+                "text": "Ours",
+                "variant": "outline"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Theirs",
+                "text": "Theirs",
+                "variant": "outline",
+                "pressed": true,
+                "icon": "check"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Off",
+                "text": "Disabled",
+                "variant": "outline",
+                "disabled": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "toggle-tool-chip-filter",
+    "width": 520,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Blame",
+                "icon": "history",
+                "variant": "tool"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Blame",
+                "icon": "history",
+                "variant": "tool",
+                "pressed": true,
+                "title": "Blame is on"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Edited only",
+                "text": "Edited only",
+                "variant": "chip"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Edited only",
+                "text": "Edited only",
+                "variant": "chip",
+                "pressed": true
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Mine",
+                "text": "Mine",
+                "variant": "filter"
+              }
+            },
+            {
+              "component": "ToggleButton",
+              "props": {
+                "label": "Merges",
+                "text": "Merges",
+                "variant": "filter",
+                "pressed": true,
+                "icon": "merge"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "toggle-column-stretched",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "xs",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "ToggleButton",
+          "props": {
+            "label": "Wrap",
+            "text": "Wrap lines",
+            "pressed": true
+          }
+        },
+        {
+          "component": "ToggleButton",
+          "props": {
+            "label": "Mine",
+            "text": "Mine",
+            "variant": "filter"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "theme-swatch-row",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm",
+        "padding": "md",
+        "align": "center"
+      },
+      "children": [
+        {
+          "component": "ThemeSwatch",
+          "props": {
+            "colors": {
+              "background": "#1e1f22",
+              "foreground": "#d4d4d4",
+              "border": "#3c3f45",
+              "keyword": "#c586c0",
+              "string": "#ce9178",
+              "accent": "#3b82f6",
+              "selection": "#264f78"
+            },
+            "label": "Dark Modern"
+          }
+        },
+        {
+          "component": "ThemeSwatch",
+          "props": {
+            "colors": {
+              "background": "#ffffff",
+              "foreground": "#24292f",
+              "border": "#d0d7de",
+              "keyword": "#cf222e",
+              "string": "#0a3069",
+              "accent": "#0969da",
+              "selection": "#b6e3ff"
+            },
+            "label": "GitHub Light"
+          }
+        }
+      ]
+    }
+  }
+]

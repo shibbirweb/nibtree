@@ -147,6 +147,31 @@ extension Stories {
                 NText("parseConfig")
             }
         },
+        Story("Logo", group: "Feedback") {
+            NStack(direction: .row, gap: .lg, align: .center) {
+                NLogo()
+                NLogo(size: .medium)
+                NLogo(size: .large)
+                NLogo(size: .soft)
+            }
+        },
+        Story("CornerCard", group: "Feedback") {
+            NCornerCard(message: "The agent ended") { NButton("Restart", size: .small) {} }
+                .frame(width: 420, height: 120)
+        },
+        Story("DragGhost", group: "Feedback") {
+            NDragGhost(text: "3 files", x: 20, y: 12).frame(width: 300, height: 80)
+        },
+        Story("RefLabel", group: "Feedback") {
+            NStack(direction: .row, gap: .xs, align: .center) {
+                NText("a1b2c3d", mono: true)
+                NRefLabel(kind: .head, label: "main", icon: .branch)
+                NRefLabel(kind: .remote, label: "origin/main")
+                NRefLabel(kind: .tag, label: "v1.0", icon: .tag)
+                NRefLabel(kind: .more, label: "+2", title: "dev, staging")
+                NRefLabel(kind: .bisectBad, label: "bad")
+            }
+        },
     ]
 }
 

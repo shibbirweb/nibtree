@@ -1,0 +1,116 @@
+[
+  {
+    "id": "radio-group-stacked",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "RadioGroup",
+          "props": {
+            "direction": "column",
+            "layout": "stacked",
+            "options": [
+              {
+                "value": "soft",
+                "label": "Soft",
+                "description": "Keep your changes staged."
+              },
+              {
+                "value": "mixed",
+                "label": "Mixed",
+                "description": "Keep your changes, unstaged."
+              },
+              {
+                "value": "hard",
+                "label": "Hard",
+                "description": "Throw your changes away.",
+                "danger": true
+              }
+            ],
+            "value": "mixed",
+            "name": "mode",
+            "label": "Mode"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "radio-group-row",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "RadioGroup",
+          "props": {
+            "direction": "row",
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "name": "mode",
+            "label": "Mode"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "radio-group-columns",
+    "width": 460,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "RadioGroup",
+          "props": {
+            "layout": "columns",
+            "labelWidth": "medium",
+            "options": [
+              {
+                "value": "a",
+                "label": "Ask",
+                "description": "Ask every time"
+              },
+              {
+                "value": "b",
+                "label": "Always",
+                "description": "Do it without asking"
+              },
+              {
+                "value": "c",
+                "label": "Never"
+              }
+            ],
+            "value": "b",
+            "name": "mode",
+            "label": "Mode"
+          }
+        }
+      ]
+    }
+  }
+]

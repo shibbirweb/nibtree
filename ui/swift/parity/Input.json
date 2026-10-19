@@ -1,0 +1,139 @@
+[
+  {
+    "id": "input-values",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Input",
+          "props": {
+            "value": "feature/login",
+            "label": "Branch"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "",
+            "placeholder": "Branch name"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "a1b2c3d4",
+            "mono": true
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "bad name",
+            "invalid": true
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "Locked",
+            "disabled": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "input-widths",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Input",
+          "props": {
+            "value": "auto",
+            "width": "auto"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "xsmall",
+            "width": "xsmall"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "12",
+            "width": "number"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "small",
+            "width": "small"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "medium",
+            "width": "medium"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "large",
+            "width": "large"
+          }
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "fill",
+            "width": "fill"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "input-row",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm",
+        "padding": "md",
+        "align": "center"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Name"
+        },
+        {
+          "component": "Input",
+          "props": {
+            "value": "",
+            "placeholder": "Placeholder in a row"
+          }
+        }
+      ]
+    }
+  }
+]

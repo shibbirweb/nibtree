@@ -16,3 +16,12 @@ struct NStackGrows: LayoutValueKey {
 struct NStackAlignSelf: LayoutValueKey {
     static let defaultValue: NStackAlign? = nil
 }
+
+/// Room a child keeps before itself on the stack's main axis, like a CSS margin: `first` when it is the stack's first
+/// child (`:first-child`), `other` after another. SectionTitle's `group` keeps more room above all but the first.
+struct NStackMargin: LayoutValueKey, Equatable {
+    static let defaultValue: NStackMargin? = nil
+
+    let first: CGFloat
+    let other: CGFloat
+}

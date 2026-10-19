@@ -1,0 +1,200 @@
+[
+  {
+    "id": "section-title-bar",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "SectionTitle",
+          "props": {
+            "title": "Staged",
+            "variant": "bar",
+            "count": 3
+          },
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "minus",
+                  "label": "Unstage all",
+                  "size": "small"
+                }
+              },
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "more",
+                  "label": "More",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "bar",
+            "title": "Changes"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "section-title-inline",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "list",
+            "count": 12,
+            "title": "Branches"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "caption",
+            "count": 4,
+            "title": "Files in this commit"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "caps",
+            "count": 2,
+            "title": "Worktrees"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "day",
+            "title": "Today"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "band",
+            "count": 5,
+            "title": "Commits to rebase"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "picker",
+            "title": "Local"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "section-title-groups",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "group",
+            "heading": 2,
+            "title": "Appearance"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "Theme"
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "group",
+            "heading": 3,
+            "title": "Editor"
+          }
+        },
+        {
+          "component": "Text",
+          "text": "Font"
+        }
+      ]
+    }
+  },
+  {
+    "id": "section-title-divided",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "divided",
+            "count": 9,
+            "heading": 4,
+            "title": "Git tools"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "divided",
+            "title": "Search"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "section-title-matches",
+    "width": 340,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "list",
+            "titleMatches": [[5, 9]],
+            "title": "Show line numbers in the editor"
+          }
+        },
+        {
+          "component": "SectionTitle",
+          "props": {
+            "variant": "list",
+            "count": 42,
+            "title": "A very long heading that runs out of room before its count does"
+          }
+        }
+      ]
+    }
+  }
+]

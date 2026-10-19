@@ -85,10 +85,17 @@ struct NStackLayout: Layout {
         return cross(natural) <= room ? natural : measure(subview, offer)
     }
 
+    /// The room each child keeps before itself (`NStackMargin`), the first child's from its own rule.
+    private func margins(_ subviews: Subviews) -> [CGFloat] {
+        subviews.indices.map { index in
+            subviews[index][NStackMargin.self].map { index == 0 ? $0.first : $0.other } ?? 0
+        }
+    }
+
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         let inner = inner(proposal)
         let sizes = sizes(inner, subviews, &cache)
-        let gaps = spacing * CGFloat(max(0, sizes.count - 1))
+        let gaps = spacing * CGFloat(max(0, sizes.count - 1)) + margins(subviews).reduce(0, +)
         let content = sizes.reduce(0) { $0 + main($1) } + gaps
         let offered = axis == .horizontal ? inner.width : inner.height
         // Spreading out or centering needs the whole offered length, like a flex container.
@@ -116,7 +123,8 @@ struct NStackLayout: Layout {
         let crossBounds = cross(box.size)
         let grows = subviews.map { $0[NStackGrows.self] }
         var sizes = sizes(inner(proposal), subviews, &cache)
-        let gaps = spacing * CGFloat(max(0, sizes.count - 1))
+        let margins = margins(subviews)
+        let gaps = spacing * CGFloat(max(0, sizes.count - 1)) + margins.reduce(0, +)
         let growing = grows.filter { $0 }.count
         if growing > 0 {
             // flex: 1 1 0: growing children start from nothing and share what the others leave.
@@ -140,7 +148,8 @@ struct NStackLayout: Layout {
         }
         let origin = axis == .horizontal ? box.minX : box.minY
         let crossOrigin = axis == .horizontal ? box.minY : box.minX
-        for (subview, childSize) in zip(subviews, sizes) {
+        for (index, (subview, childSize)) in zip(subviews, sizes).enumerated() {
+            position += margins[index]
             let align = subview[NStackAlignSelf.self] ?? align
             let childCross = align == .stretch ? crossBounds : min(cross(childSize), crossBounds)
             let crossOffset: CGFloat

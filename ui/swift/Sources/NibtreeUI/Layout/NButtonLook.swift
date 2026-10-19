@@ -111,8 +111,11 @@ struct NButtonLook: Sendable {
     }
 
     /// Where the content starts in a button `width` wide whose content is `content` wide.
+    /// Where the content starts. A button squeezed below its content and padding (a flex row that shrank it) centers
+    /// the content, as `justify-content: center` does when it overflows.
     func contentLeft(width: CGFloat, content: CGFloat) -> CGFloat {
-        fill || centered || fixedWidth != nil ? (width - content) / 2 : border + paddingX
+        let squeezed = width < content + 2 * (border + paddingX) - 0.01
+        return fill || centered || fixedWidth != nil || squeezed ? (width - content) / 2 : border + paddingX
     }
 
     func naturalWidth(content: CGFloat) -> CGFloat {
@@ -203,7 +206,8 @@ struct NButtonFrame: Layout {
         guard let offer = proposal.width, offer.isFinite, look.fixedWidth == nil else {
             return CGSize(width: natural, height: look.height)
         }
-        return CGSize(width: max(offer, natural), height: look.height)
+        // A stack stretches it past its content; a flex row short of room squeezes it, never below its min width.
+        return CGSize(width: offer >= natural ? offer : max(offer, look.minWidth), height: look.height)
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {

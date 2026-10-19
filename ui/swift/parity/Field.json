@@ -1,0 +1,93 @@
+[
+  {
+    "id": "field-normal",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Field",
+          "props": {
+            "label": "Branch name",
+            "hint": "Letters, digits, slashes and dashes.",
+            "look": "normal"
+          },
+          "children": [
+            {
+              "component": "Input",
+              "props": {
+                "value": "feature/login"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Field",
+          "props": {
+            "label": "Remote",
+            "error": "This remote already exists."
+          },
+          "children": [
+            {
+              "component": "Input",
+              "props": {
+                "value": "origin",
+                "invalid": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "field-compact",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Field",
+          "props": {
+            "label": "Message",
+            "hint": "Optional",
+            "look": "compact"
+          },
+          "children": [
+            {
+              "component": "Input",
+              "props": {
+                "value": "",
+                "placeholder": "Stash message"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Field",
+          "props": {
+            "look": "compact",
+            "error": "Needed"
+          },
+          "children": [
+            {
+              "component": "Input",
+              "props": {
+                "value": "",
+                "invalid": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

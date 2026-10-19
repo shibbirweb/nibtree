@@ -1,0 +1,208 @@
+[
+  {
+    "id": "grid-auto-medium",
+    "width": 620,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Grid",
+          "children": [
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Alpha"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Beta"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Gamma"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Delta"
+                }
+              ]
+            }
+          ],
+          "props": {
+            "columns": "auto",
+            "minColumn": "medium",
+            "gap": "lg"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "grid-auto-sizes",
+    "width": 700,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "lg"
+      },
+      "children": [
+        {
+          "component": "Grid",
+          "props": {
+            "minColumn": "small",
+            "gap": "sm"
+          },
+          "children": [
+            {
+              "component": "Tag",
+              "text": "one"
+            },
+            {
+              "component": "Tag",
+              "text": "two"
+            },
+            {
+              "component": "Tag",
+              "text": "three"
+            },
+            {
+              "component": "Tag",
+              "text": "four"
+            },
+            {
+              "component": "Tag",
+              "text": "five"
+            },
+            {
+              "component": "Tag",
+              "text": "six"
+            }
+          ]
+        },
+        {
+          "component": "Grid",
+          "props": {
+            "minColumn": "large",
+            "gap": "xl"
+          },
+          "children": [
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Wide"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Wider"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Widest"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "component": "Grid",
+          "props": {
+            "minColumn": "xlarge",
+            "gap": "md"
+          },
+          "children": [
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Huge"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Huger"
+                }
+              ]
+            },
+            {
+              "component": "Card",
+              "props": {
+                "padded": true
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Last"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

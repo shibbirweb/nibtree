@@ -1,0 +1,137 @@
+[
+  {
+    "id": "row-states",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "Row",
+          "props": {
+            "disabled": true,
+            "label": "main"
+          },
+          "children": [
+            {
+              "component": "Icon",
+              "props": {
+                "name": "branch",
+                "size": "medium"
+              }
+            },
+            {
+              "component": "Text",
+              "text": "main"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "actionsShown": "always"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Always actions"
+            },
+            {
+              "component": "Spacer"
+            }
+          ],
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "more",
+                  "label": "More",
+                  "size": "small"
+                }
+              },
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "x",
+                  "label": "Close",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Row",
+          "props": {
+            "actionsShown": "hover"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Hover actions"
+            }
+          ],
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "more",
+                  "label": "More",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Row",
+          "props": {
+            "align": "baseline"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Big",
+              "props": {
+                "size": "title"
+              }
+            },
+            {
+              "component": "Text",
+              "text": "small",
+              "props": {
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "align": "center"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Centered",
+              "props": {
+                "size": "title"
+              }
+            },
+            {
+              "component": "Text",
+              "text": "small",
+              "props": {
+                "size": "small"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

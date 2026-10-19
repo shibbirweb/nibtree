@@ -1,0 +1,95 @@
+[
+  {
+    "id": "zoom-bar-fitted",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "ZoomBar",
+          "props": {
+            "zoom": null,
+            "fitted": 0.42
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "zoom-bar-actual",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "xs",
+        "align": "center",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "ZoomBar",
+          "props": {
+            "zoom": 1,
+            "fitTitle": "Fit",
+            "actualTitle": "Real size"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "zoom-bar-zoomed-disabled",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ZoomBar",
+              "props": {
+                "zoom": 1.5
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row",
+            "gap": "xs",
+            "align": "center",
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "ZoomBar",
+              "props": {
+                "zoom": null,
+                "disabled": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

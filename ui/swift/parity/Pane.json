@@ -1,0 +1,192 @@
+[
+  {
+    "id": "pane-left-strong",
+    "width": 420,
+    "height": 140,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "none",
+        "grow": true
+      },
+      "children": [
+        {
+          "component": "Pane",
+          "props": {
+            "label": "Versions",
+            "width": "small",
+            "side": "left",
+            "line": "strong"
+          },
+          "children": [
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 1"
+                }
+              ]
+            },
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 2"
+                }
+              ]
+            },
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "padding": "md"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "The selected version's text"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "pane-right-soft",
+    "width": 460,
+    "height": 120,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "none",
+        "grow": true
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "padding": "md",
+            "grow": true
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Content"
+            }
+          ]
+        },
+        {
+          "component": "Pane",
+          "props": {
+            "label": "Recent",
+            "width": "medium",
+            "side": "right",
+            "line": "soft"
+          },
+          "children": [
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 1"
+                }
+              ]
+            },
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "pane-xlarge-column",
+    "width": 400,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "Pane",
+          "props": {
+            "label": "Wide",
+            "width": "xlarge",
+            "line": "soft"
+          },
+          "children": [
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 1"
+                }
+              ]
+            },
+            {
+              "component": "Stack",
+              "props": {
+                "paddingX": "lg",
+                "paddingY": "xs"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Version 2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

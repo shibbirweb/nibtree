@@ -41,3 +41,17 @@ struct NWebKitColors {
     private static let opaqueFillLight = 230.0 / 255
     private static let opaqueFillDark = 52.0 / 255
 }
+
+extension NWebKitColors {
+    /// A text area's resize grip: AppKit's secondary label color, as WebKit paints it.
+    static func grip(dark: Bool) -> CGColor {
+        var color = CGColor(gray: 0.5, alpha: 1)
+        NSAppearance(named: dark ? .darkAqua : .aqua)?.performAsCurrentDrawingAppearance {
+            color = NSColor.secondaryLabelColor.cgColor
+        }
+        return color
+    }
+
+    /// A text field's placeholder: WebKit's `::placeholder { color: darkGray }`, in both appearances.
+    nonisolated static let placeholder = CGColor(srgbRed: 169 / 255, green: 169 / 255, blue: 169 / 255, alpha: 1)
+}

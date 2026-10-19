@@ -1,0 +1,102 @@
+[
+  {
+    "id": "description-list-commit",
+    "width": 380,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "DescriptionList",
+          "props": {
+            "items": [
+              {
+                "label": "Author",
+                "value": "Ada Lovelace <ada@example.com>"
+              },
+              {
+                "label": "Date",
+                "value": "18 Oct 2026, 10:24"
+              },
+              {
+                "label": "Parents",
+                "value": "a1b2c3d e4f5a6b",
+                "mono": true
+              }
+            ],
+            "label": "Commit"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "description-list-wraps",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "DescriptionList",
+          "props": {
+            "items": [
+              {
+                "label": "Message",
+                "value": "A long value that wraps onto more than one line in the column"
+              },
+              {
+                "label": "Id",
+                "value": "0123456789abcdef",
+                "mono": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "description-list-value-slot",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "DescriptionList",
+          "props": {
+            "items": [
+              {
+                "label": "Author",
+                "value": "Ada Lovelace <ada@example.com>"
+              },
+              {
+                "label": "Date",
+                "value": "18 Oct 2026, 10:24"
+              }
+            ]
+          },
+          "slots": {
+            "value": [
+              {
+                "component": "Text",
+                "text": "$value",
+                "props": {
+                  "tone": "accent",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

@@ -57,6 +57,8 @@ private struct NSwitchFace: View, Animatable {
         Canvas(opaque: false, rendersAsynchronously: false) { context, box in
             MainActor.assumeIsolated {
                 let palette = context.environment.nibtreePalette
+                // A disabled group (a fieldset) disables the switch too, as the web's `:disabled` does.
+                let disabled = disabled || !context.environment.isEnabled
                 context.withCGContext { cg in
                     if disabled {
                         cg.setAlpha(Self.disabledOpacity)

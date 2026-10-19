@@ -1,0 +1,172 @@
+[
+  {
+    "id": "row-sizes",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "none"
+      },
+      "children": [
+        {
+          "component": "Row",
+          "props": {
+            "size": "tree",
+            "expanded": true
+          },
+          "children": [
+            {
+              "component": "Icon",
+              "props": {
+                "name": "folder",
+                "size": "medium"
+              }
+            },
+            {
+              "component": "Text",
+              "text": "src"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "tree",
+            "depth": 1,
+            "expanded": "leaf"
+          },
+          "children": [
+            {
+              "component": "Icon",
+              "props": {
+                "name": "file",
+                "size": "medium"
+              }
+            },
+            {
+              "component": "Text",
+              "text": "main.rs"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "tree",
+            "expanded": false
+          },
+          "children": [
+            {
+              "component": "Icon",
+              "props": {
+                "name": "folder",
+                "size": "medium"
+              }
+            },
+            {
+              "component": "Text",
+              "text": "tests"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "list",
+            "selected": true
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "feature/login"
+            },
+            {
+              "component": "Spacer"
+            },
+            {
+              "component": "Text",
+              "text": "2 days",
+              "props": {
+                "tone": "dim",
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "history",
+            "line": true
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Fix the login redirect"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "entry"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "An entry row as tall as its content"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "large",
+            "pressable": true
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Large"
+            },
+            {
+              "component": "Text",
+              "text": "block",
+              "props": {
+                "tone": "dim"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "section",
+            "mark": true
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "nibtree"
+            }
+          ]
+        },
+        {
+          "component": "Row",
+          "props": {
+            "size": "group"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "No changes",
+              "props": {
+                "tone": "dim"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
