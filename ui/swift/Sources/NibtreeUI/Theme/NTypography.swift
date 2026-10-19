@@ -12,21 +12,24 @@ public enum NTypography {
         return GMFontFamilyMono.names.first { installed.contains($0) }
     }()
 
-    /// One font: a size, a weight and whether it is the code font, or a family named by data (a font pick).
+    /// One font: a size, a weight, italic or not and whether it is the code font, or a family named by data (a font
+    /// pick).
     public struct FontKey: Hashable, Sendable {
         public let size: CGFloat
         public let weight: Font.Weight
         public let mono: Bool
         public let family: String?
+        public let italic: Bool
 
         public init(
             _ style: GMTextStyle, size: CGFloat? = nil, weight: Font.Weight? = nil, mono: Bool = false,
-            family: String? = nil
+            family: String? = nil, italic: Bool = false
         ) {
             self.size = size ?? style.size
             self.weight = weight ?? style.weight
             self.mono = mono || style.family.first == GMFontFamilyMono.names.first
             self.family = family
+            self.italic = italic
         }
     }
 
@@ -57,8 +60,15 @@ public enum NTypography {
         } else {
             font = cssWeighted(NSFont.systemFont(ofSize: key.size, weight: weight), weight: key.weight)
         }
-        fonts[key] = font
-        return font
+        let shown = key.italic ? italic(font) : font
+        fonts[key] = shown
+        return shown
+    }
+
+    /// The font's italic face (the system font has real ones, as WebKit's `font-style: italic` uses), its weight kept.
+    private static func italic(_ font: NSFont) -> NSFont {
+        let descriptor = font.fontDescriptor.withSymbolicTraits(font.fontDescriptor.symbolicTraits.union(.italic))
+        return NSFont(descriptor: descriptor, size: font.pointSize) ?? font
     }
 
     /// The first installed family of a CSS `font-family` list such as `"JetBrains Mono", monospace`.

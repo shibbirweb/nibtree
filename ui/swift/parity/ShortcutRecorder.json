@@ -1,0 +1,83 @@
+[
+  {
+    "id": "shortcut-recorder-states",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "ShortcutRecorder",
+          "props": {
+            "keys": "Cmd+Shift+P",
+            "label": "Command palette"
+          }
+        },
+        {
+          "component": "ShortcutRecorder",
+          "props": {
+            "keys": "",
+            "label": "Blame"
+          }
+        },
+        {
+          "component": "ShortcutRecorder",
+          "props": {
+            "keys": "Cmd+K",
+            "label": "Commit",
+            "recording": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "shortcut-recorder-recording",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "ShortcutRecorder",
+          "props": {
+            "keys": "Cmd+K",
+            "label": "Commit",
+            "recording": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "shortcut-recorder-pending",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "ShortcutRecorder",
+          "props": {
+            "keys": "Cmd+K",
+            "label": "Commit",
+            "recording": true,
+            "pending": "Cmd+Opt+K"
+          }
+        }
+      ]
+    }
+  }
+]

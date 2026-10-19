@@ -1,0 +1,129 @@
+[
+  {
+    "id": "tabs-panel",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Tabs",
+          "props": {
+            "tabs": [
+              {
+                "value": "terminal",
+                "label": "Terminal"
+              },
+              {
+                "value": "run",
+                "label": "Run",
+                "title": "Run scripts"
+              },
+              {
+                "value": "console",
+                "label": "Git Console"
+              }
+            ],
+            "value": "terminal",
+            "label": "Panel"
+          }
+        },
+        {
+          "component": "Tabs",
+          "props": {
+            "tabs": [
+              {
+                "value": "terminal",
+                "label": "Terminal"
+              },
+              {
+                "value": "run",
+                "label": "Run",
+                "title": "Run scripts"
+              },
+              {
+                "value": "console",
+                "label": "Git Console"
+              }
+            ],
+            "value": "console",
+            "label": "Panel",
+            "variant": "panel",
+            "keepFocus": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "tabs-underline",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Tabs",
+          "props": {
+            "tabs": [
+              {
+                "value": "all",
+                "label": "All"
+              },
+              {
+                "value": "files",
+                "label": "Files"
+              },
+              {
+                "value": "symbols",
+                "label": "Symbols"
+              },
+              {
+                "value": "actions",
+                "label": "Actions"
+              }
+            ],
+            "value": "files",
+            "label": "Scope",
+            "variant": "underline"
+          }
+        },
+        {
+          "component": "Tabs",
+          "props": {
+            "tabs": [
+              {
+                "value": "all",
+                "label": "All"
+              },
+              {
+                "value": "files",
+                "label": "Files"
+              },
+              {
+                "value": "symbols",
+                "label": "Symbols"
+              },
+              {
+                "value": "actions",
+                "label": "Actions"
+              }
+            ],
+            "value": "all",
+            "label": "Scope",
+            "variant": "underline",
+            "keepFocus": true
+          }
+        }
+      ]
+    }
+  }
+]

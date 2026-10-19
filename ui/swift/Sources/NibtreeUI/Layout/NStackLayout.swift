@@ -12,6 +12,10 @@ struct NStackLayout: Layout {
     var justify: NStackJustify
     var insets = EdgeInsets()
     var fills = false
+    /// A set height, padding and border included (a toolbar's), or at least `minHeight`; a set `width` likewise.
+    var height: CGFloat?
+    var minHeight: CGFloat?
+    var width: CGFloat?
 
     private func main(_ size: CGSize) -> CGFloat { axis == .horizontal ? size.width : size.height }
     private func cross(_ size: CGSize) -> CGFloat { axis == .horizontal ? size.height : size.width }
@@ -93,6 +97,17 @@ struct NStackLayout: Layout {
     }
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
+        let size = flexSize(proposal: set(proposal), subviews: subviews, cache: &cache)
+        return CGSize(
+            width: width ?? size.width, height: height ?? max(size.height, minHeight ?? size.height))
+    }
+
+    /// The offer with the set width and height in place of the parent's.
+    private func set(_ proposal: ProposedViewSize) -> ProposedViewSize {
+        ProposedViewSize(width: width ?? proposal.width, height: height ?? proposal.height)
+    }
+
+    private func flexSize(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         let inner = inner(proposal)
         let sizes = sizes(inner, subviews, &cache)
         let gaps = spacing * CGFloat(max(0, sizes.count - 1)) + margins(subviews).reduce(0, +)
@@ -122,7 +137,7 @@ struct NStackLayout: Layout {
             width: max(0, bounds.width - horizontalInsets), height: max(0, bounds.height - verticalInsets))
         let crossBounds = cross(box.size)
         let grows = subviews.map { $0[NStackGrows.self] }
-        var sizes = sizes(inner(proposal), subviews, &cache)
+        var sizes = sizes(inner(set(proposal)), subviews, &cache)
         let margins = margins(subviews)
         let gaps = spacing * CGFloat(max(0, sizes.count - 1)) + margins.reduce(0, +)
         let growing = grows.filter { $0 }.count

@@ -1,0 +1,222 @@
+[
+  {
+    "id": "toolbar-boxed-bars",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "filter",
+            "label": "filter bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Filter"
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "search",
+                "label": "Search",
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "merge",
+            "label": "merge bar"
+          },
+          "children": [
+            {
+              "component": "Button",
+              "text": "Accept left",
+              "props": {
+                "size": "small"
+              }
+            },
+            {
+              "component": "Divider",
+              "props": {
+                "direction": "vertical"
+              }
+            },
+            {
+              "component": "Button",
+              "text": "Accept right",
+              "props": {
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "footer",
+            "label": "footer bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "3 conflicts left"
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "Button",
+                "text": "Done",
+                "props": {
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "dialog",
+            "label": "dialog bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Show"
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "eye",
+                "label": "Show all",
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "pane",
+            "label": "pane bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Left"
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "copy",
+                "label": "Copy",
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "head",
+            "label": "head bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Heading"
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "x",
+                  "label": "Close",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "popup",
+            "label": "popup bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Popup"
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "search",
+            "label": "search bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Branches"
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "dialog-footer",
+            "label": "dialog-footer bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Press a key"
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "Button",
+                "text": "Close",
+                "props": {
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "strip",
+            "label": "strip bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Ln 1"
+            },
+            {
+              "component": "Text",
+              "text": "UTF-8"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

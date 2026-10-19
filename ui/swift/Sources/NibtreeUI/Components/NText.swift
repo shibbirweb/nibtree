@@ -132,7 +132,7 @@ public struct NText: View {
             NTextCanvas(
                 spec: NTextSpec(
                     text: shown, font: font, kerning: kerning, tabular: tabular, truncate: truncate, line: line,
-                    tone: resolvedTone.token, strike: strike, inherits: tone == nil && style.tone == nil))
+                    tone: resolvedTone.token, strike: strike))
                 // Read as its text: the canvas itself has no accessibility of its own.
                 .accessibilityLabel(content)
         }

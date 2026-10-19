@@ -1,0 +1,177 @@
+[
+  {
+    "id": "select-widths",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "width": "auto"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "rebase",
+            "label": "Pull mode",
+            "width": "xsmall"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "width": "number"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "width": "small"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "width": "medium"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "width": "large"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "width": "fill"
+          }
+        }
+      ]
+    }
+  }
+]

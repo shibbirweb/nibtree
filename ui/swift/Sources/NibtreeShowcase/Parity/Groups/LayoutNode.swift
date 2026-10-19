@@ -13,6 +13,9 @@ enum LayoutNode: Sendable {
     /// A Time; `words` is the Text it sits in, whose style its words take.
     case time(TimeProps, words: ResolvedNode.TextProps?)
     case card(CardProps, children: [ResolvedNode])
+    case toolbar(
+        variant: NToolbarVariant, label: String, placement: NToolbarPlacement, children: [ResolvedNode],
+        end: [ResolvedNode]?)
     case grid(GridProps, children: [ResolvedNode])
     case pane(PaneProps, children: [ResolvedNode])
     case panelHeader(title: String, count: Int?, actions: [ResolvedNode]?)
@@ -143,6 +146,12 @@ enum LayoutNode: Sendable {
                     side: node.string("side").flatMap(NPaneSide.init) ?? .left,
                     line: node.string("line").flatMap(NPaneLine.init) ?? .strong),
                 children: ResolvedNode.list(node.children))
+        case "Toolbar":
+            self = .toolbar(
+                variant: node.string("variant").flatMap(NToolbarVariant.init) ?? .tab,
+                label: node.string("label") ?? "",
+                placement: node.string("placement").flatMap(NToolbarPlacement.init) ?? .top,
+                children: ResolvedNode.list(node.children ?? []), end: node.slots?["end"].map { ResolvedNode.list($0) })
         case "Card":
             self = .card(
                 CardProps(
@@ -223,6 +232,16 @@ extension LayoutNode {
         case .pane(let props, let children):
             NPane(label: props.label, width: props.width, side: props.side, line: props.line) {
                 ScenarioChildren(nodes: children)
+            }
+        case .toolbar(let variant, let label, let placement, let children, let end):
+            if let end {
+                NToolbar(variant: variant, label: label, placement: placement) {
+                    ScenarioChildren(nodes: children)
+                } end: {
+                    ScenarioChildren(nodes: end)
+                }
+            } else {
+                NToolbar(variant: variant, label: label, placement: placement) { ScenarioChildren(nodes: children) }
             }
         case .card(let props, let children):
             NCard(label: props.label, padded: props.padded, selected: props.selected, dim: props.dim) {

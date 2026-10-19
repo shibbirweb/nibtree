@@ -4,6 +4,42 @@ import SwiftUI
 /// Stories of the Forms group: controls that hold a value, each story with its own state to try.
 extension Stories {
     static let forms: [Story] = [
+        Story("SearchField", group: "Forms") {
+            NStack(gap: .sm) {
+                NSearchField(value: .constant(""), placeholder: "Search settings", label: "Search settings")
+                NSearchField(value: .constant("nibtree"), label: "Search", size: .large)
+                NSearchField(value: .constant("feat"), placeholder: "Filter branches", label: "Filter", size: .compact)
+                NSearchField(value: .constant(""), placeholder: "Filter output", label: "Filter", size: .small)
+            }
+            .frame(width: 360)
+        },
+        Story("Select", group: "Forms") {
+            NStack(gap: .sm, align: .start) {
+                NSelect(
+                    options: [
+                        NSelectOption(value: "merge", label: "Merge"),
+                        NSelectOption(value: "rebase", label: "Rebase onto upstream"),
+                        NSelectOption(value: "ff", label: "Fast-forward only", disabled: true),
+                    ], value: .constant("merge"), label: "Pull mode")
+                NSelect(
+                    options: [NSelectOption(value: "a", label: "nibtree")], value: .constant("a"),
+                    label: "Repository", size: .small)
+            }
+        },
+        Story("ShortcutRecorder", group: "Forms") {
+            NStack(gap: .sm, align: .start) {
+                NShortcutRecorder(keys: "Cmd+Shift+P", recording: .constant(false), label: "Palette") { _ in }
+                NShortcutRecorder(keys: "", recording: .constant(false), label: "Blame") { _ in }
+                NShortcutRecorder(keys: "Cmd+K", recording: .constant(true), label: "Commit") { _ in }
+            }
+        },
+        Story("RenameField", group: "Forms") {
+            NStack(direction: .row, gap: .sm, align: .center) {
+                NText("Name")
+                NRenameField(value: "zsh 2", label: "Terminal name") { _ in }
+            }
+            .frame(width: 280)
+        },
         Story("Input", group: "Forms") {
             NStack(gap: .sm) {
                 NInput(value: .constant("feature/login"))

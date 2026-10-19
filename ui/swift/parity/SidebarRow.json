@@ -1,0 +1,185 @@
+[
+  {
+    "id": "sidebar-row-branches",
+    "width": 280,
+    "node": {
+      "component": "Stack",
+      "props": {},
+      "children": [
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "Branches",
+            "section": true,
+            "count": 12
+          },
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "plus",
+                  "label": "New branch",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "origin",
+            "depth": "none",
+            "expanded": true,
+            "icon": "cloud"
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "main",
+            "depth": "one",
+            "icon": "branch",
+            "current": true,
+            "strong": true,
+            "ahead": 2,
+            "behind": 1
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "feature/old-login",
+            "depth": "one",
+            "icon": "branch",
+            "gone": true,
+            "behind": 3
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "release",
+            "depth": "one",
+            "expanded": false,
+            "count": 4
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "a/very/long/branch/name/that/does/not/fit/in/the/sidebar",
+            "depth": "two",
+            "icon": "branch",
+            "ahead": 12
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "deep",
+            "depth": "three",
+            "icon": "tag",
+            "title": "A tag three levels down"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "sidebar-row-stashes",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": {},
+      "children": [
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "Stashes",
+            "section": true,
+            "expanded": true
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "WIP on main: fix the toolbar",
+            "icon": "stash",
+            "detail": "stash@{0}"
+          },
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "trash",
+                  "label": "Drop",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "Try a new layout",
+            "icon": "stash",
+            "detail": "stash@{1}",
+            "selected": true
+          },
+          "slots": {
+            "actions": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "check",
+                  "label": "Apply",
+                  "size": "small"
+                }
+              },
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "trash",
+                  "label": "Drop",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "Worktrees",
+            "section": true,
+            "expanded": false,
+            "count": 2
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "nibtree-docs",
+            "icon": "folder",
+            "path": "~/Personal/nibtree-docs",
+            "detail": "locked"
+          }
+        },
+        {
+          "component": "SidebarRow",
+          "props": {
+            "label": "selected",
+            "icon": "folder",
+            "path": "~/a/very/long/path/to/the/worktree/folder",
+            "selected": true,
+            "strong": false
+          }
+        }
+      ]
+    }
+  }
+]

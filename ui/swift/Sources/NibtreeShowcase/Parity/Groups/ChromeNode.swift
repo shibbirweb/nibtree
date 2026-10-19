@@ -10,11 +10,15 @@ enum ChromeNode: Sendable {
     case searchToggles(NSearchOptions, compact: Bool, titles: NSearchToggleTitles)
     case themeSwatch(NThemeSwatchColors, label: String)
     case zoomBadge(open: Bool, text: String)
+    case loadingOverlay(open: Bool, title: String, step: String, hint: String)
     case resourceLink(icon: GMIconName, title: String, description: String, variant: NResourceLinkVariant)
     /// `closable` is the scenario's stand-in for the web's `onclose`.
     case dialogHead(
         title: String, subtitle: String, icon: GMIconName?, iconTone: NDialogHeadIconTone, size: NDialogHeadSize,
         closable: Bool)
+    case sideNav(items: [NSideNavItem], active: String?, label: String, variant: NSideNavVariant, emptyText: String)
+    case choiceList(choices: [NChoice<String>], label: String)
+    case tabs(tabs: [NTab<String>], value: String, label: String, variant: NTabsVariant, keepFocus: Bool)
     case segmented(
         options: [NSegmentedOption<String>], value: String, label: String, disabled: Bool, size: NSegmentedSize,
         variant: NSegmentedVariant)
@@ -72,6 +76,10 @@ enum ChromeNode: Sendable {
         case "ZoomBadge":
             let text = node.string("text") ?? ""
             self = .zoomBadge(open: node.props?["open"] == nil ? true : node.flag("open"), text: text)
+        case "LoadingOverlay":
+            self = .loadingOverlay(
+                open: node.props?["open"] == nil ? true : node.flag("open"), title: node.string("title") ?? "",
+                step: node.string("step") ?? "", hint: node.string("hint") ?? "")
         case "ThemeSwatch":
             let colors = node.object("colors") ?? [:]
             let color = { (name: String) in Self.color(hex: colors[name] ?? "") }
@@ -104,6 +112,42 @@ enum ChromeNode: Sendable {
                 options: options, value: node.string("value") ?? "", label: node.string("label") ?? "",
                 disabled: node.flag("disabled"), size: node.string("size").flatMap(NSegmentedSize.init) ?? .normal,
                 variant: node.string("variant").flatMap(NSegmentedVariant.init) ?? .pill)
+        case "SideNav":
+            let items = (node.list("items") ?? []).compactMap { entry -> NSideNavItem? in
+                guard let item = entry.record, let id = item["id"]?.text else {
+                    return nil
+                }
+                let danger = if case .bool(true)? = item["danger"] { true } else { false }
+                return NSideNavItem(
+                    id: id, label: item["label"]?.text ?? "", icon: item["icon"]?.text.flatMap(GMIconName.init),
+                    danger: danger)
+            }
+            self = .sideNav(
+                items: items, active: node.string("active"), label: node.string("label") ?? "",
+                variant: node.string("variant").flatMap(NSideNavVariant.init) ?? .settings,
+                emptyText: node.string("emptyText") ?? "")
+        case "ChoiceList":
+            let choices = (node.list("choices") ?? []).compactMap { entry -> NChoice<String>? in
+                guard let choice = entry.record, let value = choice["value"]?.text else {
+                    return nil
+                }
+                let danger = if case .bool(true)? = choice["danger"] { true } else { false }
+                return NChoice(
+                    value: value, label: choice["label"]?.text ?? "", description: choice["description"]?.text,
+                    danger: danger)
+            }
+            self = .choiceList(choices: choices, label: node.string("label") ?? "")
+        case "Tabs":
+            let tabs = (node.list("tabs") ?? []).compactMap { entry -> NTab<String>? in
+                guard let tab = entry.record, let value = tab["value"]?.text else {
+                    return nil
+                }
+                return NTab(value: value, label: tab["label"]?.text ?? "", title: tab["title"]?.text)
+            }
+            self = .tabs(
+                tabs: tabs, value: node.string("value") ?? "", label: node.string("label") ?? "",
+                variant: node.string("variant").flatMap(NTabsVariant.init) ?? .panel,
+                keepFocus: node.flag("keepFocus"))
         case "SectionTitle":
             let matches = (node.list("titleMatches") ?? []).compactMap { pair -> Range<Int>? in
                 guard case .list(let ends) = pair, ends.count == 2, let start = ends[0].numberValue,
@@ -144,10 +188,18 @@ extension ChromeNode {
                 onClose: closable ? {} : nil)
         case .zoomBadge(let open, let text):
             NZoomBadge(open: open, text: text)
+        case .loadingOverlay(let open, let title, let step, let hint):
+            NLoadingOverlay(open: open, title: title, step: step, hint: hint)
         case .themeSwatch(let colors, let label):
             NThemeSwatch(colors: colors, label: label)
         case .searchToggles(let options, let compact, let titles):
             NSearchToggles(options: .constant(options), compact: compact, titles: titles)
+        case .sideNav(let items, let active, let label, let variant, let emptyText):
+            NSideNav(items: items, active: .constant(active), label: label, variant: variant, emptyText: emptyText)
+        case .choiceList(let choices, let label):
+            NChoiceList(choices: choices, label: label) { _ in }
+        case .tabs(let tabs, let value, let label, let variant, let keepFocus):
+            NTabs(tabs: tabs, value: .constant(value), label: label, variant: variant, keepFocus: keepFocus)
         case .segmented(let options, let value, let label, let disabled, let size, let variant):
             NSegmented(
                 options: options, value: .constant(value), label: label, disabled: disabled, size: size,

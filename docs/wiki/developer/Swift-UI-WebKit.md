@@ -53,22 +53,28 @@ which is wider than a scenario's frame. In a scenario, the web adapter puts them
 **Shadows past the box.** A canvas draws only inside its own bounds, so the floating bar's popup shadow is drawn by a
 canvas larger than the bar by the shadow's reach.
 
-**Text fields.** An input with no width is as wide as 20 of its font's zeros, plus 2 points for the caret, its
-padding and its border; a text area the same, the zeros rounded up to a whole point and no caret. A placeholder is
-WebKit's `darkGray` in both themes. `NInputLook` and `NTextAreaLook` follow these, found with Playwright's element
-rects.
-
-**Radios and the resize grip.** A radio is 12 points round: a 1.5 point ring in AppKit's secondary label color, or the
-accent with a 3.5 point white dot. A text area with `resize: vertical` shows a grip of two 1 point strokes at 45
-degrees, 6 points in from the corner, in the same color. Both come from pixel dumps of WebKit's pictures.
+**Form controls.** Text fields, drop-downs, checkboxes and radios have their own page:
+[Swift UI form controls](Swift-UI-Controls.md).
 
 **The cascade.** A rule's weight decides, not its place: `:hover:not(:disabled)` outranks `.active`, so a pointed-at
 toggle shows the hover color even when on. Equal weights go by order, which can undo a rule: SettingRow's `.row`
 padding comes after `.nested` and resets its indent, so neither side indents a nested row.
 
-**Inheritance and margins.** A Text with no tone takes the color it sits in (a disabled row's faint words), so an
-`NText` with no tone draws in `nibtreeCurrentColor`. A settings group title keeps room above itself, less as its
-stack's first child: `NStackMargin` gives a child a CSS margin with a `:first-child` value.
+**Inheritance and margins.** An icon with no tone takes the color it sits in (a disabled row's faint icon), so `NIcon`
+draws in `nibtreeCurrentColor`; a Text always sets its own color, so `NText` does not. A settings group title keeps
+room above itself, less as its stack's first child: `NStackMargin` gives a child a CSS margin with a `:first-child`
+value.
+
+**Spaces between spans.** Svelte keeps the line break between two inline spans in a template as one space, which
+WebKit draws: FileRow's folder sits a space plus its margin after the name. A template with no break between the
+spans (SidebarRow's path) has none.
+
+**Negative margins.** A wrapped editor tab's `margin-bottom: -1px` lays its bottom line over the row's: the tab
+takes a point less room than it draws, and `NEditorTab`'s layout reports it that way.
+
+**Baselines on the window's pixels.** WebKit puts each baseline on a whole device pixel of the window. A canvas that
+draws words at a fractional spot inside itself (a centered card, a path on its name's baseline) passes that spot to
+`NTextEngine.draw(..., phase:)`, so the baseline snaps where WebKit's does, not a pixel apart.
 
 **Baselines.** A row with `align-items: baseline` lines children up on their first text line. `NText` and `NKbd` report
 that baseline to the layouts around them (SwiftUI's `firstTextBaseline`), and a view without one uses its bottom, as
@@ -83,6 +89,10 @@ the same files into kept bitmaps; a Minimal glyph is a mask filled with its them
 check) spilled into the next. Why: `NStackLayout` ignored CSS's `min-height: auto`. Fix: a growing column child
 keeps at least its content's height and the others share the rest, as CSS does; rows were left alone because their
 children may shrink by wrapping.
+
+**A disabled row's words were faint.** The web's stayed in the text color, and only the icon dimmed. Why: an earlier
+change made `NText` with no tone take its parent's color, but the web's Text always sets `var(--text)`; the scenario
+passed because the words are small. Fix: `NText` keeps its own color, and only icons inherit.
 
 ## Where the code lives
 

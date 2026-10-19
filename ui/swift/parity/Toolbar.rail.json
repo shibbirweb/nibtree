@@ -1,0 +1,175 @@
+[
+  {
+    "id": "toolbar-rail-conflict",
+    "width": 420,
+    "height": 200,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm"
+      },
+      "children": [
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "rail",
+            "label": "rail bar"
+          },
+          "children": [
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "search",
+                "label": "Search",
+                "size": "small"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "branch",
+                "label": "Branches",
+                "size": "small"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "history",
+                "label": "History",
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "gap": "sm"
+          },
+          "children": [
+            {
+              "component": "Toolbar",
+              "props": {
+                "variant": "conflict",
+                "label": "conflict bar"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "2 conflicts"
+                },
+                {
+                  "component": "Button",
+                  "text": "Previous",
+                  "props": {
+                    "size": "small"
+                  }
+                },
+                {
+                  "component": "Button",
+                  "text": "Next",
+                  "props": {
+                    "size": "small"
+                  }
+                }
+              ],
+              "slots": {
+                "end": [
+                  {
+                    "component": "Button",
+                    "text": "Mark resolved",
+                    "props": {
+                      "size": "small"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "component": "Toolbar",
+              "props": {
+                "variant": "conflict",
+                "label": "conflict bar"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "A file with conflicts in a narrow bar"
+                },
+                {
+                  "component": "Button",
+                  "text": "Previous",
+                  "props": {
+                    "size": "small"
+                  }
+                },
+                {
+                  "component": "Button",
+                  "text": "Next",
+                  "props": {
+                    "size": "small"
+                  }
+                },
+                {
+                  "component": "Button",
+                  "text": "Accept all left",
+                  "props": {
+                    "size": "small"
+                  }
+                },
+                {
+                  "component": "Button",
+                  "text": "Accept all right",
+                  "props": {
+                    "size": "small"
+                  }
+                }
+              ],
+              "slots": {
+                "end": [
+                  {
+                    "component": "Button",
+                    "text": "Done",
+                    "props": {
+                      "size": "small"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "component": "Toolbar",
+              "props": {
+                "variant": "tab",
+                "label": "tab bar",
+                "placement": "bottom"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "At the bottom"
+                }
+              ]
+            },
+            {
+              "component": "Toolbar",
+              "props": {
+                "variant": "panel",
+                "label": "panel bar",
+                "placement": "top"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "text": "Top"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

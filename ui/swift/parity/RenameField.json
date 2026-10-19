@@ -1,0 +1,48 @@
+[
+  {
+    "id": "rename-field-row",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm",
+        "padding": "md",
+        "align": "center"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Name"
+        },
+        {
+          "component": "RenameField",
+          "props": {
+            "value": "zsh 2",
+            "label": "Terminal name"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "rename-field-invalid",
+    "width": 260,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "RenameField",
+          "props": {
+            "value": "feature/login",
+            "invalid": true
+          }
+        }
+      ]
+    }
+  }
+]

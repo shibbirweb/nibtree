@@ -20,9 +20,6 @@ struct NTextSpec {
     /// Read from the palette when drawing, so a text has no environment dependency of its own (cheaper to build).
     let tone: GMColorToken
     let strike: Bool
-    /// Draws in the color it sits in (`nibtreeCurrentColor`) instead of `tone`, like a CSS text with no color of its
-    /// own: an `NText` with no tone.
-    var inherits = false
     let state = NTextState()
 
     @MainActor
@@ -42,8 +39,7 @@ struct NTextCanvas: View {
                 MainActor.assumeIsolated {
                     let layout = spec.state.layout ?? spec.layout(width: size.width)
                     let scale = max(1, context.environment.displayScale)
-                    let tone = spec.inherits ? context.environment.nibtreeCurrentColor : spec.tone
-                    let color = context.environment.nibtreePalette.cgColor(tone)
+                    let color = context.environment.nibtreePalette.cgColor(spec.tone)
                     // SwiftUI drew the canvas at its position rounded to device pixels; WebKit draws text at the exact
                     // fractional spot, so move the drawing back by what the rounding took away.
                     let origin = spec.state.origin

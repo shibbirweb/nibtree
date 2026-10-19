@@ -26,11 +26,11 @@ public enum NRowActionsShown: String, CaseIterable, Sendable {
 }
 
 /// One row of a list: the base every list row is built on, the Swift side of ui/web `Row` (docs/components/Row.md). It
-/// draws the hover (when it has an `action`), the selected color, an optional fold chevron and indent, an accent
-/// `mark` on its left edge, a `line` under it, and `actions` that show under the pointer. The content is the caller's
-/// views (texts, icons, tags; an `NSpacer` pushes what follows to the end). Words with no tone of their own take the
-/// row's color, faint when `disabled`. The web's `title` is SwiftUI's own `.help(...)`; `cursor`, `id` and `item`
-/// belong to the web's lists and follow with the Swift ones.
+/// draws the hover (when it has an `action`), the selected color, an optional fold chevron and indent, an accent `mark`
+/// on its left edge, a `line` under it, and `actions` that show under the pointer. The content is the caller's views
+/// (texts, icons, tags; an `NSpacer` pushes what follows to the end). Icons with no tone of their own take the row's
+/// color, faint when `disabled` (an `NText` keeps its own, as the web's Text does). The web's `title` is SwiftUI's own
+/// `.help(...)`; `cursor`, `id` and `item` belong to the web's lists and follow with the Swift ones.
 public struct NRow<Content: View, Actions: View>: View {
     private let look: NRowLook
     private let label: String?

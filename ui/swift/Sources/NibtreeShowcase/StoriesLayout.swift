@@ -4,6 +4,19 @@ import SwiftUI
 /// Stories of the split and merge frames: the handles draw only when pointed at, so each story shows a frame to drag.
 extension Stories {
     static let layout: [Story] = [
+        Story("Toolbar", group: "Layout") {
+            NStack(gap: .sm) {
+                NToolbar(variant: .tab, label: "File") {
+                    NText("main.rs")
+                    NDivider(direction: .vertical)
+                    NIconButton(icon: .refresh, label: "Refresh", size: .small) {}
+                } end: {
+                    NIconButton(icon: .more, label: "More", size: .small) {}
+                }
+                NToolbar(variant: .file, label: "Path") { NText("src/lib/main.rs") }
+            }
+            .frame(width: 360)
+        },
         Story("SplitHandle", group: "Layout") { SplitHandleStory() },
         Story("ResizeHandle", group: "Layout") { SplitPaneStory(direction: .column) },
         Story("SplitPane", group: "Layout") { SplitPaneStory(direction: .row) },

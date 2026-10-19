@@ -64,6 +64,41 @@ extension Stories {
             }
             .frame(width: 380)
         },
+        Story("SideNav", group: "Navigation") {
+            NSideNav(
+                items: [
+                    NSideNavItem(id: "appearance", label: "Appearance"), NSideNavItem(id: "editor", label: "Editor"),
+                    NSideNavItem(id: "reset", label: "Reset settings", danger: true),
+                ], active: .constant("editor"), label: "Settings"
+            )
+            .frame(width: 200)
+        },
+        Story("ChoiceList", group: "Actions") {
+            NChoiceList(
+                choices: [
+                    NChoice(value: "apply", label: "Apply", description: "Keep the stash after applying it."),
+                    NChoice(value: "drop", label: "Drop", description: "Throw the stash away.", danger: true),
+                ], label: "How to apply the stash?"
+            ) { _ in }
+            .frame(width: 320)
+        },
+        Story("Tabs", group: "Navigation") {
+            NStack(gap: .md, align: .start) {
+                NTabs(
+                    tabs: [NTab(value: "terminal", label: "Terminal"), NTab(value: "run", label: "Run")],
+                    value: .constant("terminal"), label: "Panel")
+                NTabs(
+                    tabs: [NTab(value: "all", label: "All"), NTab(value: "files", label: "Files")],
+                    value: .constant("files"), label: "Scope", variant: .underline)
+            }
+        },
+        Story("LoadingOverlay", group: "Overlays") {
+            NLoadingOverlay(
+                title: "Opening Personal", step: "Scanning node_modules",
+                hint: "Big folders take a while the first time."
+            )
+            .frame(width: 480, height: 200)
+        },
         Story("ZoomBadge", group: "Feedback") {
             NZoomBadge(text: "125%").frame(width: 320, height: 110)
         },

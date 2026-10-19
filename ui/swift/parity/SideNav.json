@@ -1,0 +1,108 @@
+[
+  {
+    "id": "side-nav-settings",
+    "width": 220,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "md"
+      },
+      "children": [
+        {
+          "component": "SideNav",
+          "props": {
+            "items": [
+              {
+                "id": "appearance",
+                "label": "Appearance"
+              },
+              {
+                "id": "editor",
+                "label": "Editor"
+              },
+              {
+                "id": "git",
+                "label": "Git",
+                "icon": "branch"
+              },
+              {
+                "id": "reset",
+                "label": "Reset settings",
+                "danger": true
+              }
+            ],
+            "active": "editor",
+            "label": "Settings"
+          }
+        },
+        {
+          "component": "SideNav",
+          "props": {
+            "items": [],
+            "label": "Settings",
+            "emptyText": "No section matches",
+            "variant": "settings"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "side-nav-welcome",
+    "width": 240,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md",
+        "gap": "md"
+      },
+      "children": [
+        {
+          "component": "SideNav",
+          "props": {
+            "items": [
+              {
+                "id": "start",
+                "label": "Get started",
+                "icon": "star"
+              },
+              {
+                "id": "recent",
+                "label": "Recent",
+                "icon": "history"
+              },
+              {
+                "id": "clone",
+                "label": "Clone"
+              }
+            ],
+            "active": "recent",
+            "label": "Welcome",
+            "variant": "large"
+          }
+        },
+        {
+          "component": "SideNav",
+          "props": {
+            "items": [
+              {
+                "id": "docs",
+                "label": "Documentation",
+                "icon": "book"
+              },
+              {
+                "id": "keys",
+                "label": "Keyboard shortcuts",
+                "icon": "keyboard"
+              }
+            ],
+            "active": "docs",
+            "label": "Links",
+            "variant": "links"
+          }
+        }
+      ]
+    }
+  }
+]

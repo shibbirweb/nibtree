@@ -1,0 +1,63 @@
+[
+  {
+    "id": "loading-overlay-title",
+    "width": 480,
+    "height": 160,
+    "node": {
+      "component": "LoadingOverlay",
+      "props": {
+        "title": "Opening folder"
+      }
+    }
+  },
+  {
+    "id": "loading-overlay-step-hint",
+    "width": 520,
+    "height": 220,
+    "node": {
+      "component": "LoadingOverlay",
+      "props": {
+        "title": "Opening Personal",
+        "step": "Scanning ~/Personal/git-merger/node_modules",
+        "hint": "Big folders take a while the first time. Nibtree reads only the folders you open after this."
+      }
+    }
+  },
+  {
+    "id": "loading-overlay-step",
+    "width": 440,
+    "height": 160,
+    "node": {
+      "component": "LoadingOverlay",
+      "props": {
+        "open": true,
+        "title": "Cloning nibtree",
+        "step": "Receiving objects 42%"
+      }
+    }
+  },
+  {
+    "id": "loading-overlay-closed",
+    "width": 440,
+    "height": 120,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Done"
+        },
+        {
+          "component": "LoadingOverlay",
+          "props": {
+            "open": false,
+            "title": "Opening folder"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -142,6 +142,7 @@
     { "page": "developer/Swift-UI-Speed.md", "summary": "Why each Swift component draws faster than its web twin: few views, one canvas, no hidden costs." },
     { "page": "developer/Swift-UI-Bench.md", "summary": "How the parity gate times Swift and web fairly, what the Swift harness costs, and the bugs found in the bench." },
     { "page": "developer/Swift-UI-Icons.md", "summary": "How the web icons become Swift outlines, why NIcon draws a kept bitmap, and Divider and Spacer." },
+    { "page": "developer/Swift-UI-Controls.md", "summary": "What the Swift form controls copy from WebKit's own text fields, drop-downs, checkboxes and radios, and why they draw a picture until used." },
     { "page": "developer/Swift-UI-WebKit.md", "summary": "WebKit's own drawing and layout rules the Swift components copy: dashed borders, flex shrinking, ellipses and fixed bars." },
     { "page": "developer/UI-Library-Migration.md", "summary": "How the app uses the library as a local package and moves onto it, screen by screen." },
     { "page": "developer/Contributing.md", "summary": "Code style, commits, pull requests and the docs checklist." }

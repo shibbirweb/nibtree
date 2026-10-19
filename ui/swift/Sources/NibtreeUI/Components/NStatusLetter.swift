@@ -57,7 +57,7 @@ public struct NStatusLetter: View {
                 context.withCGContext { cg in
                     cg.translateBy(x: (box.width - layout.width) / 2, y: 0)
                     NTextEngine.draw(
-                        layout, line: spec.line, color: color(palette), strike: nil, scale: scale, in: cg)
+                        layout, line: spec.line, color: Self.color(kind, palette), strike: nil, scale: scale, in: cg)
                 }
             }
         }
@@ -65,8 +65,9 @@ public struct NStatusLetter: View {
         .accessibilityLabel(kind?.label ?? "Conflicted")
     }
 
+    /// The letter's color for `kind` (nil for a conflict).
     @MainActor
-    private func color(_ palette: Palette) -> CGColor {
+    static func color(_ kind: Kind?, _ palette: Palette) -> CGColor {
         switch kind {
         case .added, .copied: palette.cgColor(.success)
         case .modified, .typechange: palette.cgColor(.accent)

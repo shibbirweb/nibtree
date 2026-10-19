@@ -1,0 +1,95 @@
+[
+  {
+    "id": "activity-bar-sides",
+    "width": 200,
+    "height": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "justify": "between",
+        "grow": true
+      },
+      "children": [
+        {
+          "component": "ActivityBar",
+          "props": {
+            "items": [
+              {
+                "id": "files",
+                "icon": "file",
+                "label": "Files"
+              },
+              {
+                "id": "changes",
+                "icon": "git-compare",
+                "label": "Changes",
+                "badge": 12
+              },
+              {
+                "id": "branches",
+                "icon": "branch",
+                "label": "Branches",
+                "dot": true
+              },
+              "divider",
+              {
+                "id": "run",
+                "icon": "play",
+                "label": "Run",
+                "smallIcon": true,
+                "title": "Run scripts"
+              },
+              null,
+              {
+                "id": "terminal",
+                "icon": "terminal",
+                "label": "Terminal",
+                "active": true,
+                "badge": 3,
+                "badgeTone": "danger"
+              },
+              {
+                "id": "settings",
+                "icon": "settings",
+                "label": "Settings",
+                "badge": 120,
+                "badgeTone": "warning"
+              }
+            ],
+            "active": "changes",
+            "label": "Panels",
+            "side": "left"
+          }
+        },
+        {
+          "component": "ActivityBar",
+          "props": {
+            "items": [
+              {
+                "id": "files",
+                "icon": "file",
+                "label": "Files"
+              },
+              {
+                "id": "changes",
+                "icon": "git-compare",
+                "label": "Changes",
+                "badge": 12
+              },
+              {
+                "id": "branches",
+                "icon": "branch",
+                "label": "Branches",
+                "dot": true
+              }
+            ],
+            "active": "files",
+            "label": "Right panels",
+            "side": "right"
+          }
+        }
+      ]
+    }
+  }
+]

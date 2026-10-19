@@ -76,6 +76,8 @@ public struct NInput: View {
                     .onSubmit { editing = false }
             }
         }
+        // `width: 100%` fills a column even where the column keeps its children at their own width.
+        .layoutValue(key: NStackAlignSelf.self, value: look.width == .fill ? .stretch : nil)
         .opacity(look.disabled ? NInputLook.disabledOpacity : 1)
         .focusable(!look.disabled && !editing, interactions: .edit)
         .onKeyPress(phases: .down, action: start(typing:))

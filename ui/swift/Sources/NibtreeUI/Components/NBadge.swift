@@ -152,3 +152,28 @@ private struct NBadgeFrame: Layout {
         subviews.first?.place(at: frame.origin, anchor: .topLeading, proposal: ProposedViewSize(frame.size))
     }
 }
+
+extension NBadge {
+    /// A badge drawn into another component's canvas (ActivityBar's counts): the pill with its bottom right corner at
+    /// `corner`, and the count centered in it.
+    @MainActor
+    static func paint(
+        count: Int, tone: Tone, corner: CGPoint, palette: Palette, scale: CGFloat, in cg: CGContext
+    ) {
+        let badge = NBadge(count: count, tone: tone)
+        let box = NBadgeBox(size: .normal)
+        let layout = badge.spec.layout(width: nil)
+        let size = CGSize(width: Swift.max(box.minWidth, layout.width + 2 * box.paddingX), height: box.height)
+        let frame = CGRect(x: corner.x - size.width, y: corner.y - size.height, width: size.width, height: size.height)
+        let radius = Swift.min(box.radius, size.width / 2, size.height / 2)
+        cg.addPath(CGPath(roundedRect: frame, cornerWidth: radius, cornerHeight: radius, transform: nil))
+        cg.setFillColor(palette.cgColor(tone.fill))
+        cg.fillPath()
+        cg.saveGState()
+        cg.translateBy(x: frame.minX + (size.width - layout.width) / 2, y: frame.minY)
+        NTextEngine.draw(
+            layout, line: badge.spec.line, color: palette.cgColor(badge.spec.tone), strike: nil, scale: scale, in: cg,
+            phase: frame.minY)
+        cg.restoreGState()
+    }
+}

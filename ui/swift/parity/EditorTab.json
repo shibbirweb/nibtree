@@ -1,0 +1,250 @@
+[
+  {
+    "id": "editor-tab-flat",
+    "width": 640,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "a",
+                  "label": "main.rs",
+                  "icon": "file"
+                },
+                "active": true,
+                "layout": "scroll",
+                "focused": true,
+                "closable": true
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "b",
+                  "label": "README.md",
+                  "preview": true
+                }
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "c",
+                  "label": "lib.rs",
+                  "dirty": true,
+                  "hint": "src"
+                }
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "d",
+                  "label": "Cargo.toml",
+                  "pinned": true,
+                  "title": "src-tauri/Cargo.toml"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "e",
+                  "label": "a1b2c3d",
+                  "mono": true,
+                  "icon": "commit",
+                  "iconTone": "dim"
+                },
+                "active": true,
+                "focused": false
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "f",
+                  "label": "Run",
+                  "icon": "play",
+                  "iconTone": "success",
+                  "fixed": true
+                },
+                "closable": false
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "g",
+                  "label": "Failed",
+                  "icon": "alert",
+                  "iconTone": "danger"
+                }
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "h",
+                  "label": "a-very-long-file-name-that-will-not-fit-in-one-tab.svelte"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "editor-tab-wrap-rounded",
+    "width": 640,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "md",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "a",
+                  "label": "main.rs"
+                },
+                "active": true,
+                "layout": "wrap"
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "b",
+                  "label": "lib.rs",
+                  "dirty": true
+                },
+                "layout": "wrap"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "a",
+                  "label": "main.rs",
+                  "icon": "file"
+                },
+                "active": true,
+                "look": "rounded"
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "b",
+                  "label": "lib.rs"
+                },
+                "look": "rounded",
+                "active": true,
+                "focused": false
+              }
+            },
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "c",
+                  "label": "mod.rs"
+                },
+                "look": "flat"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "s",
+                  "label": "Only tab.rs",
+                  "dirty": true
+                },
+                "layout": "single",
+                "active": true
+              }
+            }
+          ]
+        },
+        {
+          "component": "Stack",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            {
+              "component": "EditorTab",
+              "props": {
+                "tab": {
+                  "id": "l",
+                  "label": "dragged.rs"
+                },
+                "lifted": true,
+                "active": false
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

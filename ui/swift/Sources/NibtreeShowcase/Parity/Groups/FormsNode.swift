@@ -11,6 +11,14 @@ enum FormsNode: Sendable {
     case slider(SliderProps)
     case fieldset(legend: String, disabled: Bool, legendTone: NFieldsetLegendTone, children: [ResolvedNode])
     case input(InputProps)
+    case renameField(value: String, label: String, invalid: Bool)
+    case shortcutRecorder(keys: String, recording: Bool, pending: String?, label: String)
+    case select(
+        options: [NSelectOption<String>], value: String, label: String, disabled: Bool, width: NControlWidth,
+        size: NSelectSize, title: String?)
+    case searchField(
+        value: String, placeholder: String, label: String, autofocus: Bool, size: NSearchFieldSize,
+        width: NControlWidth)
     case radioGroup(
         options: [NRadioOption<String>], value: String, label: String, direction: NRadioGroupDirection,
         layout: NRadioGroupLayout, labelWidth: NLabelColumn)
@@ -62,6 +70,33 @@ enum FormsNode: Sendable {
                     width: node.string("width").flatMap(NControlWidth.init) ?? .auto,
                     placeholder: node.string("placeholder") ?? "", disabled: node.flag("disabled"),
                     label: node.string("label")))
+        case "SearchField":
+            self = .searchField(
+                value: node.string("value") ?? "", placeholder: node.string("placeholder") ?? "Search",
+                label: node.string("label") ?? "", autofocus: node.flag("autofocus"),
+                size: node.string("size").flatMap(NSearchFieldSize.init) ?? .normal,
+                width: node.string("width").flatMap(NControlWidth.init) ?? .auto)
+        case "ShortcutRecorder":
+            self = .shortcutRecorder(
+                keys: node.string("keys") ?? "", recording: node.flag("recording"), pending: node.string("pending"),
+                label: node.string("label") ?? "")
+        case "RenameField":
+            self = .renameField(
+                value: node.string("value") ?? "", label: node.string("label") ?? "New name",
+                invalid: node.flag("invalid"))
+        case "Select":
+            let options = (node.list("options") ?? []).compactMap { entry -> NSelectOption<String>? in
+                guard let option = entry.record, let value = option["value"]?.text else {
+                    return nil
+                }
+                let disabled = if case .bool(true)? = option["disabled"] { true } else { false }
+                return NSelectOption(
+                    value: value, label: option["label"]?.text ?? "", disabled: disabled, title: option["title"]?.text)
+            }
+            self = .select(
+                options: options, value: node.string("value") ?? "", label: node.string("label") ?? "",
+                disabled: node.flag("disabled"), width: node.string("width").flatMap(NControlWidth.init) ?? .auto,
+                size: node.string("size").flatMap(NSelectSize.init) ?? .normal, title: node.string("title"))
         case "RadioGroup":
             let options = (node.list("options") ?? []).compactMap { entry -> NRadioOption<String>? in
                 guard let option = entry.record, let value = option["value"]?.text else {
@@ -152,6 +187,19 @@ extension FormsNode {
             NInput(
                 value: .constant(props.value), invalid: props.invalid, mono: props.mono, width: props.width,
                 placeholder: props.placeholder, disabled: props.disabled, label: props.label)
+        case .searchField(let value, let placeholder, let label, let autofocus, let size, let width):
+            NSearchField(
+                value: .constant(value), placeholder: placeholder, label: label, autofocus: autofocus, size: size,
+                width: width)
+        case .select(let options, let value, let label, let disabled, let width, let size, let title):
+            NSelect(
+                options: options, value: .constant(value), label: label, disabled: disabled, width: width, size: size,
+                title: title)
+        case .shortcutRecorder(let keys, let recording, let pending, let label):
+            NShortcutRecorder(
+                keys: keys, recording: .constant(recording), pending: pending, label: label, onRecord: { _ in })
+        case .renameField(let value, let label, let invalid):
+            NRenameField(value: value, label: label, invalid: invalid) { _ in }
         case .radioGroup(let options, let value, let label, let direction, let layout, let labelWidth):
             NRadioGroup(
                 options: options, value: .constant(value), label: label, direction: direction, layout: layout,

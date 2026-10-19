@@ -110,10 +110,11 @@ public enum NTextEngine {
     /// WebKit baseline, without font smoothing (like `-webkit-font-smoothing: antialiased`).
     /// `strike` is the line-through's color (ui/web draws it in the faint text color), or nil for none. With
     /// `centeredIn`, each line is centered in that width like CSS `text-align: center` (a wrapped line's trailing
-    /// space hangs outside).
+    /// space hangs outside). `phase` is how far below a whole device pixel the drawing's origin sits, so baselines
+    /// snap to the window's pixels, not the origin's.
     static func draw(
         _ layout: Layout, line: NLineBox, color: CGColor, strike: CGColor?, scale: CGFloat, in context: CGContext,
-        centeredIn: CGFloat? = nil
+        centeredIn: CGFloat? = nil, phase: CGFloat = 0
     ) {
         context.setShouldSmoothFonts(false)
         context.setFillColor(color)
@@ -121,7 +122,7 @@ public enum NTextEngine {
         for (index, ctLine) in layout.lines.enumerated() {
             // Baselines sit on whole device pixels, as in WebKit.
             let exact = CGFloat(index) * line.height + line.baseline
-            let baseline = (exact * max(1, scale)).rounded() / max(1, scale)
+            let baseline = ((exact + phase) * max(1, scale)).rounded() / max(1, scale) - phase
             var left: CGFloat = 0
             if let centeredIn {
                 let width = CTLineGetTypographicBounds(ctLine, nil, nil, nil) - CTLineGetTrailingWhitespaceWidth(ctLine)

@@ -1,0 +1,148 @@
+[
+  {
+    "id": "search-field-sizes",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "SearchField",
+          "props": {
+            "placeholder": "Search settings",
+            "label": "Search settings"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "value": "nibtree",
+            "label": "Search",
+            "size": "large"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "value": "feat",
+            "placeholder": "Filter branches",
+            "label": "Filter",
+            "size": "compact"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "value": "error",
+            "placeholder": "Filter output",
+            "label": "Filter",
+            "size": "small"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "label": "Search",
+            "size": "normal"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "search-field-row-widths",
+    "width": 720,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm",
+        "padding": "md",
+        "align": "center"
+      },
+      "children": [
+        {
+          "component": "SearchField",
+          "props": {
+            "label": "Search"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "value": "a long search that does not fit",
+            "label": "Search",
+            "width": "small"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "label": "Search",
+            "width": "medium",
+            "size": "compact"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "search-field-small-widths",
+    "width": 480,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "SearchField",
+          "props": {
+            "label": "Filter",
+            "size": "small",
+            "width": "large"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "label": "Filter",
+            "size": "small",
+            "width": "fill"
+          }
+        },
+        {
+          "component": "SearchField",
+          "props": {
+            "label": "Search",
+            "width": "fill"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "search-field-autofocus",
+    "width": 320,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "SearchField",
+          "props": {
+            "placeholder": "Search settings",
+            "label": "Search settings",
+            "autofocus": true
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,224 @@
+[
+  {
+    "id": "toolbar-top-bars",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "tab",
+            "label": "tab bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "main.rs"
+            },
+            {
+              "component": "Divider",
+              "props": {
+                "direction": "vertical"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "refresh",
+                "label": "Refresh",
+                "size": "small"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "search",
+                "label": "Find",
+                "size": "small"
+              }
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "more",
+                  "label": "More",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "panel",
+            "label": "panel bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "Changes"
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "refresh",
+                "label": "Refresh",
+                "size": "small"
+              }
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "more",
+                  "label": "More",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "editor",
+            "label": "editor bar"
+          },
+          "children": [
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "arrow-left",
+                "label": "Back",
+                "size": "small"
+              }
+            },
+            {
+              "component": "Divider",
+              "props": {
+                "direction": "vertical"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "arrow-right",
+                "label": "Forward",
+                "size": "small"
+              }
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "split-view",
+                  "label": "Split",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "file",
+            "label": "file bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "src/lib/main.rs"
+            },
+            {
+              "component": "Divider",
+              "props": {
+                "direction": "vertical"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "copy",
+                "label": "Copy path",
+                "size": "small"
+              }
+            }
+          ]
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "compact",
+            "label": "compact bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "zsh"
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "plus",
+                "label": "New terminal",
+                "size": "small"
+              }
+            }
+          ],
+          "slots": {
+            "end": [
+              {
+                "component": "IconButton",
+                "props": {
+                  "icon": "x",
+                  "label": "Close",
+                  "size": "small"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "component": "Toolbar",
+          "props": {
+            "variant": "log",
+            "label": "log bar"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "text": "History"
+            },
+            {
+              "component": "Divider",
+              "props": {
+                "direction": "vertical"
+              }
+            },
+            {
+              "component": "IconButton",
+              "props": {
+                "icon": "branch",
+                "label": "Branches",
+                "size": "small"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

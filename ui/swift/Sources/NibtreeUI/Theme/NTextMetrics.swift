@@ -68,7 +68,8 @@ public enum NTextMetrics {
 
     /// The exact width of `text` on one line, letter spacing included after every character as in CSS.
     public static func width(of text: String, font: NTypography.FontKey, kerning: CGFloat) -> CGFloat {
-        let cacheKey = "\(font.size)|\(font.weight)|\(font.mono)|\(kerning)|\(text)" as NSString
+        let cacheKey = "\(font.size)|\(font.weight)|\(font.mono)|\(font.italic)|\(font.family ?? "")|\(kerning)|\(text)"
+            as NSString
         if let cached = widths.object(forKey: cacheKey) {
             return CGFloat(cached.doubleValue)
         }

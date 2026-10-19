@@ -5,6 +5,10 @@ import SwiftUI
 /// The Navigation group's components, resolved from a scenario node. An open state is the scenario's (`.constant`).
 enum NavigationNode: Sendable {
     case collapsible(CollapsibleProps, children: [ResolvedNode], actions: [ResolvedNode]?)
+    case editorTab(
+        NEditorTabData, active: Bool, focused: Bool, layout: NEditorTabLayout, look: NEditorTabLookStyle, lifted: Bool,
+        closable: Bool)
+    case activityBar(entries: [NActivityEntry], active: String?, label: String, side: NActivityBarSide)
     case breadcrumbs(crumbs: [NCrumb], label: String, open: Int?, variant: NBreadcrumbs.Variant, at: ScenarioFixed?)
 
     struct CollapsibleProps: Sendable {
@@ -23,6 +27,37 @@ enum NavigationNode: Sendable {
                 count: node.number("count").map { Int($0) }, nested: node.flag("nested"), dim: node.flag("dim"))
             let actions = node.slots?["actions"].map(ResolvedNode.list)
             self = .collapsible(props, children: ResolvedNode.list(node.children), actions: actions)
+        case "EditorTab":
+            let tab = node.record("tab") ?? [:]
+            let flag = { (name: String) -> Bool in if case .bool(true)? = tab[name] { true } else { false } }
+            let data = NEditorTabData(
+                id: tab["id"]?.text ?? "", label: tab["label"]?.text ?? "",
+                icon: tab["icon"]?.text.flatMap(GMIconName.init),
+                iconTone: tab["iconTone"]?.text.flatMap(NEditorTabIconTone.init), hint: tab["hint"]?.text,
+                title: tab["title"]?.text, preview: flag("preview"), dirty: flag("dirty"), pinned: flag("pinned"),
+                mono: flag("mono"), fixed: flag("fixed"))
+            self = .editorTab(
+                data, active: node.flag("active"), focused: node.props?["focused"] == nil ? true : node.flag("focused"),
+                layout: node.string("layout").flatMap(NEditorTabLayout.init) ?? .scroll,
+                look: node.string("look").flatMap(NEditorTabLookStyle.init) ?? .flat, lifted: node.flag("lifted"),
+                closable: node.props?["closable"] == nil ? true : node.flag("closable"))
+        case "ActivityBar":
+            let entries = (node.list("items") ?? []).map { entry -> NActivityEntry in
+                guard let item = entry.record else {
+                    return entry.text == "divider" ? .divider : .spacer
+                }
+                let flag = { (name: String) -> Bool? in if case .bool(let on)? = item[name] { on } else { nil } }
+                return .item(
+                    NActivityItem(
+                        id: item["id"]?.text ?? "", icon: item["icon"]?.text.flatMap(GMIconName.init) ?? .file,
+                        label: item["label"]?.text ?? "", badge: item["badge"]?.numberValue.map { Int($0) },
+                        dot: flag("dot") ?? false, smallIcon: flag("smallIcon") ?? false, active: flag("active"),
+                        title: item["title"]?.text,
+                        badgeTone: item["badgeTone"]?.text.flatMap(NBadge.Tone.init) ?? .accent))
+            }
+            self = .activityBar(
+                entries: entries, active: node.string("active"), label: node.string("label") ?? "",
+                side: node.string("side").flatMap(NActivityBarSide.init) ?? .left)
         case "Breadcrumbs":
             let variant = node.string("variant").flatMap(NBreadcrumbs.Variant.init) ?? .inline
             var at: ScenarioFixed?
@@ -65,6 +100,12 @@ extension NavigationNode {
     @MainActor @Erased
     var view: AnyView {
         switch self {
+        case .editorTab(let tab, let active, let focused, let layout, let look, let lifted, let closable):
+            NEditorTab(
+                tab: tab, active: active, focused: focused, layout: layout, look: look, lifted: lifted,
+                closable: closable)
+        case .activityBar(let entries, let active, let label, let side):
+            NActivityBar(entries: entries, active: .constant(active), label: label, side: side)
         case .breadcrumbs(let crumbs, let label, let open, let variant, let at):
             if let at {
                 // The web's floating and anchored bars are `position: fixed`.

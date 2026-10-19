@@ -1,0 +1,42 @@
+[
+  {
+    "id": "choice-list-stash",
+    "width": 360,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "padding": "md"
+      },
+      "children": [
+        {
+          "component": "ChoiceList",
+          "props": {
+            "choices": [
+              {
+                "value": "apply",
+                "label": "Apply",
+                "description": "Keep the stash in the list after applying it."
+              },
+              {
+                "value": "pop",
+                "label": "Pop",
+                "description": "Apply it, then drop it. If the changes conflict with yours, the stash stays."
+              },
+              {
+                "value": "drop",
+                "label": "Drop",
+                "description": "Throw the stash away.",
+                "danger": true
+              },
+              {
+                "value": "branch",
+                "label": "New branch"
+              }
+            ],
+            "label": "How to apply the stash?"
+          }
+        }
+      ]
+    }
+  }
+]

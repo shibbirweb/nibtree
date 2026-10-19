@@ -39,9 +39,18 @@ struct NInputLook: Sendable {
         if let points = width.points {
             return points
         }
-        let zero = NTextMetrics.width(of: "0", font: font, kerning: 0)
-        return Self.defaultCharacters * zero + Self.caret + 2 * (GMInputTokens.paddingX + Self.border)
+        return Self.fieldWidth(font) + 2 * (GMInputTokens.paddingX + Self.border)
     }
+
+    /// A WebKit text field's own width in `font`: 20 zeros in its layout units (1/64 point), plus the caret's room.
+    @MainActor
+    static func fieldWidth(_ font: NTypography.FontKey) -> CGFloat {
+        let zeros = defaultCharacters * NTextMetrics.width(of: "0", font: font, kerning: 0)
+        return (zeros * layoutUnits).rounded() / layoutUnits + caret
+    }
+
+    /// WebKit's layout units per point.
+    nonisolated static let layoutUnits = 64.0
 
     @MainActor
     func spec(_ text: String, tone: GMColorToken) -> NTextSpec {

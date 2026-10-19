@@ -1,0 +1,158 @@
+[
+  {
+    "id": "select-sizes",
+    "width": 420,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "gap": "sm",
+        "padding": "md",
+        "align": "start"
+      },
+      "children": [
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "rebase",
+            "label": "Pull mode",
+            "size": "small"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "merge",
+            "label": "Pull mode",
+            "size": "normal",
+            "disabled": true
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "merge",
+                "label": "Merge"
+              },
+              {
+                "value": "rebase",
+                "label": "Rebase onto upstream"
+              },
+              {
+                "value": "ff",
+                "label": "Fast-forward only",
+                "disabled": true
+              }
+            ],
+            "value": "rebase",
+            "label": "Pull mode",
+            "title": "How Pull joins the upstream branch"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "select-row",
+    "width": 520,
+    "node": {
+      "component": "Stack",
+      "props": {
+        "direction": "row",
+        "gap": "sm",
+        "padding": "md",
+        "align": "center"
+      },
+      "children": [
+        {
+          "component": "Text",
+          "text": "Repository"
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "a",
+                "label": "~/Personal/git-merger/a/very/long/path/to/a/repository/folder"
+              },
+              {
+                "value": "b",
+                "label": "nibtree"
+              }
+            ],
+            "value": "a",
+            "label": "Repository",
+            "size": "small"
+          }
+        },
+        {
+          "component": "Select",
+          "props": {
+            "options": [
+              {
+                "value": "b",
+                "label": "nibtree"
+              }
+            ],
+            "value": "b",
+            "label": "Repository"
+          }
+        }
+      ]
+    }
+  }
+]

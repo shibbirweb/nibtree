@@ -201,7 +201,7 @@ struct NCheckboxBox: View {
         }
     }
 
-    private static func paint(_ context: GraphicsContext, _ colors: NWebKitColors, mark: Mark?, strength: Double) {
+    static func paint(_ context: GraphicsContext, _ colors: NWebKitColors, mark: Mark?, strength: Double) {
         let box = CGRect(x: 0, y: 0, width: side, height: side)
         let outer = RoundedRectangle(cornerRadius: radius, style: .continuous).path(in: box)
         if mark == nil || strength < 1 {

@@ -52,6 +52,30 @@ extension NWebKitColors {
         return color
     }
 
+    /// Selected text's background: AppKit's selected text color, which WebKit fades to 80% in the dark appearance.
+    static func selection(dark: Bool) -> CGColor {
+        var color = CGColor(gray: 0.7, alpha: 1)
+        NSAppearance(named: dark ? .darkAqua : .aqua)?.performAsCurrentDrawingAppearance {
+            color = NSColor.selectedTextBackgroundColor.cgColor
+        }
+        return dark ? color.copy(alpha: color.alpha * darkSelectionShare) ?? color : color
+    }
+
+    private static let darkSelectionShare = 0.8
+
+    /// Selected text's own color: AppKit's in the dark appearance; in the light one WebKit keeps the text's color
+    /// (nil).
+    static func selectedText(dark: Bool) -> CGColor? {
+        guard dark else {
+            return nil
+        }
+        var color = CGColor(gray: 1, alpha: 1)
+        NSAppearance(named: .darkAqua)?.performAsCurrentDrawingAppearance {
+            color = NSColor.selectedTextColor.cgColor
+        }
+        return color
+    }
+
     /// A text field's placeholder: WebKit's `::placeholder { color: darkGray }`, in both appearances.
     nonisolated static let placeholder = CGColor(srgbRed: 169 / 255, green: 169 / 255, blue: 169 / 255, alpha: 1)
 }

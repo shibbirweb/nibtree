@@ -23,6 +23,33 @@ enum RowsNode: Sendable {
         let current, chevron, highlighted, disabled: Bool
     }
 
+    case sidebarRow(SidebarRowProps, actions: [ResolvedNode]?)
+
+    struct SidebarRowProps: Sendable {
+        let label: String
+        let depth: NSidebarRowDepth
+        let icon: GMIconName?
+        let current, strong, section, gone, selected: Bool
+        let expanded: Bool?
+        let count: Int?
+        let ahead, behind: Int
+        let path, detail: String
+        let title: String?
+    }
+
+    case fileRow(FileRowProps)
+
+    struct FileRowProps: Sendable {
+        let kind: NStatusLetter.Kind?
+        let name, directory, note, badge: String
+        let icon: NFileIconView?
+        let selected, nested: Bool
+        let variant: NFileRowVariant
+        let checked: Bool?
+        let title: String?
+        let actions: [NFileRowAction]
+    }
+
     case listRow(
         label: String, description: String, icon: GMIconName?, highlighted: Bool, disabled: Bool,
         trailing: [ResolvedNode]?)
@@ -79,6 +106,35 @@ enum RowsNode: Sendable {
                     icon: node.string("icon").flatMap(GMIconName.init), hint: node.string("hint") ?? "",
                     current: node.flag("current"), chevron: node.flag("chevron"),
                     highlighted: node.flag("highlighted"), disabled: node.flag("disabled")))
+        case "SidebarRow":
+            let expanded: Bool? = if case .bool(let open)? = node.props?["expanded"] { open } else { nil }
+            self = .sidebarRow(
+                SidebarRowProps(
+                    label: node.string("label") ?? "",
+                    depth: node.string("depth").flatMap(NSidebarRowDepth.init) ?? .none,
+                    icon: node.string("icon").flatMap(GMIconName.init), current: node.flag("current"),
+                    strong: node.flag("strong"), section: node.flag("section"), gone: node.flag("gone"),
+                    selected: node.flag("selected"), expanded: expanded, count: node.number("count").map { Int($0) },
+                    ahead: Int(node.number("ahead") ?? 0), behind: Int(node.number("behind") ?? 0),
+                    path: node.string("path") ?? "", detail: node.string("detail") ?? "", title: node.string("title")),
+                actions: node.slots?["actions"].map { ResolvedNode.list($0) })
+        case "FileRow":
+            let checked: Bool? = if case .bool(let on)? = node.props?["checked"] { on } else { nil }
+            let actions = (node.list("actions") ?? []).compactMap { entry -> NFileRowAction? in
+                guard let action = entry.record, let icon = action["icon"]?.text.flatMap(GMIconName.init) else {
+                    return nil
+                }
+                let danger = if case .bool(true)? = action["danger"] { true } else { false }
+                return NFileRowAction(icon: icon, title: action["title"]?.text ?? "", danger: danger) {}
+            }
+            self = .fileRow(
+                FileRowProps(
+                    kind: node.string("kind").flatMap(NStatusLetter.Kind.init), name: node.string("name") ?? "",
+                    directory: node.string("directory") ?? "", note: node.string("note") ?? "",
+                    badge: node.string("badge") ?? "", icon: node.object("icon").flatMap(ActionsNode.fileIconView),
+                    selected: node.flag("selected"), nested: node.flag("nested"),
+                    variant: node.string("variant").flatMap(NFileRowVariant.init) ?? .changes, checked: checked,
+                    title: node.string("title"), actions: actions))
         case "ListRow":
             self = .listRow(
                 label: node.string("label") ?? "", description: node.string("description") ?? "",
@@ -106,6 +162,28 @@ extension RowsNode {
             NPopupRow(
                 label: props.label, variant: props.variant, icon: props.icon, hint: props.hint, current: props.current,
                 chevron: props.chevron, highlighted: props.highlighted, disabled: props.disabled)
+        case .sidebarRow(let props, let actions):
+            if let actions {
+                NSidebarRow(
+                    label: props.label, depth: props.depth, icon: props.icon, current: props.current,
+                    strong: props.strong, section: props.section, expanded: props.expanded, count: props.count,
+                    ahead: props.ahead, behind: props.behind, path: props.path, detail: props.detail, gone: props.gone,
+                    selected: props.selected, title: props.title
+                ) {
+                    ScenarioChildren(nodes: actions)
+                }
+            } else {
+                NSidebarRow(
+                    label: props.label, depth: props.depth, icon: props.icon, current: props.current,
+                    strong: props.strong, section: props.section, expanded: props.expanded, count: props.count,
+                    ahead: props.ahead, behind: props.behind, path: props.path, detail: props.detail, gone: props.gone,
+                    selected: props.selected, title: props.title)
+            }
+        case .fileRow(let props):
+            NFileRow(
+                kind: props.kind, name: props.name, directory: props.directory, note: props.note, badge: props.badge,
+                icon: props.icon, selected: props.selected, nested: props.nested, variant: props.variant,
+                checked: props.checked.map { .constant($0) }, title: props.title, actions: props.actions)
         case .listRow(let label, let description, let icon, let highlighted, let disabled, let trailing):
             if let trailing {
                 NListRow(

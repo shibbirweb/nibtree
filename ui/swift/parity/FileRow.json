@@ -1,0 +1,159 @@
+[
+  {
+    "id": "file-row-kinds",
+    "width": 300,
+    "node": {
+      "component": "Stack",
+      "props": {},
+      "children": [
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "added",
+            "name": "NewFile.svelte",
+            "directory": "src/lib",
+            "icon": {
+              "kind": "image",
+              "icon": "svelte"
+            }
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "modified",
+            "name": "main.rs",
+            "directory": "src-tauri/src",
+            "icon": {
+              "kind": "image",
+              "icon": "rust"
+            },
+            "actions": [
+              {
+                "icon": "plus",
+                "title": "Stage"
+              },
+              {
+                "icon": "discard",
+                "title": "Discard",
+                "danger": true
+              }
+            ]
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "typechange",
+            "name": "link",
+            "directory": "scripts"
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "deleted",
+            "name": "old.ts",
+            "directory": "src/lib/old"
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "renamed",
+            "name": "README.md",
+            "note": "from readme.md",
+            "icon": {
+              "kind": "mask",
+              "glyph": "markdown",
+              "tone": "gray"
+            }
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "copied",
+            "name": "copy.json",
+            "nested": true
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "untracked",
+            "name": "notes.txt",
+            "nested": false,
+            "badge": "LFS"
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "conflicted",
+            "name": "package.json",
+            "badge": "both"
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": null,
+            "name": "Cargo.lock",
+            "selected": true,
+            "title": "src-tauri/Cargo.lock"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "file-row-list",
+    "width": 280,
+    "node": {
+      "component": "Stack",
+      "props": {},
+      "children": [
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "modified",
+            "name": "a-very-long-file-name-that-does-not-fit.ts",
+            "directory": "src/lib/components/deep/folder",
+            "variant": "list"
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "added",
+            "name": "index.ts",
+            "directory": "src",
+            "variant": "list",
+            "selected": true
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "modified",
+            "name": "Shelve.svelte",
+            "directory": "src/lib",
+            "variant": "changes",
+            "checked": true
+          }
+        },
+        {
+          "component": "FileRow",
+          "props": {
+            "kind": "deleted",
+            "name": "gone.svelte",
+            "directory": "src/lib",
+            "checked": false,
+            "badge": "staged"
+          }
+        }
+      ]
+    }
+  }
+]
