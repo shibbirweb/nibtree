@@ -68,7 +68,7 @@ sequenceDiagram
 
 `release.yml` runs `browser-verify.yml` after the browser job, also when that job failed halfway, so whatever did
 get published is checked. Run workflow starts it by hand for any tag. `scripts/release-verify.ts` checks what
-people actually get, retrying for about five minutes while the registries catch up:
+people actually get, retrying for up to half an hour while the registries catch up:
 
 - **`verify-npm`**, on Linux, macOS and Windows: npm lists the launcher and all six platform packages at the
   version, the `next` or `latest` tag points at it, and `npx nibtree@<version> --version` and
@@ -114,3 +114,13 @@ authentication", though a dry run sends nothing. The rehearsal had no `NPM_TOKEN
 by mistake. `scripts/npm-package.ts` now gives a dry run a placeholder token when there is no real one: bun is
 happy, and a placeholder could not publish even if the dry-run flag were lost. Since then npm publishes instead of
 bun (trusted publishing), and `npm publish --dry-run` needs no token, so the placeholder is gone.
+
+**The npm checks failed on every release, though the packages worked.** Two things went wrong:
+
+- **npx ran from the checkout.** The repository's own `package.json` is also named `nibtree`, at the very
+  version being checked, so npx took the repository for the package and found no command in it: "could not
+  determine executable to run". No wait could fix that. npx now runs in a new empty folder, as it does for people.
+- **npm listed beta.14's launcher 11 minutes after `npm publish` returned**, while each check gave up after
+  five. npm processes a new version in the background, longer with provenance. The checks now share one half-hour
+  limit and try every 30 seconds: a slow registry costs only waiting, and a release that never shows up still
+  fails.
