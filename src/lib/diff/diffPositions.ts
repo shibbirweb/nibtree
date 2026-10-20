@@ -40,14 +40,22 @@ export function revealChange(
   editor.dispatch({ selection: { anchor: position }, effects: EditorView.scrollIntoView(position, { y: "center" }) });
 }
 
-/** The new text's line to open the file at: the cursor line when it is on screen, else the top line. */
-export function newLineOnScreen(editor: EditorView, inlineDoc: InlineDoc | null): number {
+/**
+ * The new text's line to open the file at: the cursor line when it is on screen, else the top line of `scroller`
+ * (the editor's own, or the aligned diff's that scrolls both sides).
+ */
+export function newLineOnScreen(
+  editor: EditorView,
+  inlineDoc: InlineDoc | null,
+  scroller: HTMLElement = editor.scrollDOM,
+): number {
   const head = editor.state.selection.main.head;
   let line: number;
   if (editor.hasFocus || editor.visibleRanges.some((range) => head >= range.from && head <= range.to)) {
     line = editor.state.doc.lineAt(head).number - 1;
   } else {
-    line = editor.state.doc.lineAt(editor.lineBlockAtHeight(editor.scrollDOM.scrollTop).from).number - 1;
+    const top = Math.max(0, scroller.getBoundingClientRect().top - editor.documentTop);
+    line = editor.state.doc.lineAt(editor.lineBlockAtHeight(top).from).number - 1;
   }
   return inlineDoc ? newLineAt(inlineDoc, line) : line;
 }

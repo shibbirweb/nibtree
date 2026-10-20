@@ -31,17 +31,21 @@ export const surfaceDocs: ComponentDoc[] = [
   {
     name: "DiffView",
     group: "Editor",
-    summary: "Two versions of a text compared, side by side or inline, in the app's diff colors.",
+    summary: "Two versions of a text compared, side by side, aligned or inline, in the app's diff colors.",
     usage:
       "Use for file diffs, the Changes diff and compare tabs. Side by side, each side's line numbers face the " +
-      "other and a change's color runs through them (editor/splitGutters.ts). The app adds staging buttons " +
+      "other and a change's color runs through them (editor/splitGutters.ts). Aligned (VS Code style), both " +
+      "sides scroll as one, line for line: numbers on the left, a minus or plus on each changed line and a " +
+      "hatched filler where a side has no lines (editor/alignedGutters.ts). The app adds staging buttons " +
       "(`splitPaneGutters`, beside the numbers), folds (editor/foldRow.ts) and its other diff features through " +
       "`extensions`.",
     aliases: ["Diff", "Compare"],
     props: [
       prop("original", "string", "The old text (left, or the removed lines).", { required: true, data: true }),
       prop("modified", "string", "The new text.", { required: true, data: true }),
-      prop("layout", '"split" | "inline"', "Side by side, or one column.", { default: '"split"' }),
+      prop("layout", '"split" | "aligned" | "inline"', "Side by side, side by side line for line, or one column.", {
+        default: '"split"',
+      }),
       prop("language", LANGUAGE, "Syntax colors.", { default: '"plain"' }),
       prop("height", VIEW_HEIGHT, "Fill the parent, or 160, 240 or 360 px.", { default: '"fill"' }),
       prop("label", "string", "Accessible name.", { required: true }),

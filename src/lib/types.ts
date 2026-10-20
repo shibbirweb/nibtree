@@ -118,13 +118,13 @@ export interface LinesOutcome {
   patch: string | null;
 }
 
-/** The HEAD commit and the file's object in it that the editor's marks and blame belong to. */
+/** The HEAD commit and the file's object that the editor's blame and marks belong to (in HEAD, or the index). */
 export interface HeadVersion {
   commitId: string | null;
   blobId: string | null;
 }
 
-/** A file as of HEAD, LF-normalized; empty when HEAD does not have it. */
+/** A file as of HEAD (or as staged, from readBaseFile), LF-normalized; empty when it does not exist there. */
 export interface HeadFile {
   content: string;
   binary: boolean;
@@ -134,7 +134,7 @@ export interface HeadFile {
 
 /** The editor's changes since the last commit (src-tauri/src/commands/editor.rs). */
 export interface LineMarks {
-  head: HeadVersion;
+  base: HeadVersion;
   marks: { from: number; to: number; kind: "added" | "modified" | "deleted" }[];
 }
 

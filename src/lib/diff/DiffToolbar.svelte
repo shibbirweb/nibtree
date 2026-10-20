@@ -1,4 +1,4 @@
-<!-- The bar over every diff, two panes, inline or three panes: change arrows and count, the layout, Collapse
+<!-- The bar over every diff, two panes, aligned, inline or three panes: change arrows and count, the layout, Collapse
      unchanged, Blame, Open File, the line actions of the Changes diff, and the file's name at the end. One bar for all
      of them, so a fix or a new button reaches every diff; each view says what it offers. -->
 <script lang="ts">
@@ -16,7 +16,7 @@
   import { changeCounter } from "./diffToolbar";
   import { diffPrefs } from "./prefs.svelte";
 
-  export type ToolbarLayout = "three" | "sideBySide" | "inline";
+  export type ToolbarLayout = "three" | "sideBySide" | "aligned" | "inline";
 
   interface Props {
     /** The changes to step through, and the one picked (-1 for none). */
@@ -104,6 +104,13 @@
       title="Side by side: old text on the left, new on the right"
       disabled={!textDiff}
       bind:pressed={() => layout === "sideBySide", (on) => on && onlayout("sideBySide")}
+    />
+    <ToggleButton
+      icon="split-aligned"
+      label="Aligned"
+      title="Aligned: old and new side by side, line for line, scrolling as one"
+      disabled={!textDiff}
+      bind:pressed={() => layout === "aligned", (on) => on && onlayout("aligned")}
     />
     <ToggleButton
       icon="split-rows"

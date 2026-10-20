@@ -54,4 +54,5 @@ SplitGrid, PaneRow, SplitHandle
 
 SearchToggles, FindBar, CodeView, MarkdownPreview, MarkdownEditor, CodeBlock, HighlightText, CommitGraph, CodeEditor,
 DiffView, DiffFrame, MergeFrame, MergeStackFrame, MergeView, MergeConnector, MarkdownView, FormatToolbar, MediaView,
-TerminalView, TerminalScreen, PatchView, ZoomBar, ImageCanvas, MediaCompare, RichEditorHost, FloatingFindBar, FontSample
+TerminalView, TerminalScreen, PatchView, ZoomBar, ImageCanvas, MediaCompare, PeekPanel, RichEditorHost, FloatingFindBar,
+FontSample

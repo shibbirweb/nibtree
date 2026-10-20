@@ -65,7 +65,7 @@
   // With no buttons on the connector (the app puts them in the sides' gutters) the gap is narrow.
   const buttons = $derived(Boolean(onapply || onrevert));
   const gap = $derived(buttons ? componentTokens.mergeView.gap : componentTokens.mergeView.ribbonGap);
-  const gutter = $derived(connected ? gap + (ruler ? componentTokens.diffFrame.ruler : 0) : 0);
+  const gutter = $derived((connected ? gap : 0) + (ruler ? componentTokens.diffFrame.ruler : 0));
 
   // The parts stay the same across layouts, so switching layout never hands out new elements.
   $effect(() => {
@@ -241,7 +241,9 @@
     inset: 0;
   }
 
-  .ruler > :global(.cm-editor) {
+  /* A MergeView stops short of the ruler the same way, connected or aligned (scrolling both sides as one). */
+  .ruler > :global(.cm-editor),
+  .ruler > :global(.cm-mergeView) {
     right: var(--diff-frame-ruler);
   }
 
@@ -284,9 +286,5 @@
     display: flex;
     border-left: 1px solid var(--border-strong);
     border-right: 1px solid var(--border-strong);
-  }
-
-  .ruler .connector ~ :global(.cm-mergeView) {
-    right: var(--diff-frame-ruler);
   }
 </style>

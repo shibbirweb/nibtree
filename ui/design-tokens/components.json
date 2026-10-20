@@ -234,7 +234,8 @@
     "indicator": 2, "closeSize": 16, "closeRadius": 3
   },
   "diffLabels": {"height": 24, "paddingX": 12, "gap": 6},
-  "diffFrame": {"controls": 24, "ruler": 12, "revertHeight": 20, "revertRadius": 4},
+  "diffFrame": {"controls": 24, "ruler": 12, "revertHeight": 20, "revertRadius": 4, "fillerStripe": 1, "fillerGap": 8,
+    "signWidth": 14},
   "codeView": {"copyHeight": 22},
   "viewDialog": {"height": 820},
   "editorTab": {"dirtyDot": 8, "roundedHeight": 26, "roundedRadius": 6, "roundedPaddingLeft": 10},
@@ -251,5 +252,6 @@
     "underlineIndicator": 2
   },
   "listBox": {"minHeight": 120},
-  "pane": {"paddingTop": 4, "paddingBottom": 8}
+  "pane": {"paddingTop": 4, "paddingBottom": 8},
+  "peekPanel": {"headerHeight": 32, "paddingX": 12, "gap": 8}
 }

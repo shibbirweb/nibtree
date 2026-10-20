@@ -62,7 +62,7 @@ The editor is built from `baseExtensions` in `src/lib/editor/setup.ts` (the them
 - `changeMarkField`, `changeGutter` and `scrollMarkers` for the colored gutter bars and the overview ruler beside the scrollbar,
 - `blameExtension` for blame (see [How blame works](How-Blame-Works.md)).
 
-The backend's `line_change_marks` computes the marks 200 ms after you stop typing (`FileGitInfo`); `markSource` lets conflicts win over plain changes. A click on a bar reverts it ([How reverting a change works](How-Reverting-a-Change-Works.md)). **Previous** and **Next** (Shift+F7 and F7) use `sectionTarget` from `navigation.ts`, which wraps around.
+The backend's `line_change_marks` computes the marks 200 ms after you stop typing (`FileGitInfo`); `markSource` lets conflicts win over plain changes. A click on a bar opens the change peek ([How the change peek works](How-the-Change-Peek-Works.md)). **Previous** and **Next** (Shift+F7 and F7) use `sectionTarget` from `navigation.ts`, which wraps around.
 
 ### Saving and reverting
 

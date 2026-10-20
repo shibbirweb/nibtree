@@ -12,7 +12,7 @@ use crate::merge::line_diff::{text_hunks, LineHunk};
 use crate::merge::model::{into_lf, Eol};
 
 /// Files above this size are not diffed in the UI.
-const MAX_DIFF_BYTES: usize = 4 * 1024 * 1024;
+pub(crate) const MAX_DIFF_BYTES: usize = 4 * 1024 * 1024;
 
 #[derive(Debug, Clone, Copy, Deserialize)]
 #[serde(rename_all = "camelCase")]

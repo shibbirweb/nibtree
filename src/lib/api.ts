@@ -405,11 +405,14 @@ export const api = {
   /** Blames an editor's LF-normalized `text`, unsaved edits included; `eol` is the file's own. */
   blameContents: (repoPath: string, filePath: string, text: string, eol: Eol) =>
     invoke<BlameInfo>("blame_contents", rawBody({ repoPath, filePath, eol }, text)),
-  /** The editor's changed lines against HEAD (at `origPath` for a staged rename). */
+  /** The editor's changed lines against the index, else HEAD (at `origPath` for a staged rename). */
   lineChangeMarks: (repoPath: string, filePath: string, origPath: string | null, text: string) =>
     invoke<LineMarks>("line_change_marks", rawBody({ repoPath, filePath, origPath }, text)),
-  headFileVersion: (repoPath: string, filePath: string, origPath: string | null) =>
-    invoke<HeadVersion>("head_file_version", { repoPath, filePath, origPath }),
+  baseFileVersion: (repoPath: string, filePath: string, origPath: string | null) =>
+    invoke<HeadVersion>("base_file_version", { repoPath, filePath, origPath }),
+  /** The file the editor's change bars compare with: as staged, else as of HEAD. */
+  readBaseFile: (repoPath: string, filePath: string, origPath: string | null) =>
+    invoke<HeadFile>("read_base_file", { repoPath, filePath, origPath }),
   readHeadFile: (repoPath: string, filePath: string, origPath: string | null) =>
     invoke<HeadFile>("read_head_file", { repoPath, filePath, origPath }),
   cherryPick: (repoPath: string, commitId: string) => invoke<OpOutcome>("cherry_pick", { repoPath, commitId }),

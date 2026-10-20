@@ -1,6 +1,6 @@
 // The changes of the side by side diff as lines: each side keeps its own lines (no
 // padding), a band joins a change's lines on both sides, and scrolling maps lines through the changes.
-import type { Chunk } from "@codemirror/merge";
+import type { Chunk, MergeView } from "@codemirror/merge";
 import type { Text } from "@codemirror/state";
 import type { ConnectorRibbon } from "@nibtree/ui/components/MergeConnector.svelte";
 import type { Anchor } from "$lib/merge/model";
@@ -67,4 +67,18 @@ export function copyChange(
     insert += "\n";
   }
   return { target: toA ? "a" : "b", from: destFrom, to: Math.min(dest.length, destTo), insert };
+}
+
+/** Copies change `index` onto the left side (`toA`, stage) or the right one (unstage), as a revert. */
+export function copyViewChange(view: MergeView, index: number, toA: boolean): void {
+  const { a, b, chunks } = view;
+  const chunk = chunks[index];
+  if (!chunk) {
+    return;
+  }
+  const edit = copyChange(chunk, toA, a.state.doc, b.state.doc);
+  (edit.target === "a" ? a : b).dispatch({
+    changes: { from: edit.from, to: edit.to, insert: edit.insert },
+    userEvent: "revert",
+  });
 }

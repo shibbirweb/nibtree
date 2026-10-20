@@ -32,7 +32,7 @@ flowchart LR
 
 `SplitLink.ribbons()` measures the changes with lines on screen with the merge tool's `span`, in pixels from the frame body's top, and drops bands far off screen. `DiffEditors` keeps them in `ribbons`, and `DiffView` passes them to `DiffFrame`, which draws the library's `MergeConnector`. The ruler's geometry updates also schedule the bands, so folds, edits and resizes move them.
 
-The arrow on a band is **Stage this change** (Changes) or **Unstage this change** (Staged). `DiffEditors.copyChange` dispatches the edit with the `revert` user event, so the listener that writes the index runs as before. Read-only diffs draw the bands without arrows: `MergeConnector` shows a button only with its handler.
+The arrow on a band is **Stage this change** (Changes) or **Unstage this change** (Staged). `DiffEditors.copyChange` dispatches the edit (`copyViewChange`, shared with the [aligned diff](How-the-Aligned-Diff-Works.md)) with the `revert` user event, so the listener that writes the index runs as before. Read-only diffs draw the bands without arrows: `MergeConnector` shows a button only with its handler.
 
 ## Fold labels
 
@@ -42,8 +42,8 @@ A fold names the code after it: the library's `FoldRowWidget` (`editor/foldRow.t
 
 | File | What it does |
 | --- | --- |
-| `src/lib/diff/splitChunks.ts` | Lines, kinds, anchors and the copy edit of each change |
-| `src/lib/diff/splitLink.ts` | `unpadded`, synced scrolling, band measuring, `copy` |
+| `src/lib/diff/splitChunks.ts` | Lines, kinds, anchors and the copy edit of each change (`copyViewChange`) |
+| `src/lib/diff/splitLink.ts` | `unpadded`, synced scrolling, band measuring |
 | `src/lib/diff/diffEditors.svelte.ts` | Owns the link, `ribbons` and `copyChange` |
 | `src/lib/diff/foldLabel.ts`, `foldScope.ts` | Fold labels |
 | `ui/web/src/lib/components/DiffFrame.svelte` | `ribbons`, `applySide`, `onapply`, `applyTitle`; one scroller per side |

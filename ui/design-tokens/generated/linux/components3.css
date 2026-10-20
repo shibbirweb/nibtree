@@ -140,6 +140,9 @@
   --diff-frame-ruler: 12px;
   --diff-frame-revert-height: 20px;
   --diff-frame-revert-radius: 4px;
+  --diff-frame-filler-stripe: 1px;
+  --diff-frame-filler-gap: 8px;
+  --diff-frame-sign-width: 14px;
   --code-view-copy-height: 22px;
   --view-dialog-height: 820px;
   --editor-tab-dirty-dot: 8px;
@@ -174,6 +177,9 @@
   --list-box-min-height: 120px;
   --pane-padding-top: 4px;
   --pane-padding-bottom: 8px;
+  --peek-panel-header-height: 32px;
+  --peek-panel-padding-x: 12px;
+  --peek-panel-gap: 8px;
   --bullet-list-indent: 18px;
   --font-sample-padding-y: 10px;
   --font-sample-padding-x: 12px;
@@ -268,7 +274,4 @@
   --row-group-gap: 6px;
   --row-mark-width: 3px;
   --row-mark-inset: 5px;
-  --scrollbar-size: 10px;
-  --scrollbar-thumb-radius: 10px;
-  --scrollbar-thumb-inset: 2px;
 }

@@ -13,6 +13,8 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Added
 
+- Click a change bar beside the line numbers in the editor to open a change peek under it, like VS Code: the change's diff against the staged version in your Diff layout, with **Stage this change**, **Revert this change**, the next and previous change, and Close (or Escape). Every change in the peek's diff has its own Revert button too.
+- A new diff layout, **Aligned**, shows the two versions side by side the way VS Code does: both sides scroll as one and every line sits level with its match, a hatched filler stands where one side has no lines, and a red **-** or green **+** marks each changed line. Pick it with the new button in the diff toolbar or **Diff layout** in Settings > Git; **Side by side** stays the default.
 - Nibtree runs in your browser too: `npx nibtree` (or `npx nibtree@next` for the newest beta) starts it on your machine and opens the whole app in a browser tab, with its own settings in `~/.nibtree-browser`. It works on macOS, Linux and Windows, on Intel and Arm, and needs an access token on every page; `--host 0.0.0.0` lets other machines in.
 - The browser version also comes as a Docker image with git, git-lfs, SSH and GnuPG inside: `docker run -p 4410:4410 -v "$PWD:/workspace" ghcr.io/shibbirweb/nibtree` (also on Docker Hub). It listens on its own port, 4410, so it can run next to `npx nibtree`; `NIBTREE_PUBLIC_URL` prints the right address when you map another port. `docker/compose.yaml` starts it with `docker compose up -d`, reachable only from your own machine.
 - The browser version's npm packages are published straight from GitHub Actions with npm's trusted publishing, so npm shows their provenance: the commit and the workflow that built each one. The image's Docker Hub page now explains how to run it, its tags and volumes.
@@ -151,6 +153,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Changed
 
+- The editor's change bars now compare your text with the staged version, like VS Code, instead of the last commit: a staged change drops out of the bars. A click on a bar opens the change peek instead of reverting right away; **Revert this change** is in the peek.
 - Ignored files and folders in the Files panel look like VS Code's: dimmed, in italics, and with a circle with a slash at the right end.
 - Rounded panels are on by default for new installs. If you already use Nibtree, your current look stays until you change it in Settings > Appearance.
 - The AI usage readout in the status bar is off by default for new installs, so macOS no longer asks for your Keychain password until you turn it on. Pick **Right** or **Left** in **Settings > AI > Usage in status bar** to see it.

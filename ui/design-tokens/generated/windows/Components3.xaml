@@ -142,6 +142,9 @@
     <x:Double x:Key="GmDiffFrameRuler">12</x:Double>
     <x:Double x:Key="GmDiffFrameRevertHeight">20</x:Double>
     <x:Double x:Key="GmDiffFrameRevertRadius">4</x:Double>
+    <x:Double x:Key="GmDiffFrameFillerStripe">1</x:Double>
+    <x:Double x:Key="GmDiffFrameFillerGap">8</x:Double>
+    <x:Double x:Key="GmDiffFrameSignWidth">14</x:Double>
     <x:Double x:Key="GmCodeViewCopyHeight">22</x:Double>
     <x:Double x:Key="GmViewDialogHeight">820</x:Double>
     <x:Double x:Key="GmEditorTabDirtyDot">8</x:Double>
@@ -176,6 +179,9 @@
     <x:Double x:Key="GmListBoxMinHeight">120</x:Double>
     <x:Double x:Key="GmPanePaddingTop">4</x:Double>
     <x:Double x:Key="GmPanePaddingBottom">8</x:Double>
+    <x:Double x:Key="GmPeekPanelHeaderHeight">32</x:Double>
+    <x:Double x:Key="GmPeekPanelPaddingX">12</x:Double>
+    <x:Double x:Key="GmPeekPanelGap">8</x:Double>
     <x:Double x:Key="GmBulletListIndent">18</x:Double>
     <x:Double x:Key="GmFontSamplePaddingY">10</x:Double>
     <x:Double x:Key="GmFontSamplePaddingX">12</x:Double>
@@ -270,7 +276,4 @@
     <x:Double x:Key="GmRowGroupGap">6</x:Double>
     <x:Double x:Key="GmRowMarkWidth">3</x:Double>
     <x:Double x:Key="GmRowMarkInset">5</x:Double>
-    <x:Double x:Key="GmScrollbarSize">10</x:Double>
-    <x:Double x:Key="GmScrollbarThumbRadius">10</x:Double>
-    <x:Double x:Key="GmScrollbarThumbInset">2</x:Double>
 </ResourceDictionary>

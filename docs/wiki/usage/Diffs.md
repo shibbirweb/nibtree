@@ -22,7 +22,7 @@ Which two versions you see depends on the group you clicked:
 
 Commits in the [Log](History-and-Log.md) use the same view, read-only, comparing the commit with its parent. So do commit tabs, the compare tabs of the Git menu and the Branches popup, and shelved changes.
 
-To see both versions in one column instead, click **Inline** in the toolbar. See [Inline Diffs](Inline-Diffs.md).
+Other layouts: **Aligned** ([Aligned Diffs](Aligned-Diffs.md)) and **Inline** ([Inline Diffs](Inline-Diffs.md)).
 
 ## Reading the diff
 
