@@ -41,7 +41,7 @@ With no file, diff or Log open, the editor area shows the [Navigation Bar](Navig
 - New tabs open after the current one.
 - A dot on the tab means unsaved changes; hover it for the close button. Middle-click a tab to close it.
 - Scroll the mouse wheel over the tab strip to move through many tabs.
-- When two tabs have the same file name, the folder name is shown next to each.
+- Tabs with the same file name show enough of their folder to tell them apart, like `shop/src` and `app/src`.
 - Drag a tab to move it, and pin the tabs you always need. See [Pin, Reorder and Wrap Tabs](Pin-Reorder-and-Wrap-Tabs.md).
 
 Right-click a tab for **Pin Tab**, **Close**, **Close Others**, **Close to the Right**, **Close All**, **Copy Path** and **Copy Relative Path** (a preview tab also has **Keep Open**). If a tab you close has unsaved changes, you are asked before they are thrown away. Closing the window or folder keeps them instead ([New File and Unsaved Changes](New-File-and-Unsaved-Changes.md)).

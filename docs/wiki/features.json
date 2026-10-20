@@ -465,7 +465,7 @@
       "title": "Worktrees",
       "usage": "usage/Worktrees.md",
       "developer": "developer/How-Worktrees-Work.md",
-      "screenshots": ["worktrees-section.png", "worktrees-new-dialog.png"]
+      "screenshots": ["worktrees-section.png", "worktrees-switcher.png", "worktrees-new-dialog.png"]
     },
     {
       "id": "ai-agents",

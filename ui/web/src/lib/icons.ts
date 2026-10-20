@@ -29,6 +29,15 @@ export const icons = {
   branch: ["M6 3v12", circle(18, 6, 3), circle(6, 18, 3), "M18 9a9 9 0 0 1-9 9"],
   commit: [circle(12, 12, 3), "M3 12h6", "M15 12h6"],
   merge: [circle(18, 18, 3), circle(6, 6, 3), "M6 21V9a9 9 0 0 0 9 9"],
+  // Lucide's folder-tree: a worktree, one more checkout of the same repository.
+  "folder-tree": [
+    "M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2" +
+      "a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z",
+    "M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.55l-.42-.85a1 1 0 0 0-.92-.6H13" +
+      "a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z",
+    "M3 5a2 2 0 0 0 2 2h3",
+    "M3 3v13a2 2 0 0 0 2 2h3",
+  ],
   "folder-git": [
     "M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5",
     circle(13, 12, 2),

@@ -22,6 +22,28 @@ The filter box at the top of the sidebar also searches worktree folders and bran
 
 In the Changes sidebar, a linked worktree opened as a repository has a **worktree** tag next to its name.
 
+## Switch worktrees from the top bar
+
+When the active repository has more than one worktree, the top bar shows a worktree button after the branch, with the number of worktrees. Click it to see all of them and switch.
+
+[TODO:worktrees-switcher.png]
+
+*The worktree switcher: each worktree with its branch and folder, its changes, commits to push and pull, a stopped merge, and when it last changed.*
+
+Each row shows:
+
+- The branch (or "detached at" a commit) and the folder. A check mark marks the worktree you are in, and **main** the main worktree.
+- How many files it has changed, staged or not, such as **3 changes**.
+- Commits to push (↑) and to pull (↓) against its upstream branch.
+- **Merging**, **Rebasing**, **Cherry-picking** or **Reverting** when one of those stopped in it, and how many conflicts it has.
+- When it last changed: a commit, a checkout, staging or an edited file, such as **2 hours ago**.
+
+The list is read each time you open it, so it is always current and costs nothing while closed.
+
+Click a row to switch: that worktree becomes the active repository, so Changes, the branch button and the Git menu work on it. If its folder is not in your workspace yet, it is added first (see [Workspaces](Workspaces.md)). Nothing is closed: the tabs, terminals and AI agents of every worktree keep running, and switching back is instant. The same file opened from two worktrees gets two tabs, each labelled with its worktree's folder, such as `shop/src` and `shop-fix-tax/src`. To stop a worktree's work, remove its folder from the workspace. A worktree whose folder is gone is greyed out.
+
+At the bottom, **New Worktree...** opens the New Worktree dialog and **Show Worktrees** opens the Worktrees section of the sidebar.
+
 ## Create a worktree
 
 Click **+** on the Worktrees heading, right-click the heading and choose **New Worktree...**, or choose **Git > Worktrees > New Worktree...**.

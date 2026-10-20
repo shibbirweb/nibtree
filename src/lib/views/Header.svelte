@@ -1,5 +1,5 @@
-<!-- The window's top bar on the UI library's AppHeader: Back and Forward, the folder, repository and branch pickers,
-     the busy work, and the layout, theme and settings buttons. -->
+<!-- The window's top bar on the UI library's AppHeader: Back and Forward, the folder, repository, branch and
+     worktree pickers, the busy work, and the layout, theme and settings buttons. -->
 <script lang="ts">
   import AppHeader from "@nibtree/ui/components/AppHeader.svelte";
   import Button from "@nibtree/ui/components/Button.svelte";
@@ -28,6 +28,7 @@
     pickAndSaveWorkspace,
   } from "./repoPicker";
   import { newBranchFrom } from "./sidebar/actions";
+  import WorktreeSwitcher from "./git/worktrees/WorktreeSwitcher.svelte";
   import { navigation } from "$lib/stores/navigation.svelte";
 
   const head = $derived(repoStore.status?.head);
@@ -227,6 +228,7 @@
           {@render syncCount(head.behind, "arrow-down", "Commits to pull")}
         {/if}
       </Button>
+      <WorktreeSwitcher />
     {:else}
       <Text size="small" tone="dim">No git repository</Text>
     {/if}

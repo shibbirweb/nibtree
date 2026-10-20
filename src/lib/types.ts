@@ -979,6 +979,19 @@ export interface WorktreeInfo {
   isCurrent: boolean;
 }
 
+/** A worktree with what the top bar's switcher shows: its changes, upstream, operation and last activity. */
+export interface WorktreeSummary extends WorktreeInfo {
+  /** Changed files, staged or not, untracked and conflicted ones included. */
+  changes: number;
+  conflicts: number;
+  upstream: string | null;
+  ahead: number;
+  behind: number;
+  op: OpKind;
+  /** Milliseconds since 1970: HEAD moving, the index or a changed file, whichever is latest. */
+  lastActivity: number | null;
+}
+
 /** What a new worktree checks out. */
 export type WorktreeBranch =
   | { kind: "existing"; branchName: string }

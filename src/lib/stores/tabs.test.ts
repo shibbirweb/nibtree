@@ -114,6 +114,17 @@ describe("tabLabels", () => {
     expect(labels.get("apps/api/index.ts")).toEqual({ name: "index.ts", hint: "api" });
     expect(labels.get("README.md")).toEqual({ name: "README.md", hint: null });
   });
+
+  it("adds as much of the folder as tells two worktrees' files apart", () => {
+    const labels = tabLabels([
+      { path: "/w/shop/src/prices.ts", preview: false, dirty: false },
+      { path: "/w/shop-fix-tax/src/prices.ts", preview: false, dirty: false },
+      { path: "/w/shop/lib/prices.ts", preview: false, dirty: false },
+    ]);
+    expect(labels.get("/w/shop/src/prices.ts")?.hint).toBe("shop/src");
+    expect(labels.get("/w/shop-fix-tax/src/prices.ts")?.hint).toBe("shop-fix-tax/src");
+    expect(labels.get("/w/shop/lib/prices.ts")?.hint).toBe("lib");
+  });
 });
 
 describe("adjacentTab", () => {
