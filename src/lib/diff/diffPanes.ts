@@ -3,7 +3,7 @@ import { type DiffLayout, settings } from "$lib/stores/settings.svelte";
 
 type PanesKey = "changesDiffPanes" | "mergeDiffPanes";
 
-/** Side by side or Inline from the 3-column toolbar: Side by side there means 2 columns. */
+/** Side by side, Aligned or Inline from the 3-column toolbar: Side by side there means 2 columns. */
 export function setDiffLayout(panesKey: PanesKey, layout: DiffLayout): void {
   settings.setPreference("diffLayout", layout);
   if (layout === "sideBySide") {

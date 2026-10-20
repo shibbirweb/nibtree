@@ -81,7 +81,7 @@ Type a font list and press Enter, or click a font name below it. **Reset** goes 
 
 | Setting | What it does | Default |
 | --- | --- | --- |
-| Diff layout | Every diff **Side by side** or **Inline** ([Inline Diffs](Inline-Diffs.md)); the diff toolbar's buttons set it too. | Side by side |
+| Diff layout | Every diff **Side by side**, **Aligned** ([Aligned Diffs](Aligned-Diffs.md)) or **Inline** ([Inline Diffs](Inline-Diffs.md)); the diff toolbar sets it too. | Side by side |
 | Side by side in Changes, for commits | **3 columns**: the [Staging View](Staging-View.md), or a commit beside your working tree. | 2, 3 |
 | Merge tool layout | [Merge Tool](Merge-Tool.md) panes: Columns or Stacked. | Columns |
 | Ignore whitespace in the merge tool | Hides whitespace-only differences when a merge starts; its button sets it too. | Off |

@@ -1,5 +1,5 @@
-<!-- A file's diff: the toolbar (DiffToolbar), and the two sides side by side or inline in the library's DiffFrame,
-     whose editors diffEditors.svelte.ts builds. Binary files show a preview, Git LFS files their sizes. -->
+<!-- A file's diff: the toolbar (DiffToolbar), and the two sides side by side, aligned or inline in the library's
+     DiffFrame, whose editors diffEditors.svelte.ts builds. Binary files show a preview, Git LFS files their sizes. -->
 <script lang="ts">
   import DiffFrame from "@nibtree/ui/components/DiffFrame.svelte";
   import type { DiffFrameParts } from "@nibtree/ui/components/DiffFrame.svelte";
@@ -232,7 +232,7 @@
     current={editors.current}
     ongo={(direction) => editors.goToChunk(direction)}
     textDiff={textual && !identical}
-    layout={inline ? "inline" : "sideBySide"}
+    layout={settings.diffLayout}
     threePanes={threePanes?.title ?? null}
     onlayout={(layout) => (layout === "three" ? threePanes?.open() : settings.setPreference("diffLayout", layout))}
     showBlame={blame !== null}

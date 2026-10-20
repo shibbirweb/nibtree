@@ -26,10 +26,14 @@ export type LeftPanel = "changes" | "branches" | "scripts" | null;
 /** What the right sidebar shows while it is open: the file tree or the AI agents. */
 export type RightPanel = "files" | "ai" | "notifications";
 
-/** How a diff shows its two versions: in two columns, or in one with removed lines above added ones. */
-export type DiffLayout = "sideBySide" | "inline";
+/**
+ * How a diff shows its two versions: in two columns that each scroll (joined by bands), in two columns that scroll
+ * as one, line for line (VS Code style), or in one with removed lines above added ones.
+ */
+export type DiffLayout = "sideBySide" | "aligned" | "inline";
 export const DIFF_LAYOUT_CHOICES: { value: DiffLayout; label: string }[] = [
   { value: "sideBySide", label: "Side by side" },
+  { value: "aligned", label: "Aligned" },
   { value: "inline", label: "Inline" },
 ];
 const DIFF_LAYOUTS = DIFF_LAYOUT_CHOICES.map((choice) => choice.value);

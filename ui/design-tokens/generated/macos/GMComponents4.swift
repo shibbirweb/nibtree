@@ -117,6 +117,9 @@ public enum GMDiffFrameTokens {
     public static let ruler: CGFloat = 12
     public static let revertHeight: CGFloat = 20
     public static let revertRadius: CGFloat = 4
+    public static let fillerStripe: CGFloat = 1
+    public static let fillerGap: CGFloat = 8
+    public static let signWidth: CGFloat = 14
 }
 
 public enum GMCodeViewTokens {

@@ -8,9 +8,10 @@ Every diff can show its two versions side by side, or inline in one column. Inli
 
 ## Switch the layout
 
-Pick **Diff layout** in Settings > Git, or use the two buttons in the diff toolbar, after the change counter:
+Pick **Diff layout** in Settings > Git, or use the buttons in the diff toolbar, after the change counter:
 
 - **Side by side** (a box split down the middle): the old version on the left, the new one on the right. This is the default.
+- **Aligned** (two columns of short lines): side by side, line for line, scrolling as one. See [Aligned Diffs](Aligned-Diffs.md).
 - **Inline** (a box split across): one column. Each change shows the lines it removed, then the lines it added.
 
 The highlighted button is the layout in use, and both places change the same setting. Your choice is remembered and used for every diff: in [Changes](Changes-and-Commits.md), the [Log](History-and-Log.md), commit tabs, compare tabs and the Changes tab of the status bar. The buttons are greyed out for images, PDFs and files without text changes.

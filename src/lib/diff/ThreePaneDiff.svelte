@@ -31,7 +31,7 @@
     /** The middle text with one side's change taken into it (the band's arrow). */
     onapply?: ((middle: string, side: ParentSide) => void) | null;
     applyTitles?: { left: string; right: string } | null;
-    /** Side by side or Inline in the layout buttons: back to the two-pane diff. */
+    /** Side by side, Aligned or Inline in the layout buttons: back to the two-pane diff. */
     onlayout: (layout: DiffLayout) => void;
     /** The file in the work tree (absolute path), for Open File; `sameLines` when the right pane is the work tree. */
     workingFile?: { filePath: string; sameLines: boolean } | null;

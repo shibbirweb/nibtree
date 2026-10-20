@@ -59,7 +59,7 @@ Validators: `pickBoolean` (a boolean, else the default), `pickNumber` (a finite 
 
 | Key | Default | Accepted | Used by |
 | --- | --- | --- | --- |
-| `diffLayout` | `"sideBySide"` | `"sideBySide"` or `"inline"` | `diff/DiffView.svelte` |
+| `diffLayout` | `"sideBySide"` | `"sideBySide"`, `"aligned"` or `"inline"` | `diff/DiffView.svelte` |
 | `commitBoxLayout` | `"single"` | `"single"` or `"perRepo"` | `ChangesView.svelte`, `changes/RepoSection.svelte`, `git/ChangesTab.svelte` |
 | `ignoreWhitespace` | false | boolean | `merge/MergeEditor.svelte` |
 | `logAllRefs` | true | boolean | `views/LogView.svelte` |
