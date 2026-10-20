@@ -5,7 +5,7 @@
   const original = 'const port = 3000;\nconst host = "localhost";\n\nstart(host, port);\n';
   const modified =
     'const port = Number(env.PORT ?? 3000);\nconst host = "0.0.0.0";\n\nstart(host, port);\nlog("ready");\n';
-  let layout = $state<"split" | "inline">("split");
+  let layout = $state<"split" | "aligned" | "inline">("split");
 </script>
 
 <Segmented
@@ -13,6 +13,7 @@
   bind:value={layout}
   options={[
     { value: "split", label: "Side by side" },
+    { value: "aligned", label: "Aligned" },
     { value: "inline", label: "Inline" },
   ]}
 />

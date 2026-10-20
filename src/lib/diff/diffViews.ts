@@ -1,5 +1,6 @@
-// The editors of a diff, built into a DiffFrame's body: one EditorView for the inline layout (inlineDoc.ts) or a
-// MergeView side by side without padding, whose sides SplitLink keeps in step and joins with bands.
+// The editors of a diff, built into a DiffFrame's body: one EditorView for the inline layout (inlineDoc.ts), a
+// MergeView side by side without padding, whose sides SplitLink keeps in step and joins with bands, or an aligned
+// MergeView that keeps its padding, so both sides scroll as one, line for line.
 import type { Chunk } from "@codemirror/merge";
 import { MergeView } from "@codemirror/merge";
 import type { Extension } from "@codemirror/state";
@@ -12,6 +13,7 @@ import { applyBlock, buildInlineDoc, fallbackHunks, type InlineDoc } from "./inl
 import { type InlineControl, inlineDiffExtensions } from "./inlineView";
 import { hunkSelection } from "./revertChange";
 import type { DiffSide } from "./lineSelection";
+import { alignedPaneGutters } from "@nibtree/ui/editor/alignedGutters";
 import { splitPaneGutters } from "@nibtree/ui/editor/splitGutters";
 import { unpadded } from "./splitLink";
 
@@ -84,20 +86,21 @@ export function splitEditors(
     ? { scanLimit: SCAN_LIMIT, override: hunkDiff(fileDiff.original, fileDiff.modified, fileDiff.hunks) }
     : { scanLimit: SCAN_LIMIT };
   const folds = request.collapse ? splitFolds() : [];
+  const aligned = request.layout === "aligned";
+  const gutters = (side: "a" | "b") => {
+    const sideActions = actions(side === "a" ? "left" : "right");
+    return aligned ? alignedPaneGutters(side, sideActions) : splitPaneGutters(side, sideActions);
+  };
   const view = new MergeView({
     a: {
       doc: fileDiff.original,
-      extensions: [
-        sideExtensions(mode === "unstaged", parts.findOriginal, "old", false),
-        splitPaneGutters("a", actions("left")),
-        folds,
-      ],
+      extensions: [sideExtensions(mode === "unstaged", parts.findOriginal, "old", false), gutters("a"), folds],
     },
     b: {
       doc: fileDiff.modified,
       extensions: [
         sideExtensions(mode === "staged", parts.findModified, "new", false),
-        splitPaneGutters("b", actions("right")),
+        gutters("b"),
         blameExtensions,
         folds,
       ],
@@ -108,7 +111,7 @@ export function splitEditors(
     gutter: false,
     highlightChanges: true,
   });
-  return unpadded(view);
+  return aligned ? view : unpadded(view);
 }
 
 /** Change marks in the new text's line numbers, for the overview ruler. */

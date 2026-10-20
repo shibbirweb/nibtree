@@ -1,5 +1,6 @@
-<!-- Two versions of a text compared: side by side (`split`) or in one column with the removed lines above the ones
-     that replace them (`inline`), in the app's diff colors. Read-only; the app adds staging and its other diff
+<!-- Two versions of a text compared: side by side (`split`), side by side line for line with a hatched filler where a
+     side has no lines (`aligned`, VS Code style), or in one column with the removed lines above the ones that replace
+     them (`inline`), in the app's diff colors. Read-only; the app adds staging and its other diff
      features through `extensions`. -->
 <script lang="ts">
   import { MergeView, unifiedMergeView } from "@codemirror/merge";
@@ -9,6 +10,8 @@
   import { classHighlighter } from "@lezer/highlight";
   import { onDestroy } from "svelte";
   import { languageSupport, type CodeLanguage } from "../editor/languages";
+  import { alignedPaneGutters } from "../editor/alignedGutters";
+  import { sideColors } from "../editor/diffColors";
   import { mergeGutterTheme } from "../editor/mergeGutterTheme";
   import { sideLineNumbers } from "../editor/mergeGutters";
   import { splitGutterColors } from "../editor/splitGutters";
@@ -19,7 +22,7 @@
   interface Props {
     original: string;
     modified: string;
-    layout?: "split" | "inline";
+    layout?: "split" | "aligned" | "inline";
     language?: CodeLanguage;
     height?: ViewHeight;
     label: string;
@@ -62,7 +65,17 @@
       EditorView.editable.of(false),
       ...extensions,
     ];
-    if (layout === "split") {
+    if (layout === "aligned") {
+      // Red old and green new, numbers on the left of both sides; the padding lines the sides up.
+      const merge = new MergeView({
+        a: { doc: original, extensions: [...common, sideColors, alignedPaneGutters("a", null)] },
+        b: { doc: modified, extensions: [...common, sideColors, alignedPaneGutters("b", null)] },
+        parent: target,
+        gutter: false,
+        highlightChanges: true,
+      });
+      teardown = () => merge.destroy();
+    } else if (layout === "split") {
       // Each side's numbers face the other, and a change's color runs through them (no separate change bar).
       const merge = new MergeView({
         a: {
@@ -104,7 +117,7 @@
   style:flex={height === "fill" ? null : "none"}
 >
   <DiffFrame
-    {layout}
+    layout={layout === "inline" ? "inline" : "split"}
     {label}
     {sideLabels}
     bind:ratio

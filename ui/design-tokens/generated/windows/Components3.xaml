@@ -142,6 +142,9 @@
     <x:Double x:Key="GmDiffFrameRuler">12</x:Double>
     <x:Double x:Key="GmDiffFrameRevertHeight">20</x:Double>
     <x:Double x:Key="GmDiffFrameRevertRadius">4</x:Double>
+    <x:Double x:Key="GmDiffFrameFillerStripe">1</x:Double>
+    <x:Double x:Key="GmDiffFrameFillerGap">8</x:Double>
+    <x:Double x:Key="GmDiffFrameSignWidth">14</x:Double>
     <x:Double x:Key="GmCodeViewCopyHeight">22</x:Double>
     <x:Double x:Key="GmViewDialogHeight">820</x:Double>
     <x:Double x:Key="GmEditorTabDirtyDot">8</x:Double>

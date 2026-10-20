@@ -10,10 +10,10 @@ Two columns halve the width of each version. In a narrow window, or with long li
 
 ### One setting, every diff
 
-The layout is the `diffLayout` preference in `settings.json`: `"sideBySide"` (the default) or `"inline"`, read with `pickOneOf` against `DIFF_LAYOUT_CHOICES` in `settingsData.ts`, so any other value falls back to side by side. Two places set it with `settings.setPreference("diffLayout", ...)`, so they always agree:
+The layout is the `diffLayout` preference in `settings.json`: `"sideBySide"` (the default), `"aligned"` ([How the aligned diff works](How-the-Aligned-Diff-Works.md)) or `"inline"`, read with `pickOneOf` against `DIFF_LAYOUT_CHOICES` in `settingsData.ts`, so any other value falls back to side by side. Two places set it with `settings.setPreference("diffLayout", ...)`, so they always agree:
 
 - **Diff layout** in Settings > Git, a segmented control like File toolbar, found by Settings search under words such as "unified" and "split".
-- Two buttons in a `role="group"` in the diff toolbar (`DiffToolbar.svelte`), with the `split-view` and `split-rows` icons. They are disabled when the diff has no text to show (binary, too large, LFS or identical). The build effect reads the setting, so a click tears the old view down and builds the other one; the layout is part of the scroll key.
+- Three buttons in a `role="group"` in the diff toolbar (`DiffToolbar.svelte`), with the `split-view`, `split-aligned` and `split-rows` icons. They are disabled when the diff has no text to show (binary, too large, LFS or identical). The build effect reads the setting, so a click tears the old view down and builds the other one; the layout is part of the scroll key.
 
 ### The inline document
 

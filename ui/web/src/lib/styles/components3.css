@@ -140,6 +140,9 @@
   --diff-frame-ruler: 12px;
   --diff-frame-revert-height: 20px;
   --diff-frame-revert-radius: 4px;
+  --diff-frame-filler-stripe: 1px;
+  --diff-frame-filler-gap: 8px;
+  --diff-frame-sign-width: 14px;
   --code-view-copy-height: 22px;
   --view-dialog-height: 820px;
   --editor-tab-dirty-dot: 8px;

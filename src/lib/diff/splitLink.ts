@@ -6,7 +6,7 @@ import type { ConnectorRibbon } from "@nibtree/ui/components/MergeConnector.svel
 import { overlaps, span, visibleLines } from "$lib/merge/mergeRibbons";
 import { lineAtCenter, scrollToLine } from "$lib/merge/mergeScroll";
 import { invertAnchors, mapLine } from "$lib/merge/model";
-import { chunkKind, chunkLines, copyChange, diffAnchors } from "./splitChunks";
+import { chunkKind, chunkLines, diffAnchors } from "./splitChunks";
 
 type Side = "a" | "b";
 
@@ -93,20 +93,6 @@ export class SplitLink {
       });
     });
     return ribbons;
-  }
-
-  /** Copies change `index` onto the left side (`toA`, stage) or the right one (unstage), as a revert. */
-  copy(index: number, toA: boolean): void {
-    const { a, b, chunks } = this.view;
-    const chunk = chunks[index];
-    if (!chunk) {
-      return;
-    }
-    const edit = copyChange(chunk, toA, a.state.doc, b.state.doc);
-    (edit.target === "a" ? a : b).dispatch({
-      changes: { from: edit.from, to: edit.to, insert: edit.insert },
-      userEvent: "revert",
-    });
   }
 
   dispose(): void {

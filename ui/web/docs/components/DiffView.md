@@ -1,6 +1,6 @@
 # DiffView
 
-Two versions of a text compared, side by side or inline, in the app's diff colors.
+Two versions of a text compared, side by side, aligned or inline, in the app's diff colors.
 
 ```ts
 import DiffView from "@nibtree/ui/components/DiffView.svelte";
@@ -11,14 +11,17 @@ Group: Editor. Also known as: Diff, Compare.
 ## When to use
 
 Use for file diffs, the Changes diff and compare tabs. Side by side, each side's line numbers face the other and a
-change's color runs through them (editor/splitGutters.ts). The app adds staging buttons (`splitPaneGutters`, beside the
-numbers), folds (editor/foldRow.ts) and its other diff features through `extensions`.
+change's color runs through them (editor/splitGutters.ts). Aligned (VS Code style), both sides scroll as one, line for
+line: numbers on the left, a minus or plus on each changed line and a hatched filler where a side has no lines
+(editor/alignedGutters.ts). The app adds staging buttons (`splitPaneGutters`, beside the numbers), folds
+(editor/foldRow.ts) and its other diff features through `extensions`.
 
 ## Props
 
 - `original` (`string`, required): The old text (left, or the removed lines).
 - `modified` (`string`, required): The new text.
-- `layout` (`"split" | "inline"`, default `"split"`): Side by side, or one column.
+- `layout` (`"split" | "aligned" | "inline"`, default `"split"`): Side by side, side by side line for line, or one
+  column.
 - `language` (`"plain" | "ts" | "js" | "svelte" | "html" | "css" | "json" | "md" | "python" | "rust"`, default
   `"plain"`): Syntax colors.
 - `height` (`"fill" | "small" | "medium" | "large"`, default `"fill"`): Fill the parent, or 160, 240 or 360 px.

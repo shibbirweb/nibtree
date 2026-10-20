@@ -2693,6 +2693,28 @@ define(
 );
 
 define(
+  "diff-aligned",
+  async (shot) => {
+    await collapseRepo(shot, "payments-api");
+    await shot.page.getByRole("button", { name: "Hide files" }).click();
+    await shot.page
+      .getByRole("group", { name: "storefront", exact: true })
+      .getByRole("region", { name: "Changes" })
+      .getByText("cart.ts")
+      .click();
+    await shot.page.locator("[aria-label='Diff'] .cm-diffSigns").first().waitFor();
+    await shot.settle(500);
+    const view = shot.page.getByRole("region", { name: "Diff", exact: true }).first();
+    const box = await view.boundingBox();
+    if (!box) {
+      throw new Error("diff-aligned: no diff view");
+    }
+    await shot.save({ x: box.x, y: box.y, width: box.width, height: Math.min(box.height, 560) });
+  },
+  () => ({ settings: { diffLayout: "aligned" } }),
+);
+
+define(
   "diff-split-resize",
   async (shot) => {
     await collapseRepo(shot, "payments-api");

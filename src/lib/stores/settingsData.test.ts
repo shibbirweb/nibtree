@@ -237,6 +237,7 @@ describe("parsePreferences", () => {
   it("validates the diff layout", () => {
     expect(parsePreferences({}).preferences.diffLayout).toBe("sideBySide");
     expect(parsePreferences({ diffLayout: "inline" }).preferences.diffLayout).toBe("inline");
+    expect(parsePreferences({ diffLayout: "aligned" }).preferences.diffLayout).toBe("aligned");
     expect(parsePreferences({ diffLayout: "unified" }).preferences.diffLayout).toBe("sideBySide");
     expect(parsePreferences({}).preferences.changesDiffPanes).toBe("two");
     expect(parsePreferences({}).preferences.mergeDiffPanes).toBe("three");

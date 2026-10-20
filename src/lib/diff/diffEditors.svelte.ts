@@ -1,10 +1,10 @@
-// The editors of a diff: a MergeView side by side (its sides linked by SplitLink), or one EditorView inline
-// (inlineDoc.ts), built into the body of the library's DiffFrame. Keeps the change count and position, the
+// The editors of a diff: a MergeView side by side (its sides linked by SplitLink) or aligned (scrolling as one), or
+// one EditorView inline (inlineDoc.ts), built into the body of the library's DiffFrame. Keeps the change count and position, the
 // selection's changed lines, the connector's bands and the overview ruler; DiffView.svelte draws the toolbar.
 import type { MergeView } from "@codemirror/merge";
 import type { ChunkActions } from "@nibtree/ui/editor/mergeGutters";
 import type { Extension } from "@codemirror/state";
-import { EditorView, keymap, panels } from "@codemirror/view";
+import { EditorView, panels } from "@codemirror/view";
 import type { DiffFrameParts } from "@nibtree/ui/components/DiffFrame.svelte";
 import type { ConnectorRibbon } from "@nibtree/ui/components/MergeConnector.svelte";
 import { type BlameTarget, blameExtension, loadBlame } from "$lib/editor/blame";
@@ -14,10 +14,12 @@ import { type DiffLayout, settings } from "$lib/stores/settings.svelte";
 import type { FileDiff, LineHunk, LineSelection } from "$lib/types";
 import { newLineOnScreen, revealChange, revealNewLine, rulerMarks, selectedLines } from "./diffPositions";
 import { inlineEditor, splitEditors } from "./diffViews";
+import { changeKeys, geometryWatch, selectionWatch } from "./diffWatch";
 import type { InlineDoc } from "./inlineDoc";
 import { type DiffSide, selectionSize } from "./lineSelection";
 import { chunkKinds, diffTheme, sideColors } from "./mergeExtensions";
 import { chunkSelection } from "./revertChange";
+import { copyViewChange } from "./splitChunks";
 import { SplitLink } from "./splitLink";
 
 export type DiffMode = "unstaged" | "staged" | "readonly";
@@ -47,7 +49,7 @@ export class DiffEditors {
   current = $state(-1);
   /** Changed lines the selection picks, for the line action buttons. */
   selectedLines = $state(0);
-  /** The connector's bands side by side; null inline. */
+  /** The connector's bands side by side; null aligned and inline. */
   ribbons = $state.raw<ConnectorRibbon[] | null>(null);
 
   #view: MergeView | null = null;
@@ -98,13 +100,18 @@ export class DiffEditors {
 
   /** The new text's line to open the file at: the cursor line when it is on screen, else the top line. */
   lineOnScreen(editor: EditorView): number {
-    return newLineOnScreen(editor, this.#inlineDoc);
+    return newLineOnScreen(editor, this.#inlineDoc, this.#scroller() ?? editor.scrollDOM);
+  }
+
+  /** What scrolls the diff: the aligned MergeView itself, else the new side (or the inline editor). */
+  #scroller(): HTMLElement | null {
+    return this.#view && !this.#link ? this.#view.dom : (this.newEditor()?.scrollDOM ?? null);
   }
 
   teardown(scrollKey: string): void {
     this.#token++;
     // The right side (or the inline editor) keeps the place; the left one follows it.
-    const scroller = this.newEditor()?.scrollDOM;
+    const scroller = this.#scroller();
     if (!scroller) {
       return;
     }
@@ -135,10 +142,7 @@ export class DiffEditors {
       return;
     }
     const changedSide = mode === "unstaged" ? "original" : "modified";
-    const navigation = keymap.of([
-      { key: "F7", run: () => this.goToChunk(1) },
-      { key: "Shift-F7", run: () => this.goToChunk(-1) },
-    ]);
+    const navigation = changeKeys((direction) => this.goToChunk(direction));
     const listener = EditorView.updateListener.of((update) => {
       if (!update.docChanged || !update.transactions.some((transaction) => transaction.isUserEvent("revert"))) {
         return;
@@ -152,21 +156,7 @@ export class DiffEditors {
       this.scheduleSelectionCount();
       request.onChange?.(changedSide, update.state.doc.toString());
     });
-    const selectionWatch = (side: DiffSide) =>
-      EditorView.updateListener.of((update) => {
-        const picked = update.transactions.some((transaction) => transaction.isUserEvent("select"));
-        if (picked || (update.focusChanged && update.view.hasFocus)) {
-          this.#activeSide = side;
-        }
-        if (update.selectionSet || update.focusChanged) {
-          this.scheduleSelectionCount();
-        }
-      });
-    const geometry = EditorView.updateListener.of((update) => {
-      if (update.docChanged || update.geometryChanged || update.heightChanged || update.viewportChanged) {
-        this.scheduleStrip();
-      }
-    });
+    const geometry = geometryWatch(() => this.scheduleStrip());
     const sideExtensions = (changes: boolean, findHost: HTMLElement, side: DiffSide, numbered = true): Extension[] =>
       baseExtensions({
         readOnly: true,
@@ -178,7 +168,10 @@ export class DiffEditors {
           chunkKinds,
           navigation,
           geometry,
-          selectionWatch(side),
+          selectionWatch(
+            () => (this.#activeSide = side),
+            () => this.scheduleSelectionCount(),
+          ),
           changes ? listener : [],
           panels({ topContainer: findHost }),
         ],
@@ -198,9 +191,11 @@ export class DiffEditors {
     } else {
       this.#view = splitEditors(request, sideExtensions, blameExtensions);
       editor = this.#view.b;
-      this.#link = new SplitLink(this.#view, parts.body, (ribbons) => (this.ribbons = ribbons));
       this.#copyToA = mode === "unstaged";
-      this.ribbons = [];
+      if (request.layout === "sideBySide") {
+        this.#link = new SplitLink(this.#view, parts.body, (ribbons) => (this.ribbons = ribbons));
+        this.ribbons = [];
+      }
     }
     this.#viewHunks = fileDiff.hunks ?? null;
     this.#activeSide = "new";
@@ -224,8 +219,9 @@ export class DiffEditors {
     const restore = this.#lastScroll?.key === scrollKey ? this.#lastScroll.top : null;
     requestAnimationFrame(() => {
       if (this.newEditor() === editor && !this.applyReveal(editor)) {
-        if (restore !== null) {
-          editor.scrollDOM.scrollTop = restore;
+        const scroller = this.#scroller();
+        if (restore !== null && scroller) {
+          scroller.scrollTop = restore;
         } else if (this.changeCount() > 0) {
           this.current = 0;
           this.#revealChange(0);
@@ -281,7 +277,9 @@ export class DiffEditors {
 
   /** The arrow on band `index`: stage or unstage that change. */
   copyChange(index: number): void {
-    this.#link?.copy(index, this.#copyToA);
+    if (this.#view) {
+      copyViewChange(this.#view, index, this.#copyToA);
+    }
   }
 
   goToChunk(direction: 1 | -1): boolean {

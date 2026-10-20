@@ -75,7 +75,7 @@ const SECTION_ENTRIES: Record<SettingsSection, EntrySpec[]> = {
     ["Blame gutter", "annotate author column"],
   ],
   merge: [
-    ["Diff layout", "side by side inline unified split one column compare view"],
+    ["Diff layout", "side by side aligned vs code inline unified split one column compare view"],
     ["Side by side in Changes", "three 3 two 2 columns panes staged index staging", "Diff layout"],
     ["Side by side for commits", "three 3 two 2 columns panes parents merge result working tree", "Diff layout"],
     ["Merge tool layout", "columns stacked three panes result below conflicts view"],
