@@ -154,6 +154,7 @@ GitHub release notes, and the app shows it as "What's New".
 ### Changed
 
 - The editor's change bars now compare your text with the staged version, like VS Code, instead of the last commit: a staged change drops out of the bars. A click on a bar opens the change peek instead of reverting right away; **Revert this change** is in the peek.
+- Ignored files and folders in the Files panel look like VS Code's: dimmed, in italics, and with a circle with a slash at the right end.
 - Rounded panels are on by default for new installs. If you already use Nibtree, your current look stays until you change it in Settings > Appearance.
 - The AI usage readout in the status bar is off by default for new installs, so macOS no longer asks for your Keychain password until you turn it on. Pick **Right** or **Left** in **Settings > AI > Usage in status bar** to see it.
 - With rounded panels off, the project color in the top bar glows the same way as with rounded panels on: from the window's top left corner, easing out to the right, instead of a narrow band along the bar.
