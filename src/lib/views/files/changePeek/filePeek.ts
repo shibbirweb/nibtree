@@ -8,12 +8,22 @@ import type { LineHunk } from "$lib/editor/lineDiff";
 import { revertEdit } from "$lib/editor/revertLines";
 import { repoStore } from "$lib/stores/repo.svelte";
 import type { RepoLocation } from "$lib/stores/workspacePaths";
-import type { Eol } from "$lib/types";
+import type { Eol, LineSelection } from "$lib/types";
 import { dialogs } from "$lib/ui/dialog.svelte";
 import { toast } from "$lib/ui/toast.svelte";
 import ChangePeek from "./ChangePeek.svelte";
 import { type PeekTarget, peekField, showPeek } from "./peekField";
-import { changeIndexAt, hunkKind, peekChanges, peekLine, stagedText, stepIndex, viewHunks } from "./peekModel";
+import {
+  changeIndexAt,
+  hunkIndexOf,
+  hunkKind,
+  indexAfterRevert,
+  peekChanges,
+  peekLine,
+  stagedText,
+  stepIndex,
+  viewHunks,
+} from "./peekModel";
 
 export interface PeekHost {
   view: () => EditorView | null;
@@ -77,12 +87,15 @@ export class FilePeek {
     await this.#load((hunks) => Math.min(shown.index, hunks.length - 1));
   }
 
-  /** After a confirm, the shown change's lines go back to the index's, as one edit of the text. */
-  async revert(): Promise<void> {
+  /**
+   * After a confirm, the lines of change `target` (the shown one, or any change's own button in the peek's diff) go
+   * back to the index's, as one edit of the text.
+   */
+  async revert(target = this.#shown?.index ?? -1): Promise<void> {
     const owner = this.host.location();
     const view = this.host.view();
     const shown = this.#shown;
-    if (!owner || !view || !shown || view.state.readOnly) {
+    if (!owner || !view || !shown || view.state.readOnly || !shown.hunks[target]) {
       return;
     }
     const fileName = owner.repoPath.split("/").pop() ?? owner.repoPath;
@@ -97,9 +110,9 @@ export class FilePeek {
     if (!confirmed || this.host.view() !== view || view.state.doc.toString() !== shown.text) {
       return;
     }
-    const edit = revertEdit(view.state.doc, shown.hunks[shown.index], shown.base.split("\n"));
+    const edit = revertEdit(view.state.doc, shown.hunks[target], shown.base.split("\n"));
     view.dispatch({ changes: edit, selection: { anchor: edit.from }, userEvent: "input.revert" });
-    await this.#load((hunks) => Math.min(shown.index, hunks.length - 1));
+    await this.#load((hunks) => indexAfterRevert(shown.index, target, hunks.length));
   }
 
   /** Reads the index version and shows the change `pick` chooses; none left (or -1) closes the peek. */
@@ -159,6 +172,7 @@ export class FilePeek {
         editable: !view.state.readOnly,
         onstage: () => void this.stage(),
         onrevert: () => void this.revert(),
+        onrevertchange: (selection: LineSelection) => void this.revert(hunkIndexOf(shown.hunks, selection)),
         onstep: (direction) => this.step(direction),
         onclose: () => {
           this.close();

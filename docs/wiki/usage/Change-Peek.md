@@ -30,7 +30,9 @@ At the right of the header:
 - **Next change** and **Previous change** (arrows): move the peek to the next or the previous change in the file. After the last one they wrap to the first.
 - **Close** (x): closes the peek. Escape inside the peek does the same.
 
-A read-only file has no Stage or Revert button.
+Every change in the peek's diff also has its own **Revert this change** button (the curved arrow) beside the working tree's line numbers, so you can revert any change you see in the peek, not only the one it opened on. It asks first too, and the peek stays on its change.
+
+A read-only file has no Stage or Revert buttons.
 
 Typing in the file closes the peek, since the diff it shows would be out of date. Click the bar again to see the change as it is now.
 

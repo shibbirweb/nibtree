@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   changeIndexAt,
+  hunkIndexOf,
   hunkKind,
+  indexAfterRevert,
   peekChanges,
   peekCounter,
   peekLine,
@@ -65,5 +67,22 @@ describe("counter and steps", () => {
     expect(peekCounter(0, 1)).toBe("1 of 1 change");
     expect(stepIndex(3, 4, 1)).toBe(0);
     expect(stepIndex(0, 4, -1)).toBe(3);
+  });
+});
+
+describe("a change's own Revert button", () => {
+  const hunks = peekChanges(base, doc);
+
+  it("finds the change from its lines on either side", () => {
+    expect(hunkIndexOf(hunks, { oldLines: [[0, 1]], newLines: [[0, 1]] })).toBe(0);
+    expect(hunkIndexOf(hunks, { oldLines: [], newLines: [[3, 4]] })).toBe(1);
+    expect(hunkIndexOf(hunks, { oldLines: [[4, 5]], newLines: [] })).toBe(2);
+    expect(hunkIndexOf(hunks, { oldLines: [[1, 2]], newLines: [[1, 2]] })).toBe(-1);
+  });
+
+  it("keeps the peek on its change when another one goes", () => {
+    expect(indexAfterRevert(2, 0, 3)).toBe(1);
+    expect(indexAfterRevert(1, 2, 3)).toBe(1);
+    expect(indexAfterRevert(2, 2, 2)).toBe(1);
   });
 });

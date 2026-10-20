@@ -35,6 +35,7 @@ The bars and the peek compare with the index, like VS Code. `git/base_file.rs` r
 
 - **Stage** writes `stagedText` (the index text with this one change's lines in it) with `stage_content`, through `repoStore.run` with a status refresh. It then refreshes the bars and opens the peek again on the same index, now the next change.
 - **Revert** confirms, checks the text is still the one it diffed, and dispatches `revertEdit` with `userEvent: "input.revert"`, then opens the next change. See [How reverting a change works](How-Reverting-a-Change-Works.md).
+- **A change's own Revert** in the diff: `ChangePeek` passes `onRevert` (inline) and a `bands` revert on the right side (side by side and aligned) to `DiffEditors`. Each hands over the change's lines, which `hunkIndexOf` maps back to the peek's change; `FilePeek.revert(target)` reverts that one, and `indexAfterRevert` keeps the peek on the change it showed.
 - **Next** and **Previous** wrap with `stepIndex`.
 
 ### The panel
@@ -64,7 +65,7 @@ The bars and the peek compare with the index, like VS Code. `git/base_file.rs` r
 
 ## Tests
 
-- `src/lib/views/files/changePeek/peekModel.test.ts`: kinds, the change on a line and a deletion's line, where the peek opens, staging one change of several, a new file and a last line without a break, the counter and wrapping.
+- `src/lib/views/files/changePeek/peekModel.test.ts`: kinds, the change on a line and a deletion's line, where the peek opens, staging one change of several, a new file and a last line without a break, the counter and wrapping, and mapping a change's own Revert button back to its change.
 - `src-tauri/src/commands/editor.rs`: marks against the index, a staged line leaving the marks and changing the version, a conflicted file comparing with HEAD, a staged rename.
 - The widget, the buttons and scrolling need a check in the app: `change-peek` in `scripts/screenshots.ts`.
 

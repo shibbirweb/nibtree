@@ -1,6 +1,7 @@
 <!-- The change peek's content (peekField.ts puts it under the change): the file's diff against the index in the
      library's PeekPanel, in the Diff layout from Settings, scrolled to the change, with Stage, Revert, the next and
-     previous change and Close in its header. The diff editors are the diff view's own (DiffEditors). -->
+     previous change and Close in its header, and a Revert button on every change of the diff. The diff editors are
+     the diff view's own (DiffEditors). -->
 <script lang="ts">
   import DiffFrame from "@nibtree/ui/components/DiffFrame.svelte";
   import type { DiffFrameParts } from "@nibtree/ui/components/DiffFrame.svelte";
@@ -10,7 +11,7 @@
   import { diffPrefs } from "$lib/diff/prefs.svelte";
   import { clampDiffSplit } from "$lib/diff/split";
   import { settings } from "$lib/stores/settings.svelte";
-  import type { Eol } from "$lib/types";
+  import type { Eol, LineSelection } from "$lib/types";
   import { type PeekKind, peekCounter } from "./peekModel";
 
   interface Props {
@@ -26,11 +27,27 @@
     editable: boolean;
     onstage: () => void;
     onrevert: () => void;
+    /** A change's own Revert button in the diff, with the lines it covers. */
+    onrevertchange: (selection: LineSelection) => void;
     onstep: (direction: 1 | -1) => void;
     onclose: () => void;
   }
 
-  let { path, base, text, eol, hunks, index, kind, editable, onstage, onrevert, onstep, onclose }: Props = $props();
+  let {
+    path,
+    base,
+    text,
+    eol,
+    hunks,
+    index,
+    kind,
+    editable,
+    onstage,
+    onrevert,
+    onrevertchange,
+    onstep,
+    onclose,
+  }: Props = $props();
 
   const hunk = $derived(hunks[index]);
   /** Each build scrolls to the change again, also after a layout switch. */
@@ -59,7 +76,34 @@
       tooLarge: false,
       hunks,
     };
-    void editors.build({ parts: target, diff, path, mode: "readonly", collapse, layout, scrollKey, blame: null });
+    // Side by side and aligned, each change's Revert button sits beside the working tree's numbers.
+    const bands = editable
+      ? {
+          side: "right" as const,
+          actions: {
+            revert: (change: number) => {
+              const selection = editors.changeLines(change);
+              if (selection) {
+                onrevertchange(selection);
+              }
+            },
+            toward: "left" as const,
+            revertTitle: "Revert this change",
+          },
+        }
+      : null;
+    void editors.build({
+      parts: target,
+      diff,
+      path,
+      mode: "readonly",
+      collapse,
+      layout,
+      scrollKey,
+      blame: null,
+      onRevert: editable ? onrevertchange : null,
+      bands,
+    });
     return () => editors.teardown(scrollKey);
   });
 </script>

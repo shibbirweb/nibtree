@@ -2,6 +2,7 @@
 // and the index text that stages one change. Lines are 0-based; a text ending in a line break has an empty last line.
 import { diffLines, type LineHunk } from "$lib/editor/lineDiff";
 import { changeAtLine } from "$lib/editor/revertLines";
+import type { LineSelection } from "$lib/types";
 
 export type PeekKind = "added" | "modified" | "deleted";
 
@@ -51,4 +52,22 @@ export function stagedText(baseText: string, docText: string, hunk: LineHunk): s
 /** The changes as the diff view's hunks, so the peek's diff shows exactly these changes. */
 export function viewHunks(hunks: readonly LineHunk[]): [number, number, number, number][] {
   return hunks.map((hunk) => [hunk.oldStart, hunk.oldEnd, hunk.newStart, hunk.newEnd]);
+}
+
+function overlaps(ranges: readonly [number, number][], start: number, end: number): boolean {
+  return end > start && ranges.some(([from, to]) => from < end && to > start);
+}
+
+/** The change a button in the peek's diff belongs to, from the lines it covers on either side; -1 for none. */
+export function hunkIndexOf(hunks: readonly LineHunk[], selection: LineSelection): number {
+  return hunks.findIndex(
+    (hunk) =>
+      overlaps(selection.newLines, hunk.newStart, hunk.newEnd) ||
+      overlaps(selection.oldLines, hunk.oldStart, hunk.oldEnd),
+  );
+}
+
+/** The change the peek stays on after change `reverted` is gone, out of `count` left. */
+export function indexAfterRevert(shown: number, reverted: number, count: number): number {
+  return Math.min(reverted < shown ? shown - 1 : shown, count - 1);
 }
