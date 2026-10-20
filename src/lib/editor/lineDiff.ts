@@ -1,6 +1,6 @@
 // Line-level Myers diff, fast when the texts are mostly equal (the usual
 // case for "what changed in this file"). Used to number selected lines as in
-// HEAD; the editor's change marks come from the backend (line_change_marks).
+// HEAD, and the change peek's changes; the editor's change marks come from the backend (line_change_marks).
 
 export interface LineHunk {
   /** Half-open line range in the old text. */

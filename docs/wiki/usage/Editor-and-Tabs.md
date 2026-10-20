@@ -1,6 +1,6 @@
 # Editor and Tabs
 
-Nibtree has a light code editor. Open files in tabs, edit and save them, and jump to the lines you changed since the last commit.
+Nibtree has a light code editor. Open files in tabs, edit and save them, and jump to the lines you changed and have not staged.
 
 ![Editor tabs and the path bar](../images/editor-tabs.png)
 
@@ -99,9 +99,9 @@ Saving is in the **File** menu:
 
 *A green bar beside the new lines, ticks beside the scrollbar, and 2 changes in the path bar.*
 
-While you edit, Nibtree compares the text with the last commit:
+While you edit, Nibtree compares the text with the index (staged version):
 
-- A thin colored bar next to the line numbers marks added and modified lines, a small mark deleted ones. Click a bar to [revert its change](Revert-a-Change.md).
+- A thin colored bar next to the line numbers marks added and modified lines, a small mark deleted ones. Click a bar to [peek at its change](Change-Peek.md).
 - The strip beside the scrollbar has a tick for every change and conflict. Click a tick to jump there. Hover it to see the kind of change and the line.
 - Conflict blocks are marked in their own color and win over plain changes.
 

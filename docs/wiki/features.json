@@ -32,6 +32,7 @@
     { "page": "usage/Inline-Diffs.md", "summary": "Show a diff in one column, with removed lines above the new ones." },
     { "page": "usage/Aligned-Diffs.md", "summary": "Show a diff side by side, line for line, scrolling as one, like VS Code." },
     { "page": "usage/Staging-View.md", "summary": "HEAD, the index and the work tree in three panes; stage single changes." },
+    { "page": "usage/Change-Peek.md", "summary": "Click a change bar in the editor to see that change's diff, stage it or revert it." },
     { "page": "usage/Revert-a-Change.md", "summary": "Throw away one change, or apply one from a commit, from any diff or the editor." },
     { "page": "usage/Resolving-Conflicts.md", "summary": "What to do when a merge, rebase or cherry-pick stops on conflicts." },
     { "page": "usage/Merge-Tool.md", "summary": "The three pane merge tool: take changes from either side and check the result." },
@@ -332,6 +333,13 @@
       "usage": "usage/Inline-Diffs.md",
       "developer": "developer/How-the-Inline-Diff-Works.md",
       "screenshots": ["diff-inline.png"]
+    },
+    {
+      "id": "change-peek",
+      "title": "Change peek",
+      "usage": "usage/Change-Peek.md",
+      "developer": "developer/How-the-Change-Peek-Works.md",
+      "screenshots": ["change-peek.png"]
     },
     {
       "id": "aligned-diffs",

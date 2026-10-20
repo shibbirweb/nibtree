@@ -252,5 +252,6 @@
     "underlineIndicator": 2
   },
   "listBox": {"minHeight": 120},
-  "pane": {"paddingTop": 4, "paddingBottom": 8}
+  "pane": {"paddingTop": 4, "paddingBottom": 8},
+  "peekPanel": {"headerHeight": 32, "paddingX": 12, "gap": 8}
 }

@@ -4,6 +4,40 @@ const LABEL_COLUMN = '"small" | "medium" | "large"';
 
 export const panelDocs: ComponentDoc[] = [
   {
+    name: "PeekPanel",
+    group: "Editor",
+    summary: "A band set into an editor under a line, like VS Code's peek: a header with buttons, then content.",
+    usage:
+      "Put it in an editor's block widget, such as the change peek under a changed line. Name what it shows in " +
+      "`title` and `detail`, put compact IconButtons in `actions`, and the content (a DiffFrame) in `children`; " +
+      "it fills the set height. `tone` colors the lines above and below like the change.",
+    aliases: ["Peek", "Inline panel", "Quick diff"],
+    props: [
+      prop("label", "string", "Accessible name.", { required: true }),
+      prop("title", "string", "The title, such as the file name.", { required: true, data: true }),
+      prop("detail", "string | null", "Quieter text after the title, such as the counter.", {
+        default: "null",
+        data: true,
+      }),
+      prop("tone", '"added" | "modified" | "deleted" | "neutral"', "The lines' color, like the change.", {
+        default: '"neutral"',
+      }),
+      prop("height", '"xsmall" | "small" | "medium" | "large" | "xlarge"', "The whole band's height.", {
+        default: '"large"',
+      }),
+      prop("actions", "Snippet", "Buttons at the end of the header."),
+      prop("onclose", "() => void", "Escape inside the panel."),
+      prop("children", "Snippet", "The content, filling the rest.", { required: true }),
+    ],
+    examples: [
+      {
+        title: "A change",
+        code: '<PeekPanel label="Change" title="cart.ts" detail="2 of 4 changes" tone="added">...</PeekPanel>',
+      },
+    ],
+    replaces: [],
+  },
+  {
     name: "RichEditorHost",
     group: "Editor",
     summary: "The page a rich Markdown editor (TipTap) is mounted into, in the preview's typography.",

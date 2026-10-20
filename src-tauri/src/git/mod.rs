@@ -1,3 +1,4 @@
+pub mod base_file;
 pub mod bisect;
 pub mod blame;
 pub mod cancel;

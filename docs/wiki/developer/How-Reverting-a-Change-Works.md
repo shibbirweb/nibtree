@@ -1,6 +1,6 @@
 # How reverting a change works
 
-This chapter explains the Revert button on each change of the Changes diff and the click on a change bar in the file editor. The user side is in [Revert a Change](../usage/Revert-a-Change.md). The diff itself is in [How Diffs Work](How-Diffs-Work.md) and [How the inline diff works](How-the-Inline-Diff-Works.md); the editor and its change bars are in [How the Editor Works](How-the-Editor-Works.md).
+This chapter explains the Revert button on each change of the Changes diff and in the file editor's change peek. The user side is in [Revert a Change](../usage/Revert-a-Change.md). The diff itself is in [How Diffs Work](How-Diffs-Work.md) and [How the inline diff works](How-the-Inline-Diff-Works.md); the editor and its change bars are in [How the Editor Works](How-the-Editor-Works.md).
 
 ## Why we need it
 
@@ -8,7 +8,7 @@ Staging one change was already one click, but throwing one away meant selecting 
 
 ## How it works
 
-The two places revert against different versions, because each shows a different comparison: the Changes diff compares the index with the working tree, and the editor's bars compare the editor's text with HEAD. So they take two paths.
+Both compare the index with the newer text, but the Changes diff reverts the file on disk while the editor changes its own unsaved text. So they take two paths.
 
 ```mermaid
 flowchart TD
@@ -17,10 +17,10 @@ flowchart TD
   C --> D[changesSelection.applyLines: confirm Revert Change]
   D --> E[apply_selected_lines: version check, reverse patch on the work tree]
   E --> F[Toast with Undo: restore_discarded_lines]
-  G[Click on an editor change bar] --> H[changeGutter onBarClick]
-  H --> I[FileGitInfo.revertChange: confirm]
-  I --> J[readHeadFile, diffLines against the text now]
-  J --> K[revertLines.ts: changeAtLine, revertEdit]
+  G[Revert in the editor's change peek] --> H[FilePeek.revert]
+  H --> I[confirm Revert Change]
+  I --> J[the peek's readBaseFile and diffLines, text unchanged]
+  J --> K[revertLines.ts: revertEdit]
   K --> L[One editor transaction, undoable]
 ```
 
@@ -38,13 +38,11 @@ These diffs are read-only, so `DiffView` takes `onRevert` (and `onApply` for a c
 
 ### In the editor
 
-`changeGutter` takes an optional `onBarClick`. Its `mousedown` handler looks up the gutter's own markers on the clicked line, so a click beside an unchanged line or on a conflict's bar does nothing. `FileGitInfo.revertChange` then:
+A click on a change bar opens the change peek ([How the change peek works](How-the-Change-Peek-Works.md)), which has already read the index version (`readBaseFile`) and diffed it with the text (`diffLines`). Its **Revert this change** calls `FilePeek.revert`, which:
 
 1. Confirms with a danger dialog.
-2. Reads HEAD's file with `readHeadFile` (LF text, the path HEAD has for a staged rename).
-3. Diffs it with the editor's text as it is now (`diffLines`), so edits made while the dialog was open count.
-4. Picks the change with `changeAtLine`: the hunk holding the line, or the deletion whose wedge sits on it (at the end of the text, the last line).
-5. Dispatches the edit from `revertEdit` as one transaction with `userEvent: "input.revert"`.
+2. Checks that the text is still the one the peek diffed, as any edit closes the peek.
+3. Dispatches the edit from `revertEdit` as one transaction with `userEvent: "input.revert"`, then opens the peek on the change that takes its place.
 
 ## Where the code lives
 
@@ -58,7 +56,7 @@ These diffs are read-only, so `DiffView` takes `onRevert` (and `onApply` for a c
 | `src/lib/diff/diffActions.ts`, `src-tauri/src/commands/revision_lines.rs` | Revert and Apply between two revisions, or a revision and the work tree |
 | `src/lib/editor/scrollMarkers.ts` | `changeGutter` and its bar click |
 | `src/lib/editor/revertLines.ts` | `changeAtLine` and `revertEdit` |
-| `src/lib/views/files/fileGitInfo.ts` | `revertChange` for the editor |
+| `src/lib/views/files/changePeek/filePeek.ts` | `revert` for the editor's change peek |
 
 ## Design decisions
 
@@ -66,7 +64,7 @@ These diffs are read-only, so `DiffView` takes `onRevert` (and `onApply` for a c
 
 **Edit the buffer in the editor, not the file.** The editor may hold unsaved text the disk does not have. An editor transaction keeps undo, auto save and the dirty state working as for typing.
 
-**Diff again on click.** The bars come from the backend and may be up to 200 ms old. Diffing HEAD with the text of that moment means the revert always matches what is there. Past `MAX_EDITS` the diff is one big change, so the whole range reverts.
+**Diff again on click.** The bars come from the backend and may be up to 200 ms old. The peek diffs the index version with the text of that moment, so the revert always matches what is there. Past `MAX_EDITS` the diff is one big change, so the whole range reverts.
 
 **Always confirm.** Reverting loses work, and a click on a 5 pixel bar is easy to make by mistake.
 
