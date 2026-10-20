@@ -33,7 +33,8 @@ pub struct Locations<'a> {
     pub home: PathBuf,
     pub env: &'a dyn Fn(&str) -> Option<PathBuf>,
     pub brew_prefixes: Vec<PathBuf>,
-    /// Where n installs when `N_PREFIX` is unset: `/usr/local` on a real machine.
+    /// Where n installs when `N_PREFIX` is unset: `/usr/local` on a real machine. n has no Windows version.
+    #[cfg_attr(windows, allow(dead_code))]
     pub n_prefix: PathBuf,
 }
 
