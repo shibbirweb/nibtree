@@ -53,16 +53,17 @@ gitGraph
 | `browser.yml` (Browser version) | push to `master`, any pull request, a call from `release.yml` | tests the browser version on six platforms and in Docker; publishes it to npm and Docker for a release, then checks it |
 | `browser-rehearsal.yml` (Browser release rehearsal) | push to `develop`, or a manual run | the browser version's whole release path, uploading nothing |
 | `browser-verify.yml` (Browser release check) | a call from `release.yml`, or a manual run | installs and runs the published npm packages and Docker image |
-| `windows-installer.yml`, `macos-app.yml` | any pull request | build, check and keep the Windows and macOS apps |
+| `windows-installer.yml`, `macos-app.yml`, `linux-packages.yml` | any pull request | build, check and keep the Windows, macOS and Linux apps |
 | `wiki.yml` (Wiki) | push to `master` that touches the docs, or a manual run | publishes `docs/wiki` to the GitHub wiki |
 
 ## CI
 
-`ci.yml` runs two jobs on `macos-latest`, because the app ships for macOS, and the same two on Windows.
+`ci.yml` runs two jobs on `macos-latest`, the same two on Windows, and the Rust one on Linux.
 
 - **Frontend:** `bun install --frozen-lockfile`, `bun scripts/version.ts check`, `bun scripts/file-icons.ts --check` (see [How file icons work](How-File-Icons-Work.md)), `bun run check`, `bun run test` and, in the step "Wiki docs are complete", `bun scripts/build-wiki.ts --check`.
 - **Rust:** builds the frontend first (`tauri::generate_context!` embeds it, so it must exist), then `cargo test --locked --workspace` and `cargo clippy --locked --workspace --all-targets -- -D warnings`.
 - **Windows:** the same checks in `windows-frontend` and `windows-rust`, side by side on `windows-latest`; a failed check never skips the next. Both must pass ([Windows Support](Windows-Support.md)).
+- **Linux:** the Rust checks in `linux-rust` on `ubuntu-22.04`, with the WebKitGTK libraries installed ([Linux Support](Linux-Support.md)).
 
 `--frozen-lockfile` and `--locked` fail when `bun.lock` or `Cargo.lock` is out of date, so always commit them.
 
@@ -120,7 +121,7 @@ sequenceDiagram
 
 ## Building: `release.yml`
 
-It checks that every file agrees on the version, that the tag is exactly `v` plus the version in `src-tauri/Cargo.toml`, and that the pre-release flag matches (betas must be pre-releases, stable versions must not). Empty or GitHub-generated notes are replaced with the changelog section. Unless the caller says CI already passed, it runs `ci.yml` first. Then `tauri-action` builds a universal app (Apple Silicon and Intel) and attaches the `.dmg` and zipped `.app`. When the repository variable `WINDOWS_RELEASES` is `true`, `build-windows` also attaches the Windows installer. The `npm` job calls `browser.yml`, which builds the browser version for six platforms and publishes it to npm ([Browser Version Packages](Browser-Version-Packages.md)). Run workflow with a tag rebuilds an existing release. Signing is optional: add the `APPLE_*` secrets named at the top of the file and uncomment the matching lines.
+It checks that every file agrees on the version, that the tag is exactly `v` plus the version in `src-tauri/Cargo.toml`, and that the pre-release flag matches (betas must be pre-releases, stable versions must not). Empty or GitHub-generated notes are replaced with the changelog section. Unless the caller says CI already passed, it runs `ci.yml` first. Then `tauri-action` builds a universal app (Apple Silicon and Intel) and attaches the `.dmg` and zipped `.app`. When the repository variable `WINDOWS_RELEASES` is `true`, `build-windows` also attaches the Windows installer, and with `LINUX_RELEASES`, `build-linux` attaches the AppImage and `.deb`. The `npm` job calls `browser.yml`, which builds the browser version for six platforms and publishes it to npm ([Browser Version Packages](Browser-Version-Packages.md)). Run workflow with a tag rebuilds an existing release. Signing is optional: add the `APPLE_*` secrets named at the top of the file and uncomment the matching lines.
 
 ## Publishing the wiki: `wiki.yml`
 

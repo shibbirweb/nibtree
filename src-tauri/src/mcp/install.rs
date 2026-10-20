@@ -1,5 +1,6 @@
 //! Puts the command line tool on the PATH, never with sudo and never in /usr/local.
-//! macOS and Linux: a `nibtree` link in `~/.local/bin` to the running binary.
+//! macOS and Linux: a `nibtree` link in `~/.local/bin` to the running binary (on Linux, to the AppImage
+//! when the app runs from one).
 //! Windows: a `nibtree.cmd` in `%LOCALAPPDATA%\Microsoft\WindowsApps`, which Windows puts on
 //! every user's PATH, running the console program `nibtree-cli.exe` next to the app (the
 //! app itself is a GUI program there, without a console).
@@ -150,9 +151,21 @@ pub fn cli_program(exe: &Path) -> PathBuf {
 }
 
 pub fn current_exe() -> PathBuf {
+    if let Some(app_image) = app_image_in(std::env::var_os("APPIMAGE")) {
+        return app_image;
+    }
     std::env::current_exe()
         .and_then(|exe| exe.real_path())
         .unwrap_or_else(|_| PathBuf::from(LINK_NAME))
+}
+
+/// Linux AppImage: the binary runs from a mount that is gone once the app quits, so a link has to point at
+/// the AppImage file itself, which its runtime names in `APPIMAGE`.
+fn app_image_in(app_image: Option<std::ffi::OsString>) -> Option<PathBuf> {
+    if !cfg!(target_os = "linux") {
+        return None;
+    }
+    app_image.filter(|path| !path.is_empty()).map(PathBuf::from)
 }
 
 #[cfg(test)]
@@ -220,5 +233,17 @@ mod tests {
         assert!(on_path(home, "/usr/bin:/Users/someone/.local/bin:/bin"));
         assert!(!on_path(home, "/usr/bin:/bin"));
         assert!(!on_path(home, ""));
+    }
+
+    #[test]
+    fn links_to_the_app_image_only_on_linux() {
+        let app_image = Some(std::ffi::OsString::from("/home/someone/Apps/Nibtree.AppImage"));
+        if cfg!(target_os = "linux") {
+            assert_eq!(app_image_in(app_image), Some(PathBuf::from("/home/someone/Apps/Nibtree.AppImage")));
+        } else {
+            assert_eq!(app_image_in(app_image), None);
+        }
+        assert_eq!(app_image_in(Some(std::ffi::OsString::new())), None);
+        assert_eq!(app_image_in(None), None);
     }
 }

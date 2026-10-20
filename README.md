@@ -4,7 +4,7 @@ A native desktop Git client with a 3-way merge tool, multi-folder workspaces, ta
 
 ![Nibtree: Changes, the editor with blame, and the Files panel](docs/wiki/images/window-overview.png)
 
-- **[Download the latest release](https://github.com/shibbirweb/nibtree/releases)**: the desktop app for macOS (Apple Silicon and Intel) and Windows 10 and 11
+- **[Download the latest release](https://github.com/shibbirweb/nibtree/releases)**: the desktop app for macOS (Apple Silicon and Intel), Windows 10 and 11, and Linux (x64)
 - **In your browser**: `npx nibtree` ([npm](#in-your-browser-with-npm)), or [Docker](#in-docker) with `docker run` or `docker compose`
 - **[User guide and developer docs](https://github.com/shibbirweb/nibtree/wiki)**
 - **[Report a bug or request a feature](https://github.com/shibbirweb/nibtree/issues/new/choose)**
@@ -64,25 +64,25 @@ Every feature has its own page with screenshots in the [wiki](https://github.com
 
 ## Platforms
 
-The desktop app runs on macOS and Windows with the same features; Linux is planned. The [browser version](#in-your-browser-with-npm) runs on more platforms, [below](#browser-version-platforms). Each platform is built and tested on every pull request. Where the desktop app differs:
+The desktop app runs on macOS, Windows and Linux with the same features (Linux has no memory readout yet). The [browser version](#in-your-browser-with-npm) runs on more platforms, [below](#browser-version-platforms). Each platform is built and tested on every pull request. Where the desktop app differs:
 
 | | macOS | Windows | Linux |
 | --- | --- | --- | --- |
-| Download | Universal `.dmg` (Apple Silicon and Intel) | `-setup.exe` for 64-bit Windows 10 and 11, installs for your account without admin rights | Planned |
-| First launch | Not signed yet: right-click the app, Open | Not signed yet: SmartScreen, More info, Run anyway | |
-| Web view | WebKit (WKWebView) | Microsoft Edge WebView2 (the installer adds it if missing) | |
-| Menu bar | Top of the screen, with a Nibtree menu | Inside the window; Settings and Exit in File, About in Help | |
-| Shortcuts | Cmd and Option | Ctrl and Alt; Navigation Bar is Alt+Home, tabs switch with Ctrl+PageDown and Ctrl+PageUp | |
-| Git menu keys (Commit, Update Project, Show Log) | Cmd+K, Cmd+T, Cmd+9 | None: Ctrl+K and Ctrl+T belong to the shell | |
-| Terminal shells | Your login shell and those in `/etc/shells` | PowerShell 7, Windows PowerShell, Command Prompt and Git Bash | |
-| Terminal copy and paste | Cmd+C, Cmd+V | Ctrl+Shift+C, Ctrl+Shift+V | |
-| Tools found on PATH | Read from your login shell (`~/.zprofile`) | The PATH Windows gives the app | |
-| Git sign-in | Your git setup (macOS keychain, SSH agent) | Your git setup (Git Credential Manager, SSH agent) | |
-| GitHub token | Keychain | Credential Manager | |
-| Deleted files | Trash | Recycle Bin | |
-| Settings folder | `~/.nibtree` | `C:\Users\<you>\.nibtree` | |
-| Command line tool | `nibtree` in the app, linked into `~/.local/bin` | `nibtree-cli.exe` next to the app, `nibtree.cmd` in WindowsApps | |
-| Memory readout | Activity Monitor's Memory (physical footprint) | Task Manager's Memory (private working set) | |
+| Download | Universal `.dmg` (Apple Silicon and Intel) | `-setup.exe` for 64-bit Windows 10 and 11, installs for your account without admin rights | `.AppImage` (any distribution) or `.deb` (Ubuntu, Debian), x64 |
+| First launch | Not signed yet: right-click the app, Open | Not signed yet: SmartScreen, More info, Run anyway | AppImage: `chmod +x` first |
+| Web view | WebKit (WKWebView) | Microsoft Edge WebView2 (the installer adds it if missing) | WebKitGTK |
+| Menu bar | Top of the screen, with a Nibtree menu | Inside the window; Settings and Exit in File, About in Help | Inside the window, like Windows |
+| Shortcuts | Cmd and Option | Ctrl and Alt; Navigation Bar is Alt+Home, tabs switch with Ctrl+PageDown and Ctrl+PageUp | Like Windows |
+| Git menu keys (Commit, Update Project, Show Log) | Cmd+K, Cmd+T, Cmd+9 | None: Ctrl+K and Ctrl+T belong to the shell | None, like Windows |
+| Terminal shells | Your login shell and those in `/etc/shells` | PowerShell 7, Windows PowerShell, Command Prompt and Git Bash | Your login shell and those in `/etc/shells` |
+| Terminal copy and paste | Cmd+C, Cmd+V | Ctrl+Shift+C, Ctrl+Shift+V | Ctrl+Shift+C, Ctrl+Shift+V |
+| Tools found on PATH | Read from your login shell (`~/.zprofile`) | The PATH Windows gives the app | Read from your login shell |
+| Git sign-in | Your git setup (macOS keychain, SSH agent) | Your git setup (Git Credential Manager, SSH agent) | Your git setup (credential helper, SSH agent) |
+| GitHub token | Keychain | Credential Manager | Keyring (GNOME Keyring or KWallet) |
+| Deleted files | Trash | Recycle Bin | Trash |
+| Settings folder | `~/.nibtree` | `C:\Users\<you>\.nibtree` | `~/.nibtree` |
+| Command line tool | `nibtree` in the app, linked into `~/.local/bin` | `nibtree-cli.exe` next to the app, `nibtree.cmd` in WindowsApps | `nibtree` (on PATH from the `.deb`; linked into `~/.local/bin` from the AppImage) |
+| Memory readout | Activity Monitor's Memory (physical footprint) | Task Manager's Memory (private working set) | Not yet |
 
 ### Browser version platforms
 
@@ -101,7 +101,7 @@ Only a small server runs on your machine (or in a container); any modern browser
 | PDF preview | Safari's built-in viewer | Microsoft Edge's built-in viewer | |
 | Opening the app again | Brings the running app forward | Hands its folder to the running app | |
 
-The user guide covers each difference where it matters ([Getting Started](https://github.com/shibbirweb/nibtree/wiki/Getting-Started) has the install steps); how the code handles them is in [Windows Support](https://github.com/shibbirweb/nibtree/wiki/Windows-Support).
+The user guide covers each difference where it matters ([Getting Started](https://github.com/shibbirweb/nibtree/wiki/Getting-Started) has the install steps); how the code handles them is in [Windows Support](https://github.com/shibbirweb/nibtree/wiki/Windows-Support) and [Linux Support](https://github.com/shibbirweb/nibtree/wiki/Linux-Support).
 
 ## Three ways to run it
 
@@ -111,7 +111,7 @@ the first stable release is out, use the `next` lines below: they give the newes
 
 ### Desktop app
 
-Download it from [Releases](https://github.com/shibbirweb/nibtree/releases): the `.dmg` for macOS (Apple Silicon and Intel) or `-setup.exe` for Windows 10 and 11. Betas are marked as pre-releases; the app tells you about updates on your channel (Settings).
+Download it from [Releases](https://github.com/shibbirweb/nibtree/releases): the `.dmg` for macOS (Apple Silicon and Intel), `-setup.exe` for Windows 10 and 11, or the `.AppImage` or `.deb` for Linux. Betas are marked as pre-releases; the app tells you about updates on your channel (Settings).
 
 ### In your browser with npm
 
@@ -275,7 +275,7 @@ The [wiki](https://github.com/shibbirweb/nibtree/wiki) has a user guide with scr
 ## Continuous integration and releases
 
 - **Branches**: work merges into `develop` (the beta line) by pull request; `master` is stable.
-- **CI** (`.github/workflows/ci.yml`) runs on every push to `develop` and `master` and every pull request, on macOS: `bun scripts/version.ts check`, `bun run check`, `bun run test`, `bun scripts/build-wiki.ts --check`, `cargo test` and `cargo clippy --all-targets -- -D warnings`.
+- **CI** (`.github/workflows/ci.yml`) runs on every push to `develop` and `master` and every pull request, on macOS: `bun scripts/version.ts check`, `bun run check`, `bun run test`, `bun scripts/build-wiki.ts --check`, `cargo test` and `cargo clippy --all-targets -- -D warnings`. The checks also run on Windows, and the Rust ones on Linux. Every pull request also builds the macOS app, the Windows installer and the Linux packages (`macos-app.yml`, `windows-installer.yml`, `linux-packages.yml`) and keeps them as downloads.
 - **Browser version** (`.github/workflows/browser.yml`) builds `nibtree-browser` on macOS, Linux and Windows (x64 and Arm each), runs its tests, smoke tests its npm packages and its Docker image (amd64 and arm64); every release publishes them to npm, ghcr.io and Docker Hub.
 - **Versions and notes**: the version lives in `src-tauri/Cargo.toml` and only the release workflows move it. Release notes come from `CHANGELOG.md`, so write each change under `## [Unreleased]` in the same pull request.
 - **Releases** are automated: the "Beta release" and "Stable release" workflows open a release pull request; once it is merged (and, for a stable release, the `develop` to `master` pull request too), the GitHub release is published and the macOS app is built. Builds are unsigned unless the `APPLE_*` secrets are set.

@@ -1,7 +1,7 @@
 //! The desktop app's real windows: making them, their bounds, the saved session and the app loop's window
 //! events. Only with the `desktop` feature; in the browser, tabs stand in for windows (src/lib/browser).
 
-#[cfg(windows)]
+#[cfg(any(windows, target_os = "linux"))]
 use std::path::Path;
 use std::sync::atomic::Ordering;
 
@@ -16,7 +16,7 @@ use crate::config::{self, ConfigPatch, PatchSet};
 use crate::error::{AppError, AppResult};
 use crate::mcp::McpWindow;
 use crate::state::AppState;
-#[cfg(windows)]
+#[cfg(any(windows, target_os = "linux"))]
 use crate::windows::Shown;
 use crate::windows::{self, Bounds, SessionEntry, WindowOpen};
 
@@ -31,10 +31,10 @@ pub(super) const DEFAULT_TITLE: &str = "Nibtree";
 /// A logical (x, y) position or (width, height) size.
 type Pair = (f64, f64);
 
-/// Windows: a second start of the app hands its arguments here and exits (tauri-plugin-single-instance).
+/// Windows and Linux: a second start of the app hands its arguments here and exits (tauri-plugin-single-instance).
 /// A folder or workspace file opens like Open Folder in New Window, or focuses the window showing it;
 /// with nothing to open, the last focused window comes to the front.
-#[cfg(windows)]
+#[cfg(any(windows, target_os = "linux"))]
 pub fn on_second_launch(app: &AppHandle, args: &[String], cwd: &str) {
     let state = app.state::<AppState>();
     let Some(open) = windows::open_for_arguments(args.get(1..).unwrap_or_default(), Path::new(cwd)) else {

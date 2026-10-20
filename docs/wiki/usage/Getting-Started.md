@@ -1,6 +1,6 @@
 # Getting Started
 
-Nibtree is a small, fast Git app for macOS and Windows. It shows what changed in your projects, lets you commit, switch branches and sync with a server, and has a friendly three pane tool for fixing merge conflicts.
+Nibtree is a small, fast Git app for macOS, Windows and Linux. It shows what changed in your projects, lets you commit, switch branches and sync with a server, and has a friendly three pane tool for fixing merge conflicts.
 
 ## Install
 
@@ -20,9 +20,16 @@ Open the [Releases page](https://github.com/shibbirweb/nibtree/releases) on GitH
 
 Nibtree draws its window with Microsoft Edge WebView2, which Windows 10 and 11 already have. If it is missing, the installer downloads it.
 
+### On Linux
+
+- **AppImage** (any 64-bit distribution): download it, run `chmod +x Nibtree_*.AppImage`, then open it. If it does not start, install FUSE 2 (`libfuse2` on Ubuntu).
+- **.deb** (Ubuntu, Debian): run `sudo apt install ./Nibtree_*.deb`.
+
+A GitHub token is saved in your desktop's keyring (GNOME Keyring or KWallet).
+
 ### Git itself
 
-Nibtree uses the `git` already installed on your computer for every change it makes, so your hooks, passwords and signing keys work the same as in a terminal. If you have never used git on this computer, install it first: on a Mac with `xcode-select --install`, on Windows with [Git for Windows](https://git-scm.com/download/win).
+Nibtree uses the `git` already installed on your computer for every change it makes, so your hooks, passwords and signing keys work the same as in a terminal. If you have never used git on this computer, install it first: on a Mac with `xcode-select --install`, on Windows with [Git for Windows](https://git-scm.com/download/win), on Linux from your package manager.
 
 ## First launch
 

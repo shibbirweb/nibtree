@@ -85,7 +85,8 @@ interface GitHubRelease {
 
 /**
  * The asset to download on `platform` (a `platformName`): the .dmg on macOS, the installer on
- * Windows (the NSIS setup, else an .msi). None elsewhere, so the release page opens instead.
+ * Windows (the NSIS setup, else an .msi), the AppImage on Linux (it runs on any distribution; the
+ * .deb is on the release page). None elsewhere, so the release page opens instead.
  */
 export function downloadAsset(assets: GitHubAsset[], platform: string): GitHubAsset | null {
   const named = (pattern: RegExp) => assets.find((asset) => pattern.test(asset.name ?? "")) ?? null;
@@ -94,6 +95,9 @@ export function downloadAsset(assets: GitHubAsset[], platform: string): GitHubAs
   }
   if (platform === "Windows") {
     return named(/-setup\.exe$/i) ?? named(/\.msi$/i);
+  }
+  if (platform === "Linux") {
+    return named(/\.AppImage$/i);
   }
   return null;
 }

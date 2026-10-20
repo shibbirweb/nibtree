@@ -46,6 +46,8 @@ describe("downloadAsset", () => {
     { name: "Git.Manager_0.2.0_x64_en-US.msi", browser_download_url: "https://x/msi" },
     { name: "Git.Manager_0.2.0_x64-setup.exe", browser_download_url: "https://x/exe" },
     { name: "Git.Manager_universal.app.tar.gz", browser_download_url: "https://x/tar" },
+    { name: "Nibtree_0.2.0_amd64.deb", browser_download_url: "https://x/deb" },
+    { name: "Nibtree_0.2.0_amd64.AppImage", browser_download_url: "https://x/appimage" },
   ];
 
   it("picks the file for each platform", () => {
@@ -57,10 +59,12 @@ describe("downloadAsset", () => {
         "Windows",
       )?.browser_download_url,
     ).toBe("https://x/msi");
+    expect(downloadAsset(assets, "Linux")?.browser_download_url).toBe("https://x/appimage");
   });
 
   it("has nothing for a platform without a build", () => {
-    expect(downloadAsset(assets, "Linux")).toBeNull();
+    expect(downloadAsset(assets, "Unknown")).toBeNull();
+    expect(downloadAsset([{ name: "Nibtree_0.2.0_amd64.deb" }], "Linux")).toBeNull();
     expect(downloadAsset([{ name: "Git.Manager_0.2.0_universal.dmg" }], "Windows")).toBeNull();
     expect(downloadAsset([], "macOS")).toBeNull();
   });

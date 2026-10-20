@@ -1,0 +1,88 @@
+# Builds the Linux packages (AppImage and .deb) for every pull request, installs the .deb on the runner, runs both
+# packages' command line tool, and keeps them as downloads (the run's Artifacts) for trying the app on Linux.
+#
+# Apart from ci.yml on purpose, like windows-installer.yml: a release build takes a while, and the release
+# workflows wait for CI. release.yml builds the real packages the same way in build-linux.
+name: Linux packages
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to the same pull request makes the older packages useless.
+concurrency:
+  group: linux-packages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packages:
+    name: Build, install and keep the Linux packages
+    # The oldest supported runner, so the AppImage needs no newer glibc than Ubuntu 22.04's.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # The same libraries as build-linux in release.yml.
+      - name: Linux libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libxdo-dev libssl-dev librsvg2-dev pkg-config
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # tauri.linux.conf.json makes the AppImage and the .deb.
+      - name: Build the packages
+        run: bun run tauri build
+
+      # The .deb must install with its dependencies and put `nibtree` on the PATH; without FUSE on the runner, the
+      # AppImage unpacks itself and runs from there. Both must answer: exit code 2 with "not running" is right, the
+      # app is installed but not started.
+      - name: Install the .deb and run both command line tools
+        timeout-minutes: 10
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: 1
+        run: |
+          check() {
+            set +e
+            output="$("$1" cli status 2>&1)"
+            code=$?
+            set -e
+            echo "$output"
+            if [ "$code" != "2" ] || ! echo "$output" | grep -q "not running"; then
+              echo "::error::$1 cli status answered $code instead of 2 and \"not running\""
+              exit 1
+            fi
+          }
+          deb="$(find src-tauri/target/release/bundle/deb -name '*.deb' | head -n 1)"
+          dpkg-deb --info "$deb"
+          sudo apt-get install -y "./$deb"
+          check nibtree
+          appimage="$(find src-tauri/target/release/bundle/appimage -name '*.AppImage' | head -n 1)"
+          echo "AppImage: $appimage"
+          chmod +x "$appimage"
+          check "$appimage"
+
+      - name: Keep the packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nibtree-linux-packages
+          path: |
+            src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/deb/*.deb
+          retention-days: 14
+          if-no-files-found: error
