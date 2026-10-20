@@ -177,7 +177,7 @@ function home(manifest: Manifest): string {
   return [
     GENERATED_NOTE,
     "",
-    "Nibtree is a native Git client for macOS with a friendly three pane merge tool, workspaces, tabs, blame and history.",
+    "Nibtree is a native Git client for macOS, Windows and Linux with a friendly three pane merge tool, workspaces, tabs, blame and history.",
     "",
     "## Using Nibtree",
     "",

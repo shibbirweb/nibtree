@@ -89,7 +89,7 @@ src-tauri/
 ├── capabilities/default.json   what the main window may call
 ├── build.rs                tauri_build::build()
 ├── .gitignore              keeps target/ and gen/schemas out of git
-├── icons/                  app icons
+├── icons/                  app icons from docs/brand/nibtree-logo-branch.svg (bun tauri icon into a temp folder, copy these sizes)
 └── src/
     ├── main.rs             calls nibtree_lib::run()
     ├── lib.rs              plugins, AppState, the registered commands, `nibtree cli`

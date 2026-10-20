@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/brand/nibtree-logo-branch.svg" width="128" height="128" alt="Nibtree logo"></p>
+
 # Nibtree
 
 A native desktop Git client with a 3-way merge tool, multi-folder workspaces, tabs, blame and history, and a place to run and watch AI coding agents side by side. Built with Rust (Tauri 2) and a small Svelte 5 UI running in the system web view, so it starts fast and stays light on memory.

@@ -155,6 +155,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Changed
 
+- The app icon is the Nibtree logo now, a date palm with git's branch on its trunk, in the Dock, the taskbar, the Linux app list and the browser tab.
 - The editor's change bars now compare your text with the staged version, like VS Code, instead of the last commit: a staged change drops out of the bars. A click on a bar opens the change peek instead of reverting right away; **Revert this change** is in the peek.
 - Tabs with the same file name show as much of their folder as tells them apart, such as `shop/src` and `shop-fix-tax/src` for the same file in two worktrees, instead of only the parent folder.
 - Ignored files and folders in the Files panel look like VS Code's: dimmed, in italics, and with a circle with a slash at the right end.
