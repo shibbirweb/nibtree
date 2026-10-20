@@ -112,4 +112,4 @@ The MCP tools `list_scripts`, `run_script` and `stop_run` go through the same `s
 
 ## Bugs we fixed
 
-None yet.
+- **Tests saw the CI machine's own Node.** The Node version tests failed on the Linux CI runner with an extra "22.23.3 n". The runner has Node installed with n, and n's default folder `/usr/local` was written into the code, so the tests read the real machine instead of their temporary home. Now `Locations.n_prefix` carries that folder like `brew_prefixes` does: `/usr/local` for the app, a temporary folder in tests, which also check that n is found.

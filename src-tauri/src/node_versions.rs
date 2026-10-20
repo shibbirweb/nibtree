@@ -33,6 +33,8 @@ pub struct Locations<'a> {
     pub home: PathBuf,
     pub env: &'a dyn Fn(&str) -> Option<PathBuf>,
     pub brew_prefixes: Vec<PathBuf>,
+    /// Where n installs when `N_PREFIX` is unset: `/usr/local` on a real machine.
+    pub n_prefix: PathBuf,
 }
 
 /// The Node program in a version's bin folder.
@@ -83,7 +85,7 @@ impl Locations<'_> {
         add("asdf", Some((self.env)("ASDF_DATA_DIR").unwrap_or_else(|| home.join(".asdf"))), "installs/nodejs", "bin");
         add("mise", Some((self.env)("MISE_DATA_DIR").unwrap_or_else(|| home.join(".local/share/mise"))), "installs/node", "bin");
         add("nodenv", Some((self.env)("NODENV_ROOT").unwrap_or_else(|| home.join(".nodenv"))), "versions", "bin");
-        add("n", Some((self.env)("N_PREFIX").unwrap_or_else(|| PathBuf::from("/usr/local"))), "n/versions/node", "bin");
+        add("n", Some((self.env)("N_PREFIX").unwrap_or_else(|| self.n_prefix.clone())), "n/versions/node", "bin");
         layouts
     }
 }
@@ -181,6 +183,7 @@ pub fn installed_here() -> Vec<NodeInstall> {
         home,
         env: &env,
         brew_prefixes,
+        n_prefix: PathBuf::from("/usr/local"),
     };
     installed(&locations)
 }
@@ -224,9 +227,11 @@ mod tests {
         node_at(&brew.join("Cellar/node@18/18.19.1/bin"));
         std::fs::create_dir_all(brew.join("opt")).unwrap();
         std::os::unix::fs::symlink(brew.join("Cellar/node@18/18.19.1"), brew.join("opt/node@18")).unwrap();
+        let n_prefix = temp.path().join("usr-local");
+        node_at(&n_prefix.join("n/versions/node/17.9.1/bin"));
 
         let env = |name: &str| (name == "ASDF_DATA_DIR").then(|| custom_asdf.clone());
-        let locations = Locations { home: home.clone(), env: &env, brew_prefixes: vec![brew.clone()] };
+        let locations = Locations { home: home.clone(), env: &env, brew_prefixes: vec![brew.clone()], n_prefix };
         let listed: Vec<(String, String)> = installed(&locations)
             .into_iter()
             .map(|install| (install.version, install.manager))
@@ -239,6 +244,7 @@ mod tests {
             ("19.9.0", "asdf"),
             ("18.20.4", "nvm"),
             ("18.19.1", "Homebrew"),
+            ("17.9.1", "n"),
             ("16.20.2", "Herd"),
         ]
         .iter()
@@ -257,7 +263,8 @@ mod tests {
         let herd = home.join("Library/Application Support/Herd/config/nvm");
         node_at(&herd.join("versions/node/v20.18.0/bin"));
         let env = |name: &str| (name == "NVM_DIR").then(|| herd.clone());
-        let locations = Locations { home, env: &env, brew_prefixes: Vec::new() };
+        let n_prefix = home.join("usr-local");
+        let locations = Locations { home, env: &env, brew_prefixes: Vec::new(), n_prefix };
         let listed = installed(&locations);
         assert_eq!(listed.len(), 1);
         assert_eq!(listed[0].manager, "Herd");
