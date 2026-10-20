@@ -15,7 +15,7 @@ export interface TreeDecoration {
   badge?: string;
   /** A pending cut: the name and icon half faded. */
   cut?: boolean;
-  /** Ignored by git: the name and icon faint. */
+  /** Ignored by git: the name and icon faint, the name in italics, and a circle with a slash at the end. */
   ignored?: boolean;
   /** A workspace folder in a multi-folder workspace: its name as a section header. */
   root?: boolean;

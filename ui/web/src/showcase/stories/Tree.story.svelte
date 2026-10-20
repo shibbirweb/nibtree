@@ -18,7 +18,9 @@
         { id: "src/old.ts", label: "old.ts" },
       ],
     },
+    { id: "build", label: "build", children: [{ id: "build/app.js", label: "app.js" }] },
     { id: "gen", label: "generated (2,000 files)", children: many },
+    { id: ".DS_Store", label: ".DS_Store" },
     { id: "README.md", label: "README.md" },
   ];
   const STATUS: Record<string, TreeDecoration> = {
@@ -26,6 +28,8 @@
     "src/lib/cart.ts": { tone: "accent", badge: "M", badgeTitle: "Modified", title: "src/lib/cart.ts" },
     "src/main.ts": { tone: "success", badge: "A" },
     "src/old.ts": { tone: "danger", strike: true, badge: "D" },
+    build: { ignored: true },
+    ".DS_Store": { ignored: true },
   };
 
   let expanded = $state(["src", "src/lib"]);
