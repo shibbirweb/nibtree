@@ -186,6 +186,12 @@ public enum GMPaneTokens {
     public static let paddingBottom: CGFloat = 8
 }
 
+public enum GMPeekPanelTokens {
+    public static let headerHeight: CGFloat = 32
+    public static let paddingX: CGFloat = 12
+    public static let gap: CGFloat = 8
+}
+
 public enum GMBulletListTokens {
     public static let indent: CGFloat = 18
 }

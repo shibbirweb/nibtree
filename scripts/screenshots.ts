@@ -1818,6 +1818,20 @@ define(
   () => ({ settings: { currentLineBlame: false } }),
 );
 
+define(
+  "change-peek",
+  async (shot) => {
+    await shot.openFile(cartTs());
+    const bar = shot.page.locator("main.main .cm-change-clickable .cm-change-bar").first();
+    await bar.waitFor();
+    await bar.click();
+    await shot.page.locator("main.main .cm-change-peek section").first().waitFor();
+    await shot.settle(500);
+    await shot.save(shot.page.locator("main.main"));
+  },
+  () => ({ settings: { currentLineBlame: false, diffLayout: "inline" } }),
+);
+
 /** Puts up a push, a failed pull, a fetch and a pull as the app words them, held on screen like a pointer over them. */
 async function showSampleToasts(shot: Shot): Promise<void> {
   await inApp(

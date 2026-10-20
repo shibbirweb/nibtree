@@ -1,5 +1,5 @@
-//! Git info for the file editor: change marks against HEAD, blame of the text on screen and
-//! the committed version. The editor's text arrives as a raw body (see `raw_parts`), so a
+//! Git info for the file editor: change marks against the index (see `git::base_file`), blame of the text on
+//! screen, and the indexed and committed versions. The editor's text arrives as a raw body (see `raw_parts`), so a
 //! large file crosses the bridge as plain bytes instead of an escaped JSON string.
 
 use std::path::Path;
@@ -11,6 +11,7 @@ use tauri::ipc::Request;
 
 use super::{blocking, raw_parts};
 use crate::error::{AppError, AppResult};
+use crate::git::base_file;
 use crate::git::blame::{self, BlameRuns};
 use crate::git::diff::{self, HeadFile, HeadVersion};
 use crate::git::repo as git_repo;
@@ -33,11 +34,11 @@ struct BlameArgs {
     eol: Eol,
 }
 
-/// The editor's changes since the last commit and the HEAD version they were measured against.
+/// The editor's changes against the index (what is staged) and the version they were measured against.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LineMarks {
-    pub head: HeadVersion,
+    pub base: HeadVersion,
     pub marks: Vec<ChangeMark>,
 }
 
@@ -45,17 +46,17 @@ fn utf8(bytes: &[u8]) -> AppResult<&str> {
     std::str::from_utf8(bytes).map_err(|_| AppError::invalid("The text is not valid UTF-8"))
 }
 
-/// Marks for `doc` (the editor's LF-normalized text) against the file in HEAD. A binary or
-/// very large committed file gets none; a file HEAD does not have is all added.
+/// Marks for `doc` (the editor's LF-normalized text) against the file in the index. A binary or
+/// very large base file gets none; a file neither the index nor HEAD has is all added.
 pub fn marks_for(repo: &Repository, file_path: &str, orig_path: Option<&str>, doc: &str) -> AppResult<LineMarks> {
-    let head = diff::head_file(repo, file_path, orig_path)?;
-    let marks = if head.binary || head.too_large {
+    let base = base_file::base_file(repo, file_path, orig_path)?;
+    let marks = if base.binary || base.too_large {
         Vec::new()
     } else {
-        change_marks(&head.content, doc)
+        change_marks(&base.content, doc)
     };
     Ok(LineMarks {
-        head: head.version,
+        base: base.version,
         marks,
     })
 }
@@ -90,13 +91,23 @@ pub async fn blame_contents(request: Request<'_>) -> AppResult<BlameRuns> {
     .await
 }
 
-/// Which HEAD commit and committed file the editor's marks and blame belong to, so a refresh
-/// can tell whether they need to run again.
+/// Which HEAD commit and base file the editor's blame and marks belong to, so a refresh can tell
+/// whether they need to run again (a commit, or staging the file).
 #[crate::command]
-pub async fn head_file_version(repo_path: String, file_path: String, orig_path: Option<String>) -> AppResult<HeadVersion> {
+pub async fn base_file_version(repo_path: String, file_path: String, orig_path: Option<String>) -> AppResult<HeadVersion> {
     blocking(move || {
         let repo = git_repo::open(&repo_path)?;
-        Ok(diff::head_version(&repo, &file_path, orig_path.as_deref()))
+        base_file::base_version(&repo, &file_path, orig_path.as_deref())
+    })
+    .await
+}
+
+/// The file the change bars compare with: as staged, else as of HEAD (empty when neither has it).
+#[crate::command]
+pub async fn read_base_file(repo_path: String, file_path: String, orig_path: Option<String>) -> AppResult<HeadFile> {
+    blocking(move || {
+        let repo = git_repo::open(&repo_path)?;
+        base_file::base_file(&repo, &file_path, orig_path.as_deref())
     })
     .await
 }
@@ -129,24 +140,62 @@ mod tests {
     }
 
     #[test]
-    fn marks_compare_the_text_with_head_and_report_the_head_version() {
+    fn marks_compare_the_text_with_the_index_and_report_its_version() {
         let repo = TestRepo::new();
         repo.write("a.txt", "one\ntwo\nthree\n");
         let first = repo.commit_all("First");
         let git = repo.open();
 
         let marks = marks_for(&git, "a.txt", None, "one\nTWO\nthree\nfour\n").unwrap();
-        assert_eq!(marks.head.commit_id.as_deref(), Some(first.as_str()));
-        assert!(marks.head.blob_id.is_some());
+        assert_eq!(marks.base.commit_id.as_deref(), Some(first.as_str()));
+        assert!(marks.base.blob_id.is_some());
         let kinds: Vec<(u32, u32, MarkKind)> = marks.marks.iter().map(|mark| (mark.from, mark.to, mark.kind)).collect();
         assert_eq!(kinds, vec![(1, 2, MarkKind::Modified), (3, 4, MarkKind::Added)]);
         assert!(marks_for(&git, "a.txt", None, "one\ntwo\nthree\n").unwrap().marks.is_empty());
 
-        // A new file is all added; HEAD has no object for it.
+        // A new file is all added; neither the index nor HEAD has an object for it.
         let fresh = marks_for(&git, "new.txt", None, "x\n").unwrap();
-        assert_eq!(fresh.head.blob_id, None);
+        assert_eq!(fresh.base.blob_id, None);
         assert_eq!(fresh.marks.len(), 1);
         assert_eq!(fresh.marks[0].kind, MarkKind::Added);
+    }
+
+    #[test]
+    fn staged_lines_leave_the_marks_and_change_the_version() {
+        let repo = TestRepo::new();
+        repo.write("a.txt", "one\ntwo\nthree\n");
+        repo.commit_all("First");
+        let before = base_file::base_version(&repo.open(), "a.txt", None).unwrap();
+        repo.write("a.txt", "ONE\ntwo\nthree\n");
+        repo.git(&["add", "a.txt"]);
+        let staged = base_file::base_version(&repo.open(), "a.txt", None).unwrap();
+        assert_eq!(staged.commit_id, before.commit_id);
+        assert_ne!(staged.blob_id, before.blob_id);
+        // Only the unstaged line is marked.
+        let marks = marks_for(&repo.open(), "a.txt", None, "ONE\ntwo\nTHREE\n").unwrap();
+        let kinds: Vec<(u32, u32, MarkKind)> = marks.marks.iter().map(|mark| (mark.from, mark.to, mark.kind)).collect();
+        assert_eq!(kinds, vec![(2, 3, MarkKind::Modified)]);
+        assert_eq!(base_file::base_file(&repo.open(), "a.txt", None).unwrap().content, "ONE\ntwo\nthree\n");
+    }
+
+    #[test]
+    fn a_file_without_a_plain_index_entry_compares_with_head() {
+        let repo = TestRepo::new();
+        repo.write("a.txt", "base\n");
+        repo.commit_all("Base");
+        repo.git(&["checkout", "-q", "-b", "other"]);
+        repo.write("a.txt", "theirs\n");
+        repo.commit_all("Theirs");
+        repo.git(&["checkout", "-q", "-"]);
+        repo.write("a.txt", "ours\n");
+        repo.commit_all("Ours");
+        // A conflicted merge leaves only stages 1 to 3 in the index.
+        assert!(!repo.git_raw(&["merge", "other"]).status.success());
+        let git = repo.open();
+        assert!(git.index().unwrap().has_conflicts());
+        let base = base_file::base_file(&git, "a.txt", None).unwrap();
+        assert_eq!(base.content, "ours\n");
+        assert_eq!(base.version, diff::head_version(&git, "a.txt", None));
     }
 
     #[test]

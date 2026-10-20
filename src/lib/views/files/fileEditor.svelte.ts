@@ -1,6 +1,5 @@
-// The editor of a work tree file (FileView.svelte): reads the file into CodeMirror, follows changes on disk, and
-// keeps the conflicts, the change navigation and the status bar up to date. Writing is in fileSave.svelte.ts and
-// the git marks in fileGitInfo.ts. With the editor split, both groups' editors share one document (sharedDocs.ts).
+// The editor of a work tree file (FileView.svelte): reads it into CodeMirror, follows the disk, the conflicts, F7
+// and the status bar. Saving is in fileSave.svelte.ts, git marks and peek in fileGitInfo.ts, splits in sharedDocs.ts.
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { api, errorMessage } from "$lib/api";
@@ -211,7 +210,8 @@ export class FileEditor {
           conflictMarkers({ onOpenMergeTool: this.ctx.openMergeTool }),
           changeMarkField,
           blameExtension({ inline: settings.currentLineBlame, gutter: settings.blameGutter }),
-          changeGutter(this.markSource, (line) => void this.git.revertChange(line)),
+          changeGutter(this.markSource, (line) => void this.git.peek.open(line)),
+          this.git.peek.extension(),
           scrollMarkers(this.markSource),
           this.saver.extension(),
         ],

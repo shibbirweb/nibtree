@@ -27,14 +27,11 @@ If the file changed after the diff was shown, for example in another editor, not
 
 ![A change bar beside the line numbers](../images/revert-change-editor.png)
 
-*Added lines in cart.ts with their green bar beside the line numbers: click it to revert them.*
+*Added lines in cart.ts with their green bar beside the line numbers: click it to open the change peek.*
 
-While you edit, colored bars beside the line numbers show what changed since the last commit (see [Editor and Tabs](Editor-and-Tabs.md#change-markers)). The pointer turns into a hand over a bar. Click it to revert that change:
+While you edit, colored bars beside the line numbers show what changed against the staged version (see [Editor and Tabs](Editor-and-Tabs.md#change-markers)). Click a bar, or the small red wedge of deleted lines, to open the [change peek](Change-Peek.md), then click **Revert this change** (the curved arrow) in its header.
 
-- For added or modified lines, click the bar beside them.
-- For deleted lines, click the small red wedge where they were.
-
-After you confirm, the last commit's lines replace the change in the editor. This is an ordinary edit, the same as typing:
+After you confirm, the staged lines replace the change in the editor. This is an ordinary edit, the same as typing:
 
 - **Edit > Undo** brings your lines back.
 - Nothing is saved until you save the file, or until auto save does.
@@ -62,10 +59,11 @@ Like the staging view, a commit can show three columns: its **parent**, the **co
 
 ## Which version comes back
 
-The two places compare with different versions, the same ones their colors show:
+Each place compares with its own version, the same one its colors show:
 
 - The Changes diff compares the working tree with the index, so Revert brings back the **staged** lines. If you never staged the file, that is the last commit.
-- The editor and the Changes tab compare with the **last commit** (HEAD), so Revert brings back the committed lines, even when a newer version is staged. The staged version stays staged.
+- The editor compares with the index too, so its Revert also brings back the **staged** lines.
+- The Changes tab compares with the **last commit** (HEAD), so Revert brings back the committed lines, even when a newer version is staged. The staged version stays staged.
 - A commit's diff brings back the lines as they were in the commit's **parent**.
 
 ## Related

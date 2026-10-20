@@ -1,17 +1,16 @@
-// A file editor's git marks: changed lines against HEAD in the gutter and ruler, and blame. Each runs only when
-// what it was made for changed (the text, or HEAD), so a refresh of an unchanged tab costs one small call.
+// A file editor's git marks: changed lines against the index in the gutter and ruler, the change peek a bar opens
+// (changePeek/), and blame. Each runs only when what it was made for changed (the text, the index's version of
+// the file, or HEAD), so a refresh of an unchanged tab costs one small call.
 import type { EditorState, Text } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
 import { api } from "$lib/api";
 import { loadBlame } from "$lib/editor/blame";
 import { conflictField } from "$lib/editor/conflictDecorations";
 import { type ChangeMark, diffLines } from "$lib/editor/lineDiff";
-import { changeAtLine, revertEdit } from "$lib/editor/revertLines";
 import { changeMarkField, type MarkSource, setChangeMarks } from "$lib/editor/scrollMarkers";
 import type { RepoLocation } from "$lib/stores/workspacePaths";
-import type { Eol, HeadFile, HeadVersion, RepoStatus } from "$lib/types";
-import { dialogs } from "$lib/ui/dialog.svelte";
-import { toast } from "$lib/ui/toast.svelte";
+import type { Eol, HeadVersion, RepoStatus } from "$lib/types";
+import { FilePeek } from "./changePeek/filePeek";
 
 export interface GitInfoHost {
   filePath: string;
@@ -23,16 +22,26 @@ export interface GitInfoHost {
 }
 
 export class FileGitInfo {
-  /** HEAD as last seen, and the text and HEAD the change marks and blame were made for. */
+  /** The base version (index and HEAD) as last seen, and the text and versions the marks and blame were made for. */
   #head: HeadVersion | null = null;
   #marksFor: { doc: Text; blobId: string | null } | null = null;
   #blameFor: { doc: Text; commitId: string | null } | null = null;
   #timer: ReturnType<typeof setTimeout> | undefined;
 
-  constructor(private readonly host: GitInfoHost) {}
+  readonly peek: FilePeek;
+
+  constructor(private readonly host: GitInfoHost) {
+    this.peek = new FilePeek({
+      view: host.view,
+      location: host.location,
+      eol: host.eol,
+      origPath: (repoPath) => this.origPath(repoPath),
+      refreshMarks: () => this.refresh(),
+    });
+  }
 
   /** The path HEAD has the file under: the old one for a staged rename. */
-  #headPath(repoPath: string): string | null {
+  origPath(repoPath: string): string | null {
     return this.host.repoStatus()?.files.find((entry) => entry.path === repoPath)?.origPath ?? null;
   }
 
@@ -46,7 +55,7 @@ export class FileGitInfo {
     }
     let head: HeadVersion;
     try {
-      head = await api.headFileVersion(owner.repo.root, owner.repoPath, this.#headPath(owner.repoPath));
+      head = await api.baseFileVersion(owner.repo.root, owner.repoPath, this.origPath(owner.repoPath));
     } catch {
       return;
     }
@@ -105,12 +114,12 @@ export class FileGitInfo {
       const result = await api.lineChangeMarks(
         owner.repo.root,
         owner.repoPath,
-        this.#headPath(owner.repoPath),
+        this.origPath(owner.repoPath),
         doc.toString(),
       );
       marks = result.marks;
       if (this.host.view() === shown && shown.state.doc === doc) {
-        this.#marksFor = { doc, blobId: result.head.blobId };
+        this.#marksFor = { doc, blobId: result.base.blobId };
       }
     } catch {
       // No marks, e.g. while the repository is being changed; the next refresh tries again.
@@ -121,52 +130,6 @@ export class FileGitInfo {
       return;
     }
     shown.dispatch({ effects: setChangeMarks.of(marks) });
-  }
-
-  /**
-   * A click on a change bar: after a confirm, the change on `line` goes back to HEAD's lines as one edit
-   * (undo brings it back). The change is found again in the text as it is then, so edits made meanwhile count.
-   */
-  async revertChange(line: number): Promise<void> {
-    const owner = this.host.location();
-    const view = this.host.view();
-    if (!owner || !view || view.state.readOnly) {
-      return;
-    }
-    const fileName = owner.repoPath.split("/").pop() ?? owner.repoPath;
-    const confirmed = await dialogs.confirm({
-      title: "Revert Change",
-      message: `Revert the change at line ${line + 1} in ${fileName}? Its lines go back to the last commit.`,
-      confirmLabel: "Revert",
-      danger: true,
-    });
-    if (!confirmed) {
-      return;
-    }
-    let head: HeadFile;
-    try {
-      head = await api.readHeadFile(owner.repo.root, owner.repoPath, this.#headPath(owner.repoPath));
-    } catch (error) {
-      toast.error("Could not read the last commit", String(error));
-      return;
-    }
-    if (head.binary || head.tooLarge || this.host.view() !== view) {
-      return;
-    }
-    const doc = view.state.doc;
-    const headLines = head.content.split("\n");
-    const hunk = changeAtLine(diffLines(headLines, doc.toString().split("\n")), line, doc.lines);
-    if (!hunk) {
-      toast.info("Nothing to revert", `Line ${line + 1} has no change since the last commit.`);
-      return;
-    }
-    const edit = revertEdit(doc, hunk, headLines);
-    view.dispatch({
-      changes: edit,
-      selection: { anchor: edit.from },
-      scrollIntoView: true,
-      userEvent: "input.revert",
-    });
   }
 
   /** After a pause in typing. */

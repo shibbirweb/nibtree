@@ -62,6 +62,7 @@ export const componentTokens3 = {
   },
   listBox: { minHeight: 120 },
   pane: { paddingTop: 4, paddingBottom: 8 },
+  peekPanel: { headerHeight: 32, paddingX: 12, gap: 8 },
   bulletList: { indent: 18 },
   fontSample: { paddingY: 10, paddingX: 12 },
   table: { rowHeight: 28, paddingX: 10, gap: 8 },
