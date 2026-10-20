@@ -122,6 +122,8 @@
       title={decoration.badgeTitle}
       style:background={decoration.tone ? toneColor(decoration.tone) : null}
     ></span>
+  {:else if decoration?.ignored}
+    <span class="ignored-mark" title="Ignored by git"><Icon name="circle-slash" size="medium" /></span>
   {/if}
 </div>
 
@@ -176,6 +178,20 @@
 
   .ignored .name,
   .ignored .icon {
+    color: var(--text-faint);
+  }
+
+  .ignored .name {
+    font-style: italic;
+  }
+
+  /* In the badge's column, so the marks of ignored rows line up with the status letters. */
+  .ignored-mark {
+    flex: none;
+    display: flex;
+    justify-content: center;
+    width: var(--tree-badge-width);
+    margin-left: auto;
     color: var(--text-faint);
   }
 

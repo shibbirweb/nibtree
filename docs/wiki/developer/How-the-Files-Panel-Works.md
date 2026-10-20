@@ -78,7 +78,7 @@ The panel is shown by `settings.explorerOpen`. The Files icon in `RightActivityB
 | --- | --- |
 | `src/lib/views/files/FileExplorer.svelte` | The panel: header, the library Tree, clicks and keys |
 | `src/lib/views/files/explorerTree.svelte.ts` | Loaded folders, open folders, selection, the Tree's nodes |
-| `src/lib/views/files/explorerLook.ts` | Row tones and marks |
+| `src/lib/views/files/explorerLook.ts` | Row tones and marks (ignored: faint, italic, `circle-slash` in `TreeRow`) |
 | `src/lib/views/files/tones.ts` | `marksByPath`, `tonesByPath`, `deletedByFolder` |
 | `src/lib/views/files/reveal.ts` | `revealLabel`, `terminalFolderFor` |
 | `src/lib/views/files/locate.ts` | `foldersToOpen` for Select Opened File (the Tree centers the row) |

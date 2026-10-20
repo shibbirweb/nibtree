@@ -43,7 +43,7 @@ More details:
 - The letter follows what the file looks like on disk now. A staged file that you changed again still shows its staged letter unless it was deleted or is untracked.
 - A folder gets a small colored dot, and its name the same color, when something inside it changed. It takes the strongest color inside, so a conflict anywhere below turns it red.
 - Deleted files stay in the tree, struck through, so you can still see what went away. Clicking one only reminds you that you can restore or stage the deletion from [Changes](Changes-and-Commits.md).
-- Files that your `.gitignore` ignores are shown dimmed.
+- Files and folders that your `.gitignore` ignores are dimmed, in italics, with a circle with a slash at the right end (hover it: **Ignored by git**).
 - Files stored in Git LFS (large files kept outside the repository) have a small **LFS** tag. See [Git LFS](Git-LFS.md).
 
 The tree refreshes on its own when files change on disk or in git, so you rarely need the Refresh button.

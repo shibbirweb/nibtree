@@ -238,6 +238,8 @@ export const icons = {
     circle(8, 9, 2.2),
     "M22.4 14.6a1.41 1.41 0 0 0-2-2L14.8 18.2 14 21l2.8-.8z",
   ],
+  // A circle with a slash: ignored by git, as in VS Code's file tree.
+  "circle-slash": [circle(12, 12, 9), "m5.6 18.4 12.8-12.8"],
   "split-view": ["M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z", "M12 3v18"],
   "split-rows": ["M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z", "M3 12h18"],
   "split-stacked": ["M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z", "M3 12h18", "M12 3v9"],
