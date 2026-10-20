@@ -23,6 +23,7 @@ pub mod status;
 pub mod submodule;
 pub mod workspace;
 pub mod worktree;
+pub mod worktree_summary;
 pub mod worktree_prepare;
 
 #[cfg(test)]

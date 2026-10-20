@@ -198,6 +198,7 @@ macro_rules! with_commands {
             commands::ignore::ensure_ignore_file,
             commands::ignore::untrack_files,
             commands::worktree::list_worktrees,
+            commands::worktree::worktree_summaries,
             commands::worktree::add_worktree,
             commands::worktree::remove_worktree,
             commands::worktree::lock_worktree,

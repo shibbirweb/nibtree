@@ -24,6 +24,10 @@ flowchart LR
 
 `worktreeStore` keeps only the active repository's list. It reloads whenever the sidebar sees that repository's refs replaced (every refresh), so new or removed worktrees show up without a separate watcher. A failed list (for example an old git) only empties the section.
 
+### The top bar switcher
+
+`WorktreeSwitcher.svelte` sits after the branch button in `Header.svelte`. It loads the plain list with `worktreeStore.load` whenever the active repository's refs change, and shows only when there is more than one worktree. Opening it calls `worktree_summaries` (`git/worktree_summary.rs`): for each worktree, one `status::read` gives the changed and conflicted files, the upstream's ahead and behind and the operation, and `last_activity` takes the newest of HEAD's reflog, the worktree's own `index` file and up to 2,000 changed files' times. Nothing is kept or polled. `switcherModel.ts` turns them into rows. `switchAction` activates a worktree already open in the workspace, or joins it first with `repoStore.addFolder`, which adds a folder in place. The switch never calls `repoStore.open`, whose teardown would close every tab, terminal and agent of the window. With several worktrees open, the same file can have a tab in each; `tabHints.ts` labels them by the folder end that differs (`shop/src`, `shop-fix-tax/src`).
+
 ### Changing worktrees
 
 | Action | Command | git |
@@ -73,7 +77,9 @@ git2 opens a linked worktree folder like any repository. `RepoInfo.worktree` is 
 | File | What it does |
 | --- | --- |
 | `src-tauri/src/git/worktree.rs` | `WorktreeInfo`, `WorktreeBranch`, porcelain parser, add, remove, lock, unlock, prune, `has_changes` |
-| `src-tauri/src/commands/worktree.rs` | The seven `*_worktree*` commands |
+| `src-tauri/src/commands/worktree.rs` | The `*_worktree*` commands and `worktree_summaries` |
+| `src-tauri/src/git/worktree_summary.rs` | Per-worktree changes, ahead and behind, operation, last activity |
+| `src/lib/views/git/worktrees/WorktreeSwitcher.svelte`, `switcherModel.ts` | The top bar switcher |
 | `src-tauri/src/watcher.rs` | `git_dir_links`, `relink` for external git dirs |
 | `src/lib/views/git/worktrees/worktreeStore.svelte.ts` | The active repository's list |
 | `src/lib/views/git/worktrees/worktreeActions.ts` | Menus and actions |
@@ -97,6 +103,8 @@ git2 opens a linked worktree folder like any repository. `RepoInfo.worktree` is 
 - `src-tauri/src/git/worktree.rs`: `parses_every_porcelain_field`; `adds_lists_locks_removes_and_prunes_worktrees` (new and existing branch, the current worktree seen from a linked one, a non-empty folder refused, lock with a reason and unlock, a dirty worktree needs force, prune of a deleted folder); `a_worktree_folder_opens_as_a_repository` (workspace scan, `worktree` flag, status of its own).
 - `src-tauri/src/commands/tests.rs`: `open_workspace_finds_linked_worktrees`.
 - `src/lib/views/git/worktrees/worktreeModel.test.ts`: labels, default folder, main worktree lookup, validation and available branches.
+- `src-tauri/src/git/worktree_summary.rs`: changes, a stopped merge with its conflict and the last activity per worktree; a deleted folder has no counts.
+- `src/lib/views/git/worktrees/switcherModel.test.ts`: row order and labels, tracking fields, and opening, activating or leaving a row.
 
 ## Keeping this page in sync
 

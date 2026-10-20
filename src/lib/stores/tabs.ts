@@ -11,6 +11,7 @@ import { isPseudoTab } from "./pseudoTabs";
 import { SINGLE_TAB } from "./tabLimit";
 import { isUntitledTab, UNTITLED_TITLE } from "./untitledTabs";
 import { movedPath, pathsUnder, type PathMove } from "./workspacePaths";
+import { distinctFolderHints } from "./tabHints";
 
 export interface FileTab {
   /** Absolute path (see workspacePaths.ts). */
@@ -182,16 +183,22 @@ export function adjacentTab(tabs: FileTab[], activePath: string | null, step: 1 
 export const TERMINAL_TAB_LABEL = "Terminal";
 
 /**
- * Tab labels: the file name, plus its folder when another tab has the same
- * name. A commit tab (see commitTabs.ts) is labelled with its short hash; a
+ * Tab labels: the file name, plus as much of its folder as tells it apart when another tab has the same
+ * name (tabHints.ts). A commit tab (see commitTabs.ts) is labelled with its short hash; a
  * terminal tab gets a placeholder, since only the terminal store knows its name.
  */
 export function tabLabels(tabs: FileTab[]): Map<string, { name: string; hint: string | null }> {
-  const counts = new Map<string, number>();
+  const byName = new Map<string, string[]>();
   const nameOf = (path: string) => path.slice(path.lastIndexOf("/") + 1);
   for (const tab of tabs) {
     if (!isPseudoTab(tab.path)) {
-      counts.set(nameOf(tab.path), (counts.get(nameOf(tab.path)) ?? 0) + 1);
+      byName.set(nameOf(tab.path), [...(byName.get(nameOf(tab.path)) ?? []), tab.path]);
+    }
+  }
+  const hints = new Map<string, string | null>();
+  for (const paths of byName.values()) {
+    if (paths.length > 1) {
+      distinctFolderHints(paths).forEach((hint, index) => hints.set(paths[index], hint));
     }
   }
   return new Map(
@@ -218,10 +225,7 @@ export function tabLabels(tabs: FileTab[]): Map<string, { name: string; hint: st
       if (isUntitledTab(tab.path)) {
         return [tab.path, { name: UNTITLED_TITLE, hint: null }];
       }
-      const name = nameOf(tab.path);
-      const folder = tab.path.includes("/") ? tab.path.slice(0, tab.path.lastIndexOf("/")) : "";
-      const duplicate = (counts.get(name) ?? 0) > 1;
-      return [tab.path, { name, hint: duplicate ? folder.split("/").pop() || folder || null : null }];
+      return [tab.path, { name: nameOf(tab.path), hint: hints.get(tab.path) ?? null }];
     }),
   );
 }

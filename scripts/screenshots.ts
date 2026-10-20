@@ -3690,6 +3690,19 @@ define(
   () => ({ state: { sidebarWidth: 400 } }),
 );
 
+define("worktrees-switcher", async (shot) => {
+  addDemoWorktrees();
+  try {
+    await shot.page.locator("header button[title^='Worktrees:']").first().click();
+    const popup = shot.page.getByRole("dialog", { name: "Worktrees" });
+    await popup.getByText("main", { exact: true }).first().waitFor();
+    await shot.settle(400);
+    await shot.save(popup);
+  } finally {
+    removeDemoWorktrees();
+  }
+});
+
 define("worktrees-new-dialog", async (shot) => {
   await inApp(shot, `(await imp("/src/lib/views/git/worktrees/worktreeActions.ts")).openNewWorktreeDialog();`);
   const dialog = topDialog(shot);

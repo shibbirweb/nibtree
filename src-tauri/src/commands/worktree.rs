@@ -2,10 +2,17 @@ use super::blocking;
 use crate::error::AppResult;
 use crate::git::worktree::{self, WorktreeBranch, WorktreeInfo};
 use crate::git::worktree_prepare::{self, PrepareReport};
+use crate::git::worktree_summary::{self, WorktreeSummary};
 
 #[crate::command]
 pub async fn list_worktrees(repo_path: String) -> AppResult<Vec<WorktreeInfo>> {
     blocking(move || worktree::list(&repo_path)).await
+}
+
+/// Every worktree with its changes, ahead and behind, operation and last activity, for the top bar's switcher.
+#[crate::command]
+pub async fn worktree_summaries(repo_path: String) -> AppResult<Vec<WorktreeSummary>> {
+    blocking(move || worktree_summary::summaries(&repo_path)).await
 }
 
 /// `git worktree add`; resolves with the new work tree's path.

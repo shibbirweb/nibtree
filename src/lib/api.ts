@@ -100,7 +100,7 @@ import type {
   GitHubSharedRepository,
   GitHubSyncForkOutcome,
 } from "./types";
-import type { FileMove, LfsStatus, SubmoduleInfo, WorktreeBranch, WorktreeInfo } from "./types";
+import type { FileMove, LfsStatus, SubmoduleInfo, WorktreeBranch, WorktreeInfo, WorktreeSummary } from "./types";
 import type { CompareSide, FileCompare } from "./types";
 import type { LineAction, LineSelection, LinesOutcome } from "./types";
 import type { BranchComparison, CommitOptions, MergeOptions, RebaseOptions, WorktreeComparison } from "./types";
@@ -452,6 +452,8 @@ export const api = {
 
   // Worktrees
   listWorktrees: (repoPath: string) => invoke<WorktreeInfo[]>("list_worktrees", { repoPath }),
+  /** Every worktree with its changes, ahead and behind, operation and last activity (the top bar's switcher). */
+  worktreeSummaries: (repoPath: string) => invoke<WorktreeSummary[]>("worktree_summaries", { repoPath }),
   /** `git worktree add`; resolves with the new work tree's path. */
   addWorktree: (repoPath: string, worktreePath: string, branch: WorktreeBranch) =>
     invoke<string>("add_worktree", { repoPath, worktreePath, branch }),
