@@ -62,3 +62,21 @@ export function runDialogKey(
     (action === "close" ? actions.close : actions.submit)?.();
   }
 }
+
+/**
+ * Dismisses a Dialog (Esc, its close button, a click outside): asks the owner first, and hides it only when the owner
+ * did not answer false (a form going back a step, a save still running). Hiding first would leave the dialog gone
+ * while its owner still counts it as open, and that blocks every shortcut and Git command behind it. Nothing is
+ * hidden when the owner already closed it: DialogHost shows every confirm, prompt and pick in one Dialog with
+ * `open={active !== null}`, and writing `open` there would keep the next one hidden.
+ */
+export function dismissDialog(
+  onclose: (() => void | boolean) | undefined,
+  isOpen: () => boolean,
+  hide: () => void,
+): void {
+  if (onclose?.() === false || !isOpen()) {
+    return;
+  }
+  hide();
+}

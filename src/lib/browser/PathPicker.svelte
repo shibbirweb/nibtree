@@ -77,6 +77,15 @@
     if (!listing || !canChoose) {
       return;
     }
+    // A folder typed without Enter is where the person means, not the one still listed: open it first.
+    const typed = typedPath.trim();
+    if (typed !== "" && typed !== listing.folderPath) {
+      await go(typed);
+      // Opening it clears the selection, so a file to open must be picked there first.
+      if (error || !listing || listing.folderPath !== typedPath || !canChoose) {
+        return;
+      }
+    }
     if (request.mode === "save") {
       const fileName = saveName(name, request.filters);
       const exists = listing.entries.some((entry) => entry.name === fileName && !entry.isDir);

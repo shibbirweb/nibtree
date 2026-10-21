@@ -98,7 +98,7 @@ The token lives in `~/.nibtree/mcp.json` with mode 0600, never in settings.json,
 
 ## Tests
 
-- `src-tauri/src/mcp/tests.rs`: a real server on a free port: protocol versions, JSON-RPC errors and batches, token and Origin checks, keep-alive, switches per client, `mcp.json`, busy and low ports, UI calls with timeouts and no window, paths outside the workspace, git tools over HTTP, `clone_repository` (off at first) and the CLI against the running server.
+- `src-tauri/src/mcp/tests.rs`: a real server on a free port: protocol versions, JSON-RPC errors and batches, token and Origin checks, keep-alive, switches per client, `mcp.json`, busy and low ports, UI calls with timeouts and no window, paths outside the workspace, git tools over HTTP, `clone_repository` (off at first) and the CLI against the running server. `tests/git_tools/` runs every git tool ([Test Suites](Test-Suites.md)).
 - Unit tests in `token.rs`, `install.rs`, `paths.rs`, `registry.rs`, `tools/recorder.rs` and `tools/performance.rs`.
 - Vitest: `src/lib/mcp/args.test.ts`, `connect.test.ts`, `fileTools.test.ts`, `menuCommands.test.ts`, `perfModel.test.ts`, `toolDefs.test.ts`, `toolStates.test.ts`.
 

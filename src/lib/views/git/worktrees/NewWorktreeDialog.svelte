@@ -133,10 +133,13 @@
       return;
     }
     creating = false;
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
+    const reloadAgents = startAgent;
     gitDialogs.close();
-    await repoStore.refreshRepo(repoRoot, true);
+    await repoStore.refreshRepo(targetRepo, true);
     await worktreeStore.load(repoStore.repo?.root ?? null);
-    if (startAgent) {
+    if (reloadAgents) {
       await aiStore.reload();
     }
     if (afterCreate === "open") {

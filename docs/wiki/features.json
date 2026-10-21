@@ -7,6 +7,7 @@
     { "page": "usage/Files-Panel.md", "summary": "Browse your files and see at a glance what git thinks of each one." },
     { "page": "usage/File-Operations.md", "summary": "Create, rename, copy, move and trash files and folders right in the Files panel." },
     { "page": "usage/File-Icons.md", "summary": "Show an icon for each file type: no icons, simple Minimal shapes, or full Material Icons." },
+    { "page": "usage/Activity-Bars.md", "summary": "Move the activity bar icons to either edge, top or bottom; their panels go along." },
     { "page": "usage/Rounded-Panels.md", "summary": "Turn the sidebars, editors and terminal into rounded panels with space between them, in any color theme." },
     { "page": "usage/Editor-and-Tabs.md", "summary": "Edit files in tabs, jump between changes and keep an eye on what you changed." },
     { "page": "usage/Pin-Reorder-and-Wrap-Tabs.md", "summary": "Drag tabs into the order you like, pin the ones you always need, and wrap a long row of tabs." },
@@ -99,6 +100,7 @@
     { "page": "developer/Blame-Bugs-We-Fixed.md", "summary": "The blame bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Project-Color-And-Title-Bar.md", "summary": "The project's color glow and the macOS window buttons in the top bar." },
     { "page": "developer/One-Diff-View.md", "summary": "How every place that shows a diff shares one view, its panes and its buttons." },
+    { "page": "developer/Editor-Bugs-We-Fixed.md", "summary": "The file editor bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Diff-Bugs-We-Fixed.md", "summary": "The diff view bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Merge-Tool-Layouts.md", "summary": "The merge tool's Columns and Stacked layouts: one set of editors moved between two frames." },
     { "page": "developer/Merge-Tool-Bugs-We-Fixed.md", "summary": "The merge tool bugs we found, why they happened and how we fixed them." },
@@ -107,6 +109,9 @@
     { "page": "developer/Rounded-Panels-Bugs-We-Fixed.md", "summary": "The rounded panels bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Update-Bugs-We-Fixed.md", "summary": "The update check and link bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Status-Bar-Bugs-We-Fixed.md", "summary": "The status bar and Help link bugs we found, why they happened and how we fixed them." },
+    { "page": "developer/Git-Menu-UI-Tests.md", "summary": "The Playwright tests that click every Git menu item and dialog and check the result with git, on every pull request." },
+    { "page": "developer/Git-Menu-Bugs-We-Fixed.md", "summary": "The Git menu and dialog bugs we found, why they happened and how we fixed them." },
+    { "page": "developer/Conflict-Resolution-Bugs-We-Fixed.md", "summary": "The conflict resolution bugs we found, why they happened and how we fixed them." },
     { "page": "developer/MCP-and-CLI-Bugs-We-Fixed.md", "summary": "The MCP server and command line tool bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Repository-Actions-Bugs-We-Fixed.md", "summary": "The repository row and Changes title bar bugs we found, why they happened and how we fixed them." },
     { "page": "developer/How-the-Changes-Tab-Works.md", "summary": "The Changes tab opened from the status bar: every uncommitted file compared with the last commit." },
@@ -572,6 +577,13 @@
       "usage": "usage/Color-Themes.md",
       "developer": "developer/How-Color-Themes-Work.md",
       "screenshots": ["color-theme-pickers.png", "color-theme-dracula.png", "color-theme-solarized-light.png", "color-theme-high-contrast.png"]
+    },
+    {
+      "id": "activity-bar-positions",
+      "title": "Activity bar positions",
+      "usage": "usage/Activity-Bars.md",
+      "developer": "developer/How-Activity-Bar-Positions-Work.md",
+      "screenshots": ["activity-bar-menu.png"]
     },
     {
       "id": "rounded-panels",

@@ -381,3 +381,13 @@ describe("activity bars", () => {
     expect(state["view.rightActivityBar"]?.checked).toBe(false);
   });
 });
+
+describe("while a git command runs", () => {
+  it("greys out every Git action that would wait for it, and keeps the views", () => {
+    const state = menuState(inputs({ repo: { ...repo, busy: true } }));
+    for (const action of ["git.fetch", "git.fetchCurrent", "git.push", "git.commit", "git.bisect.good"] as const) {
+      expect(state[action]?.enabled ?? false, action).toBe(false);
+    }
+    expect(state["git.showLog"]?.enabled).toBe(true);
+  });
+});

@@ -77,4 +77,4 @@ The mode sits in a `Compartment`. A tiny ViewPlugin registers every live view in
 
 ## Bugs we fixed
 
-The selection hidden by the current line highlight is recorded in [How the editor works](How-the-Editor-Works.md#bugs-we-fixed).
+The selection hidden by the current line highlight is recorded in [Editor Bugs We Fixed](Editor-Bugs-We-Fixed.md).

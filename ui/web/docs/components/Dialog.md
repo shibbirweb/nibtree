@@ -31,7 +31,8 @@ Primary button in `actions`, last.
 - `iconTone` (`"accent" | "success" | "warning" | "danger"`, default `"accent"`): The tile's color.
 - `toolbar` (`Snippet`): A bar under the head, such as a Toolbar with a filter (panel dialogs).
 - `footnote` (`Snippet`): Content at the footer's start, such as a Link or a hint.
-- `onclose` (`() => void`): Called when the user dismisses it (Esc or outside click).
+- `onclose` (`() => void | boolean`): Called when the user dismisses it (Esc, the close button or an outside click);
+  return false to keep it open, such as a form that goes back a step or a save still running.
 - `onsubmit` (`() => void`): Cmd+Enter (Ctrl+Enter): the main action of a form.
 - `enterSubmits` (`boolean`, default `false`): A plain Enter in a one-line field submits too, like a one-field prompt or
   a password; Enter in a text area or on a button does not.

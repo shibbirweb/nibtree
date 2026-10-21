@@ -19,7 +19,7 @@
   <PanelHead
     title="Notifications"
     hideTitle={withCommandKeys("Hide", "view.notifications")}
-    onhide={() => settings.toggleRightPanel("notifications")}
+    onhide={() => settings.hidePanel("notifications")}
   >
     <IconButton
       icon={doNotDisturb ? "bell-off" : "bell"}

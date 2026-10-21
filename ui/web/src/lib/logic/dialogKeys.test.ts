@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { dialogKeyAction, isLineField, runDialogKey, type DialogKey, type DialogKeyOptions } from "./dialogKeys";
+import {
+  dialogKeyAction,
+  dismissDialog,
+  isLineField,
+  runDialogKey,
+  type DialogKey,
+  type DialogKeyOptions,
+} from "./dialogKeys";
 
 function key(name: string, extra: Partial<DialogKey> = {}): DialogKey {
   return {
@@ -83,5 +90,47 @@ describe("runDialogKey", () => {
     runDialogKey(escape as unknown as KeyboardEvent, { dismissible: true, enterSubmits: false }, { close });
     expect(close).toHaveBeenCalled();
     expect(escape.preventDefault).toHaveBeenCalled();
+  });
+});
+
+describe("dismissDialog", () => {
+  const open = () => true;
+
+  it("hides the dialog after telling its owner", () => {
+    const calls: string[] = [];
+    dismissDialog(
+      () => {
+        calls.push("owner");
+      },
+      open,
+      () => calls.push("hide"),
+    );
+    expect(calls).toEqual(["owner", "hide"]);
+  });
+
+  it("hides it without an owner, and when the owner answers true", () => {
+    const hide = vi.fn();
+    dismissDialog(undefined, open, hide);
+    dismissDialog(() => true, open, hide);
+    expect(hide).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps it open when the owner answers false (a form going back a step)", () => {
+    const hide = vi.fn();
+    dismissDialog(() => false, open, hide);
+    expect(hide).not.toHaveBeenCalled();
+  });
+
+  it("leaves it alone when the owner already closed it (a shared Dialog would stay hidden for the next one)", () => {
+    let shown = true;
+    const hide = vi.fn();
+    dismissDialog(
+      () => {
+        shown = false;
+      },
+      () => shown,
+      hide,
+    );
+    expect(hide).not.toHaveBeenCalled();
   });
 });

@@ -1,9 +1,11 @@
 // Commands the page answers itself in a browser tab: what a desktop window or a Tauri plugin does, done by the tab.
 // Windows are tabs (tabs.ts), the open and save dialogs are the page's picker (PathPicker.svelte), web links open
-// in the browser. Reveal in Finder and opening a file with its app go to the server (src-tauri/browser/opener.rs).
+// in the browser, and the clipboard is the browser's. Reveal in Finder and opening a file with its app go to the
+// server (src-tauri/browser/opener.rs).
 
 import { replaceState } from "$app/navigation";
 import { closeThisTab } from "./closedTab.svelte";
+import { readPageClipboard } from "./pageClipboard";
 import { pickRequest } from "./pathPickerModel";
 import { pathPicker } from "./pickerStore.svelte";
 import { tabOpenFrom, tabUrl, type TabOpen } from "./tabs";
@@ -50,6 +52,8 @@ export function answerLocally(command: string, args: Args): { answer: unknown } 
 }
 
 const LOCAL_COMMANDS: Record<string, (args: Args) => unknown> = {
+  // The person's clipboard is the browser's; the server's (pbpaste there) may be another machine's, or none.
+  read_clipboard_text: () => readPageClipboard(navigator.clipboard),
   // A tab opened for some folders starts with them; the first tab asks the server (command line, session).
   window_startup: () => {
     const open = tabOpenFrom(location.search);

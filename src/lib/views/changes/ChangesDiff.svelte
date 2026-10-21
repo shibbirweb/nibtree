@@ -40,7 +40,7 @@
   const selected = $derived(changesSelection.selected);
   const selectedSection = $derived(selected ? findSection(sections, selected.repoRoot) : null);
   const diffMode = $derived(selected?.area === "staged" ? "staged" : "unstaged");
-  const panelHidden = $derived(settings.leftPanel !== "changes");
+  const panelHidden = $derived(!settings.panelShown("changes"));
 
   /** Blame of the work tree text; a clicked line goes back to this diff. */
   const blameTarget = $derived.by((): BlameTarget | null => {

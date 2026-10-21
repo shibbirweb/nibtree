@@ -6,7 +6,7 @@ use serde::Deserialize;
 use tauri::{AppHandle, State};
 
 use super::rebase::cleanup_rebase_files;
-use super::{blocking, run_op, safe_join, with_paths, OpOutcome};
+use super::{blocking, has_conflicts, run_op, safe_join, with_paths, OpOutcome};
 use crate::error::{AppError, AppResult};
 use crate::git::cli;
 use crate::git::conflicts::{self, ConflictSummary};
@@ -113,7 +113,12 @@ pub async fn continue_operation(repo_path: String) -> AppResult<OpOutcome> {
 pub async fn abort_operation(repo_path: String) -> AppResult<OpOutcome> {
     blocking(move || {
         let subcommand = operation_subcommand(&repo_path)?;
-        let finished = run_op(&repo_path, &[subcommand, "--abort"]);
+        // Not run_op: its conflicts-left-behind outcome would report a refused abort (local changes in the way)
+        // as "stopped with conflicts" and hide git's reason. The conflicts are what the abort was meant to remove.
+        let finished = cli::run(Path::new(&repo_path), &[subcommand, "--abort"]).map(|output| OpOutcome {
+            output: output.text(),
+            conflicts: has_conflicts(&repo_path),
+        });
         cleanup_rebase_files(&repo_path);
         finished
     })

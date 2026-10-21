@@ -70,6 +70,15 @@ The repositories' boxes sit inside the Changes list, whose key handler moves the
 
 The placements and the key guard need a visual check in the app: `commit-box-per-repo` in `scripts/screenshots.ts`.
 
+- `src/lib/views/changes/commitFields.test.ts`: the box of a repository is found, else the first one shown.
+
+## Bugs we fixed
+
+**Git > Commit... did not put the caret in the message.**
+- **The issue:** Git > Commit... (Cmd+K) showed the Changes panel, but the caret stayed where it was, so typing went nowhere. The Git menu UI tests found it.
+- **Why it happened:** `focusCommitMessage` looked the box up with `.sidebar textarea[aria-label='Commit message']`. The panels moved out of `.sidebar` when the layout changed, so the lookup found nothing and nothing failed.
+- **The fix and why we chose it:** each `CommitMessageField` registers its box by repository root (`commitFields.ts`), and `focusCommitMessage` focuses the box of the active repository, else the first one. With a commit box per repository the right box gets the caret, and no page selector can go stale again.
+
 ## Keeping this page in sync
 
 - Update this page and [Commit Box Layout](../usage/Commit-Box-Layout.md) when a placement or the setting changes.

@@ -1268,6 +1268,14 @@ define(
   () => ({ settings: { wrapTabs: true }, viewport: { width: 900, height: 700 } }),
 );
 
+// The activity bar's menu: right-click Changes for Move to Left Top ... Reset Positions.
+define("activity-bar-menu", async (shot) => {
+  const bar = shot.page.getByRole("navigation", { name: "Sidebar", exact: true });
+  await bar.getByRole("button", { name: "Changes", exact: true }).click({ button: "right" });
+  await shot.page.waitForTimeout(300);
+  await shot.save(await shot.clipAround([bar, shot.page.getByRole("menu").last()], { bottom: 20 }));
+});
+
 // Settings > Editor > Tab limit > Single tab title: in single tab mode, one open file shows its name centered above the code.
 define(
   "single-tab-title",

@@ -103,7 +103,7 @@ Type a font list and press Enter, or click a font name below it. **Reset** goes 
 | --- | --- | --- |
 | Files panel | Shows the file tree on the right (also Cmd+B). | On |
 | Confirm drag and drop | Asks before a drag in the Files panel moves files (see [File Operations](File-Operations.md)). | On |
-| Left sidebar | **Changes**, **Branches** or **Hidden** (also Option+Cmd+B and the activity bar). | Changes |
+| Left sidebar | A panel [on the left](Activity-Bars.md), or **Hidden** (Option+Cmd+B). | Changes |
 
 Two header buttons show or hide the **activity bars**, the icon strips at the window edges (also in the **View** menu). Drag a panel's edge to resize it; double-click to reset. All this is saved in `state.json`, but **Confirm drag and drop** is in `settings.json`.
 

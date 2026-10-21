@@ -75,7 +75,17 @@ function shortcut(name: WorkspaceShortcut): Handler {
 
 /** Needs an active repository that is not busy with another operation. */
 function git(handler: Handler): Handler {
-  return workspace(() => (repoStore.repo !== null && repoStore.busy === null ? handler() : undefined));
+  return workspace(() => {
+    if (repoStore.repo === null) {
+      return undefined;
+    }
+    // The menu greys these out meanwhile (menuState.ts); a shortcut still lands here, so say why nothing ran.
+    if (repoStore.busy !== null) {
+      toast.info(`Wait for ${repoStore.busy} to finish`, "Then try again.");
+      return undefined;
+    }
+    return handler();
+  });
 }
 
 /** The file editor on screen, if any. */

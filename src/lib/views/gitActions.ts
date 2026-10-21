@@ -18,6 +18,7 @@ import {
 import type { AppError, HeadInfo } from "$lib/types";
 import { dialogs } from "$lib/ui/dialog.svelte";
 import { toast } from "$lib/ui/toast.svelte";
+import { commitFieldFor } from "./changes/commitFields";
 import { changesLayout } from "./changes/layout.svelte";
 import { changesSelection } from "./changes/selection.svelte";
 import { syncPlan } from "./changes/sync";
@@ -215,7 +216,7 @@ export async function focusCommitMessage(repoRoot?: string): Promise<void> {
   }
   settings.setLeftPanel("changes");
   await tick();
-  document.querySelector<HTMLTextAreaElement>(".sidebar textarea[aria-label='Commit message']")?.focus();
+  commitFieldFor(repoRoot)?.focus();
 }
 
 /** Opens the Log, switching the active repository to `repoRoot` first when given. */

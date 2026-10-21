@@ -121,4 +121,7 @@ Conflicts come back as `OpOutcome { conflicts: true }`, so `repoStore.runOp` ope
 
 ## Bugs we fixed
 
-None yet.
+**Unshelve needed a mouse.**
+- **The issue:** a shelf's Unshelve and Delete buttons showed only while the mouse was over its row, and the right-click menu was the only other way, so the keyboard and screen readers could not unshelve. The Git menu GUI test of the desktop app found it.
+- **Why it happened:** the library `Row` hid its `actions` with `display: none` unless hovered or holding the focus, and a List keeps the focus on itself, not on the row.
+- **The fix and why we chose it:** `Row` also shows the selected row's actions, as VS Code does, so every list row with buttons has them in reach once selected. `scripts/ui-test/changes.ts` checks it with the mouse away.

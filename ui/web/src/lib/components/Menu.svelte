@@ -23,7 +23,8 @@
     alignEnd?: boolean;
     keyboard?: boolean;
     label?: string;
-    onclose: (restoreFocus: boolean) => void;
+    /** chosen: an item ran, so every menu above a submenu closes too (not just this one, as Left or Esc do). */
+    onclose: (restoreFocus: boolean, chosen: boolean) => void;
     onstep?: (step: 1 | -1) => void;
   }
 
@@ -60,7 +61,7 @@
       return;
     }
     if (!isSeparator(item)) {
-      onclose(true);
+      onclose(true, true);
       item.action();
     }
   }
@@ -78,8 +79,8 @@
           onstep?.(1);
         }
       },
-      ArrowLeft: () => (onstep ? onstep(-1) : onclose(true)),
-      Escape: () => onclose(true),
+      ArrowLeft: () => (onstep ? onstep(-1) : onclose(true, false)),
+      Escape: () => onclose(true, false),
       Enter: () => run(highlighted),
       " ": () => run(highlighted),
     };
@@ -107,10 +108,10 @@
   onmousedown={(event) => {
     // A click outside every open menu (this one and its submenus) closes it.
     if (!(event.target as Element | null)?.closest?.('[role="menu"]')) {
-      onclose(false);
+      onclose(false, false);
     }
   }}
-  onblur={() => onclose(false)}
+  onblur={() => onclose(false, false)}
 />
 
 <div
@@ -170,8 +171,12 @@
       y={rect.top - 4}
       {keyboard}
       label={openItem.label}
-      onclose={(restoreFocus) => {
+      onclose={(restoreFocus, chosen) => {
         openSub = -1;
+        if (chosen) {
+          onclose(restoreFocus, true);
+          return;
+        }
         if (restoreFocus) {
           menuEl?.focus();
         }

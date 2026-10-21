@@ -230,7 +230,7 @@
   <PanelHead
     title={repoStore.workspace?.name ?? "Files"}
     hideTitle="Hide files"
-    onhide={() => settings.toggleExplorer()}
+    onhide={() => settings.hidePanel("files")}
   >
     <IconButton
       icon="plus"

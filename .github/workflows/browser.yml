@@ -5,6 +5,9 @@
 # The Docker image (docker/Dockerfile) is built from the Linux packages and smoke tested in a container on amd64
 # and arm64 (`browser-smoke.ts --docker`).
 #
+# On Linux x64, pull requests also run the Git menu UI tests (scripts/ui-test.ts): Playwright clicks every Git
+# menu item and dialog in the page and checks each result with git.
+#
 # release.yml calls this for every beta and stable release with `publish: true`: the programs are built in release
 # mode, published to npm (betas under `next`, stable versions under `latest`) and the image is pushed for both
 # architectures to ghcr.io/<owner>/nibtree (the built-in token) and Docker Hub as <DOCKERHUB_USERNAME>/nibtree,
@@ -119,6 +122,23 @@ jobs:
       - name: Build nibtree-browser
         working-directory: src-tauri
         run: cargo build --locked -p nibtree-browser ${{ inputs.publish && '--release' || '' }}
+
+      # Every Git menu item and its dialog, clicked in the page by Playwright, each result checked with git
+      # (scripts/ui-test.ts). Once, on Linux x64, for pull requests; a release build skips it.
+      - name: Git menu UI tests
+        if: ${{ !inputs.publish && matrix.target == 'x86_64-unknown-linux-gnu' }}
+        run: |
+          bunx playwright install --with-deps chromium
+          bun scripts/ui-test.ts --binary "src-tauri/target/$PROFILE/nibtree-browser" --assets build
+
+      - name: Keep the UI test screenshots
+        if: ${{ failure() && !inputs.publish && matrix.target == 'x86_64-unknown-linux-gnu' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-failures
+          path: ui-test-failures/
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Pack the npm packages
         run: |

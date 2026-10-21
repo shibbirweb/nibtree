@@ -84,12 +84,14 @@
     const target = branchName.trim();
     const request = mergeRequest(options);
     const into = current;
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
     close();
     await repoStore.runOp(
       "Merge",
       (repoPath) => api.mergeWithOptions(repoPath, target, request),
       mergeDoneMessage(target, into, request),
-      repoRoot,
+      targetRepo,
     );
   }
 </script>

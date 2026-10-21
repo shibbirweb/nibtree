@@ -2,16 +2,27 @@
 <script lang="ts">
   import { commandKeys } from "$lib/commands/commandRuntime";
   import { settings } from "$lib/stores/settings.svelte";
+  import { panelSide, SIDE_PANELS, type SidePanel } from "$lib/stores/sidePanels";
   import Segmented from "@nibtree/ui/components/Segmented.svelte";
   import Switch from "@nibtree/ui/components/Switch.svelte";
   import SettingsRow from "./SettingsRow.svelte";
   import { set } from "./settingsShared";
 
-  const sidebarChoices: { value: "changes" | "branches" | "hidden"; label: string }[] = [
-    { value: "changes", label: "Changes" },
-    { value: "branches", label: "Branches" },
-    { value: "hidden", label: "Hidden" },
-  ];
+  const PANEL_NAMES: Record<SidePanel, string> = {
+    changes: "Changes",
+    branches: "Branches",
+    scripts: "Scripts",
+    files: "Files",
+    ai: "AI Agents",
+    notifications: "Notifications",
+  };
+  // The panels whose activity bar icon is on the left (the icons can move between the bars).
+  const sidebarChoices = $derived([
+    ...SIDE_PANELS.filter((panel) => panel !== "scripts" && panelSide(settings.activityLayout, panel) === "left").map(
+      (panel) => ({ value: panel as SidePanel | "hidden", label: PANEL_NAMES[panel] }),
+    ),
+    { value: "hidden" as const, label: "Hidden" },
+  ]);
   const filesKeys = commandKeys("view.filesPanel");
   const sidebarKeys = commandKeys("view.sidebar");
 </script>

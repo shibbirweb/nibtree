@@ -20,6 +20,8 @@ use super::protocol::{self, TURNED_OFF};
 use super::{cli, token, Host, Mcp};
 use crate::test_support::{git_in, image_bytes, TestRepo};
 
+mod git_tools;
+
 #[derive(Default)]
 struct TestHost {
     ready: bool,

@@ -170,7 +170,7 @@
           icon="x"
           iconSize="normal"
           size="compact"
-          onclick={() => settings.setLeftPanel(null)}
+          onclick={() => settings.hidePanel("changes")}
           title={withCommandKeys("Hide", "view.sidebar")}
           label="Hide changes"
         />

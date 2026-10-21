@@ -103,22 +103,7 @@ Saving writes through `writeWorktreeFile` with the remembered `eol` and refreshe
 
 ## Bugs we fixed
 
-**A selection inside one line was invisible.**
-- **The issue:** selecting text inside one line showed no selection at all.
-- **Why it happened:** CodeMirror draws the selection behind the text, and the opaque current line background on the cursor's line covered it.
-- **The fix and why we chose it:** `activeLine.ts` highlights the current line only while nothing is selected, tested in `activeLine.test.ts`. It was found with the MCP `inspect_elements` tool in the real app.
-
-The toolbar and breadcrumb bugs moved with the bar to [How the path bar works](How-the-Path-Bar-Works.md#bugs-we-fixed).
-
-**The Diff tab could not be closed.**
-- **The issue:** the Diff tab always showed a file and had no close button.
-- **Why it happened:** it was a fixed tab, and `changesSelection.sync` picked the first changed file on its own.
-- **The fix and why we chose it:** the tab shows only while a change is selected, with a close button, and `sync` waits for the user to pick a file.
-
-**Find previous also opened Changes.**
-- **The issue:** Shift+Cmd+G in the editor (find previous) also showed Changes, and Shift+Cmd+L also toggled the Log.
-- **Why it happened:** the window handler in `Workspace.svelte` ran too, without checking whether the editor had handled the key.
-- **The fix and why we chose it:** the pure `workspaceShortcut` skips a key when `event.defaultPrevented` is set, like every window key handler, so inside an editor the editor's action wins.
+The editor's bugs, why they happened and how we fixed them are in [Editor Bugs We Fixed](Editor-Bugs-We-Fixed.md).
 
 ## Tests
 

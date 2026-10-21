@@ -75,6 +75,8 @@
       return;
     }
     const options = { remoteName, branchName: branchName.trim(), mode, noCommit: noCommit && mode === "merge" };
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
     close();
     await repoStore.runOp(
       "Pull",
@@ -83,7 +85,7 @@
       options.noCommit
         ? "Merged without committing: review and commit"
         : `Pulled ${options.remoteName}/${options.branchName}`,
-      repoRoot,
+      targetRepo,
     );
   }
 </script>

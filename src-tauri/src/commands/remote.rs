@@ -107,7 +107,7 @@ pub(crate) fn run_push(repo_path: &str, force: bool, on_progress: OnProgress) ->
     stream(repo_path, &args, on_progress).map(finished)
 }
 
-fn run_push_tags(repo_path: &str, on_progress: OnProgress) -> AppResult<OpOutcome> {
+pub(crate) fn run_push_tags(repo_path: &str, on_progress: OnProgress) -> AppResult<OpOutcome> {
     let repo = git_repo::open(repo_path)?;
     let mut args = vec!["push", "--progress"];
     // Without an upstream git falls back to "origin", which may not exist.

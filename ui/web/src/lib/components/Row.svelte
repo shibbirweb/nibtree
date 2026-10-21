@@ -1,5 +1,6 @@
 <!-- One row of a list: the base every list row is built on. It draws the hover, the selected color (stronger while
-     its List has the focus), an optional fold chevron and indent, and actions that show on hover. The content is
+     its List has the focus), an optional fold chevron and indent, and actions that show on hover and on the selected
+     row (so the keyboard and screen readers reach them too). The content is
      composed from Text, Icon, Tag and the like; a Spacer pushes what follows to the end. Inside a List the List
      owns the keyboard and the selection; alone, a Row with `onclick` is a button. -->
 <script lang="ts">
@@ -250,6 +251,7 @@
 
   .always,
   .row:hover .actions,
+  .row.selected .actions,
   .row:focus-within .actions {
     display: flex;
   }

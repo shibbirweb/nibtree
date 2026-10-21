@@ -1,5 +1,7 @@
 // The Navigation Bar's geometry: which crumbs give up their width first when the bar is narrow, and where a crumb's
-// list opens (under the crumb, or above it when the room below is short), always inside the window.
+// list opens (under the crumb, or above it when the room below is short), always inside the window, and what a key
+// does in that list.
+import { paletteMove, paletteStep } from "./palette";
 import type { TriggerRect } from "./popoverPlace";
 
 /** A crumb's flex-shrink: 10 to the power of its distance from the last one, so the farthest shorten first. */
@@ -45,4 +47,28 @@ export function crumbPlace(
   }
   const maxHeight = Math.max(sizes.minHeight, Math.min(sizes.maxHeight, below));
   return { left, top: crumb.bottom + sizes.offset, bottom: null, width, maxHeight };
+}
+
+/** A key in a crumb's list: the entry to select, "pick", "close", "keep" (Tab stays in the list) or null (not ours). */
+export type CrumbKey = number | "pick" | "close" | "keep" | null;
+
+export function crumbPopupKey(
+  event: Pick<KeyboardEvent, "key" | "ctrlKey" | "metaKey" | "altKey" | "shiftKey">,
+  list: { selected: number; count: number; query: string },
+): CrumbKey {
+  const plain = !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
+  const by = paletteStep(event);
+  if (by !== 0) {
+    return paletteMove(list.selected, list.count, by);
+  }
+  if (plain && list.query === "" && (event.key === "Home" || event.key === "End")) {
+    return event.key === "Home" ? 0 : Math.max(0, list.count - 1);
+  }
+  if (event.key === "Enter" && list.selected >= 0 && list.selected < list.count) {
+    return "pick";
+  }
+  if (event.key === "Escape") {
+    return "close";
+  }
+  return event.key === "Tab" ? "keep" : null;
 }

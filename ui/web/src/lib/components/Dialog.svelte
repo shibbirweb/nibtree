@@ -5,9 +5,9 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { IconName } from "../icons";
-  import { focusInto } from "../logic/dialogFocus";
+  import { focusInto, strayKeys } from "../logic/dialogFocus";
   import { DIALOG_OVERLAY, URGENT_DIALOG_LAYER, type DialogVariant } from "../logic/dialogLayout";
-  import { runDialogKey } from "../logic/dialogKeys";
+  import { dismissDialog, runDialogKey } from "../logic/dialogKeys";
   import { DialogMover } from "../logic/dialogMover.svelte";
   import { presetVar, type DialogWidth } from "../logic/presets";
   import DialogHead from "./DialogHead.svelte";
@@ -24,7 +24,7 @@
     urgent?: boolean;
     /** Drag the title to move it; double-click the title to center it again. */
     movable?: boolean;
-    onclose?: () => void;
+    onclose?: () => void | boolean;
     onsubmit?: () => void;
     enterSubmits?: boolean;
     actions?: Snippet;
@@ -66,9 +66,9 @@
   const mover = new DialogMover();
   const grab = () => (movable ? dialogEl : null);
   const dragHint = $derived(movable ? "Drag to move, double-click to center" : undefined);
+  const hide = () => (open = false);
   function close(): void {
-    open = false;
-    onclose?.();
+    dismissDialog(onclose, () => open, hide);
   }
 
   $effect(() => {
@@ -82,6 +82,7 @@
   }
 </script>
 
+<svelte:window onkeydown={strayKeys(() => (open ? dialogEl : null), onkeydown)} />
 {#snippet heading()}
   <h2 id={titleId} class:handle={movable} title={dragHint} use:mover.handle={grab}>{title}</h2>
 {/snippet}

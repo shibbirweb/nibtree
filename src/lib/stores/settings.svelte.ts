@@ -19,7 +19,19 @@ import type { ShortcutOverrides } from "$lib/commands/registry";
 import { applyColorTheme } from "$lib/themes/apply";
 import { type ColorMode, effectiveMode, pickThemeId } from "@nibtree/ui/themes/themeIndex";
 import { toast } from "$lib/ui/toast.svelte";
+import { type ActivityLayout, type ActivitySlot, moveActivity } from "@nibtree/ui/logic/activityLayout";
 import { type RecentFile, withRecentFiles } from "./recentFiles";
+import {
+  DEFAULT_ACTIVITY_LAYOUT,
+  firstPanelOn,
+  followLayout,
+  hidePanel,
+  type PanelSlots,
+  panelShown,
+  showPanel,
+  type SidePanel,
+  togglePanel,
+} from "./sidePanels";
 import { type SavedTabSession, withTabSession } from "./tabSession";
 import {
   type ConfigPatch,
@@ -301,6 +313,7 @@ class SettingsStore {
   explorerOpen = $state(initialState.explorerOpen);
   rightPanel = $state<RightPanel>(initialState.rightPanel);
   leftBarVisible = $state(initialState.leftBarVisible);
+  activityLayout = $state.raw<ActivityLayout>(initialState.activityLayout);
   rightBarVisible = $state(initialState.rightBarVisible);
   diffSplitRatio = $state(initialState.diffSplitRatio);
   threePaneSplit = $state.raw(initialState.threePaneSplit);
@@ -568,6 +581,7 @@ class SettingsStore {
       explorerOpen: this.explorerOpen,
       rightPanel: this.rightPanel,
       leftBarVisible: this.leftBarVisible,
+      activityLayout: this.activityLayout,
       rightBarVisible: this.rightBarVisible,
       diffSplitRatio: this.diffSplitRatio,
       threePaneSplit: this.threePaneSplit,
@@ -791,14 +805,19 @@ class SettingsStore {
     this.save();
   }
 
+  /** Hides the left side (null), or shows `panel` on the side its icon is on. */
   setLeftPanel(panel: LeftPanel): void {
-    this.leftPanel = panel;
-    this.save();
+    if (panel === null) {
+      this.leftPanel = null;
+      this.save();
+    } else {
+      this.showPanel(panel);
+    }
   }
 
-  /** Activity bar click: show the panel, or hide the sidebar when it is already shown. */
-  toggleLeftPanel(panel: Exclude<LeftPanel, null>): void {
-    this.setLeftPanel(this.leftPanel === panel ? null : panel);
+  /** Activity bar click: show the panel, or hide it when it is already shown. */
+  toggleLeftPanel(panel: SidePanel): void {
+    this.togglePanel(panel);
   }
 
   /** Share of the editor area the Markdown preview takes, clamped; saved with state.json. */
@@ -819,40 +838,77 @@ class SettingsStore {
   }
 
   toggleExplorer(): void {
-    this.toggleRightPanel("files");
+    this.togglePanel("files");
   }
 
-  /** The right sidebar shows one panel: its icon hides the sidebar when that panel is shown, else shows it. */
+  /** The panel's icon click: hide it when shown, else show it on its icon's side. */
   toggleRightPanel(panel: RightPanel): void {
-    if (this.explorerOpen && this.rightPanel === panel) {
-      this.explorerOpen = false;
-    } else {
-      this.rightPanel = panel;
-      this.explorerOpen = true;
-    }
+    this.togglePanel(panel);
+  }
+
+  /** What the two sides show (sidePanels.ts). */
+  private get slots(): PanelSlots {
+    return { left: this.leftPanel, right: this.rightPanel, rightOpen: this.explorerOpen };
+  }
+
+  private setSlots(slots: PanelSlots): void {
+    this.leftPanel = slots.left;
+    this.rightPanel = slots.right;
+    this.explorerOpen = slots.rightOpen;
     this.save();
   }
 
-  /** The right sidebar is open on the Files panel. */
+  panelShown(panel: SidePanel): boolean {
+    return panelShown(this.slots, panel);
+  }
+
+  showPanel(panel: SidePanel): void {
+    this.setSlots(showPanel(this.slots, this.activityLayout, panel));
+  }
+
+  hidePanel(panel: SidePanel): void {
+    this.setSlots(hidePanel(this.slots, panel));
+  }
+
+  togglePanel(panel: SidePanel): void {
+    this.setSlots(togglePanel(this.slots, this.activityLayout, panel));
+  }
+
+  /** View > Sidebar: hide the left side, or show the first panel whose icon is on the left. */
+  toggleLeftSide(): void {
+    const first = firstPanelOn(this.activityLayout, "left");
+    this.setSlots({ ...this.slots, left: this.leftPanel === null ? first : null });
+  }
+
+  /** Moves an activity bar icon; a shown panel whose icon changes side goes along. */
+  moveActivity(id: string, slot: ActivitySlot, index?: number): void {
+    this.setActivityLayout(moveActivity(this.activityLayout, id, slot, index));
+  }
+
+  resetActivityLayout(): void {
+    this.setActivityLayout(DEFAULT_ACTIVITY_LAYOUT);
+  }
+
+  private setActivityLayout(layout: ActivityLayout): void {
+    this.activityLayout = layout;
+    this.setSlots(followLayout(this.slots, layout));
+  }
+
   get filesPanelShown(): boolean {
-    return this.explorerOpen && this.rightPanel === "files";
+    return this.panelShown("files");
   }
 
-  /** The right sidebar is open on the AI panel. */
   get aiPanelShown(): boolean {
-    return this.explorerOpen && this.rightPanel === "ai";
+    return this.panelShown("ai");
   }
 
-  /** The right sidebar is open on the Notifications panel. */
   get notificationsPanelShown(): boolean {
-    return this.explorerOpen && this.rightPanel === "notifications";
+    return this.panelShown("notifications");
   }
 
-  /** Shows `panel` in the right sidebar, opening it. */
+  /** Shows `panel` on its icon's side. */
   showRightPanel(panel: RightPanel): void {
-    this.rightPanel = panel;
-    this.explorerOpen = true;
-    this.save();
+    this.showPanel(panel);
   }
 
   /** Shows or hides the icon strip at the left or right edge of the window. */

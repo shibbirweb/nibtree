@@ -48,11 +48,13 @@
   // Closed any other way (another dialog took its place): no commit.
   onDestroy(() => answer(false));
 
-  function cancel(): void {
+  /** Stays open while saving: the commit waiting on it continues once the save is done. */
+  function cancel(): boolean {
     if (saving) {
-      return;
+      return false;
     }
     gitDialogs.close();
+    return true;
   }
 
   async function save(): Promise<void> {

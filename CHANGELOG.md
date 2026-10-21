@@ -13,6 +13,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Added
 
+- Move the activity bar icons: right-click an icon for **Move to Left Top**, **Left Bottom**, **Right Top** or **Right Bottom**, or drag it to a new place on either bar. A panel goes with its icon, so Changes can open on the right and the file tree on the left. **Reset Positions** puts everything back, and the places are remembered.
 - Nibtree for Linux (x64): an `.AppImage` that runs on any distribution and a `.deb` for Ubuntu and Debian. A GitHub token is kept in your desktop's keyring (GNOME Keyring or KWallet), opening Nibtree again brings the running window forward (with the folder you opened), and the update check links to the new AppImage. The memory readout is not on Linux yet.
 - Click a change bar beside the line numbers in the editor to open a change peek under it, like VS Code: the change's diff against the staged version in your Diff layout, with **Stage this change**, **Revert this change**, the next and previous change, and Close (or Escape). Every change in the peek's diff has its own Revert button too.
 - Switch between worktrees from the top bar: when a repository has more than one, a worktree button after the branch lists them all with their branch and folder, changed files, commits to push and pull, a stopped merge or rebase, and when each last changed. Click one to make it active: it joins the window's workspace, and the tabs, terminals and AI agents of every worktree keep running.
@@ -213,6 +214,17 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- Saving again right after a save (Cmd+S, a quick edit, Cmd+S) writes the file again. The second save used to be dropped and the tab stayed unsaved.
+- Esc closes the Navigation Bar's list again after you switch to another app and back. It used to stay open and keep the Command Palette and other shortcuts from working until you clicked elsewhere.
+- Pressing Esc in the Add or Edit form of Git Remotes goes back to the list again. It used to close the whole dialog and leave every Git command and shortcut doing nothing until another Git dialog opened. The same could happen to the name and email dialog before a commit when Esc was pressed while it saved.
+- Choosing a Git command while another one is still finishing now says to wait for it, instead of doing nothing.
+- The buttons of a list row, such as a shelf's Unshelve and Delete, also show on the selected row, so they can be reached with the keyboard and by screen readers, not only by hovering with the mouse.
+- Esc closes a dialog again after a button in it went away, such as the Conflicts dialog once Accept Yours or Accept Theirs resolved the last conflict.
+- Pull, Push, Merge, Rebase, Reset HEAD, Rollback, Shelve, New Worktree and the Branches popup's Checkout Tag or Revision now do what their button says: they closed without running git before.
+- Git > Commit... (Cmd+K) puts the caret in the commit message again.
+- In the browser version, choosing an item from a submenu closes the menu, Apply Patch from Clipboard reads your browser's clipboard instead of the server's, and a folder typed in the save or open picker is used even without pressing Enter.
+- When git refuses to abort a merge or rebase (for example a file has staged changes and more changes on top), Abort now shows git's reason as an error, instead of "Abort stopped with conflicts".
+- `nibtree cli call git_push pushTags=true` (and the MCP `git_push` tool) now pushes the tags too when no remote name is given, instead of only the branch.
 - Typing in the Rich Editor no longer rewrites the rest of a file whose fenced code block is followed by a code span holding a tag, such as `` `name@<version>` ``. Before, the code span was saved with a placeholder in it and lists were reindented.
 - With **Rounded panels** on, the merge, rebase and bisect banners are rounded panels with a gap around them, like the panels below, instead of a bar across the whole window.
 - On macOS the window buttons no longer cover the title of the merge tool ("Merge Revisions for"): its top bar leaves room for them, and you can drag the window by it.

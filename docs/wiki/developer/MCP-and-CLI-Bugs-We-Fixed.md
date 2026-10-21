@@ -11,3 +11,8 @@ The bugs we found in the MCP server and the command line tool, why they happened
 - **The issue:** with the command line tool switched off, `nibtree cli tools` failed on Windows with "Could not read Nibtree's answer: io: Peer disconnected" instead of saying the tool is off. The Windows CI job found it.
 - **Why it happened:** a refused request (wrong token, a switch off, a bad path) is answered before its body is read, and the connection was closed at once. Closing a socket that still holds unread data makes Windows reset the connection, and the reset can arrive before the client has read the answer.
 - **The fix and why we chose it:** `close_after_refusal` in `mcp/http.rs` shuts the sending side first, then reads and drops the rest of the request for up to a second before closing. Reading the whole body before refusing would have let anyone make the server read 1 MB without a token; the short linger only reads what the client already sent.
+
+**`git_push` dropped `pushTags`.**
+- **The issue:** `nibtree cli call git_push pushTags=true` pushed the branch but no tags, and said nothing about it. A full test run of the git tools found it.
+- **Why it happened:** tags were only added on the path with a `remoteName`; the plain push to the upstream has no tags option, and the flag was read only on the other path.
+- **The fix and why we chose it:** without `remoteName`, `git_push` now pushes the branch, then the tags with `run_push_tags`, the same push the app's Push Tags uses. Refusing the flag would have made callers learn a rule for no reason. `push_sends_the_branch_and_push_tags_works_without_a_remote_name` covers it.

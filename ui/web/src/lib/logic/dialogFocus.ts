@@ -12,3 +12,40 @@ export function focusInto(dialog: HTMLElement): () => void {
     }
   };
 }
+
+/**
+ * Whether a key pressed with the focus on nothing (the page itself, because the focused button was removed or the
+ * window came back to the front) belongs to `dialog`: only when it is the topmost open dialog. A popup that is not
+ * modal (the Navigation Bar's list) is on top when no modal dialog is open. A key aimed at an element, or at a dialog
+ * stacked above this one, is never taken, so Esc closes the right one and nothing outside it loses its keys.
+ */
+export function ownsStrayKey(
+  dialog: Element,
+  active: Element | null,
+  body: Element | null,
+  openDialogs: readonly Element[],
+): boolean {
+  const stray = active === null || active === body;
+  return stray && (openDialogs.at(-1) ?? dialog) === dialog;
+}
+
+/**
+ * A window keydown listener for a Dialog or a popup: a key its own handler never saw because the focus fell to the
+ * page (a button that removed itself, the window coming back to the front) goes to `handle`, with the focus back in.
+ */
+export function strayKeys(
+  dialog: () => HTMLElement | null,
+  handle: (event: KeyboardEvent) => void,
+): (event: KeyboardEvent) => void {
+  return (event) => {
+    const element = dialog();
+    if (!element || event.defaultPrevented) {
+      return;
+    }
+    const openDialogs = [...document.querySelectorAll("[role='dialog'][aria-modal='true']")];
+    if (ownsStrayKey(element, document.activeElement, document.body, openDialogs)) {
+      element.focus();
+      handle(event);
+    }
+  };
+}

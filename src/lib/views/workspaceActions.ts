@@ -133,7 +133,7 @@ export function runWorkspaceShortcut(shortcut: WorkspaceShortcut): void {
       settings.toggleWordWrap();
       break;
     case "toggleSidebar":
-      settings.setLeftPanel(settings.leftPanel === null ? "changes" : null);
+      settings.toggleLeftSide();
       break;
     case "showChanges":
       settings.setLeftPanel("changes");

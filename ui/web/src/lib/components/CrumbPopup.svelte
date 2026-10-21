@@ -4,8 +4,8 @@
      room below is short (logic/crumbs.ts). -->
 <script lang="ts">
   import type { IconName } from "../icons";
-  import { crumbPlace } from "../logic/crumbs";
-  import { paletteMove, paletteStep } from "../logic/palette";
+  import { crumbPlace, crumbPopupKey } from "../logic/crumbs";
+  import { strayKeys } from "../logic/dialogFocus";
   import { componentTokens } from "../styles/tokens";
   import FileIcon, { type FileIconView } from "./FileIcon.svelte";
   import HighlightText from "./HighlightText.svelte";
@@ -80,23 +80,18 @@
     if (event.defaultPrevented || event.isComposing) {
       return;
     }
-    const plain = !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
-    const by = paletteStep(event);
-    let used = true;
-    if (by !== 0) {
-      selected = paletteMove(selected, entries.length, by);
-    } else if (plain && query === "" && (event.key === "Home" || event.key === "End")) {
-      selected = event.key === "Home" ? 0 : Math.max(0, entries.length - 1);
-    } else if (event.key === "Enter" && entries[selected]) {
-      onpick(entries[selected], event);
-    } else if (event.key === "Escape") {
-      onclose?.();
-    } else {
-      used = event.key === "Tab";
+    const action = crumbPopupKey(event, { selected, count: entries.length, query });
+    if (action === null) {
+      return;
     }
-    if (used) {
-      event.preventDefault();
-      event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    if (action === "pick") {
+      onpick(entries[selected], event);
+    } else if (action === "close") {
+      onclose?.();
+    } else if (typeof action === "number") {
+      selected = action;
     }
   }
 
@@ -113,6 +108,8 @@
     return { destroy: () => node.remove() };
   }
 </script>
+
+<svelte:window onkeydown={strayKeys(() => popup, keydown)} />
 
 <div
   bind:this={popup}

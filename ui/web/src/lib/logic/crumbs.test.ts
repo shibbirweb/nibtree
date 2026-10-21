@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { crumbPlace, crumbShrink } from "./crumbs";
+import { crumbPlace, crumbPopupKey, crumbShrink } from "./crumbs";
 
 const sizes = { width: 340, maxHeight: 440, minHeight: 120, offset: 3, inset: 8, roomBelow: 200 };
 const crumb = (top: number, left = 100) => ({ left, right: left + 60, top, bottom: top + 22 });
@@ -30,5 +30,33 @@ describe("crumbPlace", () => {
     const place = crumbPlace(crumb(40, 280), { width: 300, height: 800 }, sizes);
     expect(place.width).toBe(284);
     expect(place.left).toBe(8);
+  });
+});
+
+describe("crumbPopupKey", () => {
+  const key = (name: string, extra: Partial<KeyboardEvent> = {}) => ({
+    key: name,
+    ctrlKey: false,
+    metaKey: false,
+    altKey: false,
+    shiftKey: false,
+    ...extra,
+  });
+  const list = { selected: 1, count: 3, query: "" };
+
+  it("moves with the arrows, wrapping around, and jumps with Home and End while the filter is empty", () => {
+    expect(crumbPopupKey(key("ArrowDown"), list)).toBe(2);
+    expect(crumbPopupKey(key("ArrowUp"), { ...list, selected: 0 })).toBe(2);
+    expect(crumbPopupKey(key("Home"), list)).toBe(0);
+    expect(crumbPopupKey(key("End"), list)).toBe(2);
+    expect(crumbPopupKey(key("Home"), { ...list, query: "no" })).toBe(null);
+  });
+
+  it("picks with Enter only on an entry, closes with Escape and keeps Tab", () => {
+    expect(crumbPopupKey(key("Enter"), list)).toBe("pick");
+    expect(crumbPopupKey(key("Enter"), { ...list, selected: -1, count: 0 })).toBe(null);
+    expect(crumbPopupKey(key("Escape"), list)).toBe("close");
+    expect(crumbPopupKey(key("Tab"), list)).toBe("keep");
+    expect(crumbPopupKey(key("a"), list)).toBe(null);
   });
 });

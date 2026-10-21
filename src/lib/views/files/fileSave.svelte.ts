@@ -12,6 +12,7 @@ import { relativeTo } from "$lib/stores/workspacePaths";
 import { toast } from "$lib/ui/toast.svelte";
 import type { FileEditor } from "./fileEditor.svelte";
 import { currentPosition } from "./filePosition";
+import { whenIdle } from "./saveQueue";
 
 export class FileSaver {
   saving = $state(false);
@@ -35,9 +36,13 @@ export class FileSaver {
    * `auto` is an auto save, which leaves the lines with a caret alone in the clean-ups.
    */
   async save(options: { quiet?: boolean; auto?: boolean } = {}): Promise<boolean> {
+    // A save still writing: this one follows it, so the newest text is written too.
+    if (!(await whenIdle(() => this.busy))) {
+      return false;
+    }
     const { ctx, file, shared } = this.editor;
     const root = ctx.folder()?.root;
-    if (!this.editor.view || !file || !root || this.busy) {
+    if (!this.editor.view || !file || !root) {
       return false;
     }
     // Rich Editor: its last keystrokes are in the text before it is written.

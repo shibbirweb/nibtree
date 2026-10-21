@@ -149,7 +149,7 @@
   <PanelHead
     title="Branches and Stashes"
     hideTitle={withCommandKeys("Hide", "view.sidebar")}
-    onhide={() => settings.setLeftPanel(null)}
+    onhide={() => settings.hidePanel("branches")}
   >
     <IconButton
       icon="refresh"
