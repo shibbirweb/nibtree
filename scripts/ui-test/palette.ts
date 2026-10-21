@@ -99,6 +99,18 @@ export async function palette(g: Group): Promise<void> {
   await g.waitForChange("notes.txt");
   await g.openFile("notes.txt");
 
+  // Esc closes the Navigation Bar's list even when the focus fell to the page, as when the window comes back to the
+  // front; it once stayed open and kept every shortcut from working.
+  await runCommand(g, "Edit: Jump to Navigation Bar");
+  const crumbList = page.getByRole("dialog", { name: /^Navigation bar: / });
+  await crumbList.waitFor();
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await page.keyboard.press("Escape");
+  await g.expect("Esc closes the Navigation Bar's list with the focus on the page", async () => {
+    return (await crumbList.count()) === 0;
+  });
+  await settle(g);
+
   const names = await listCommands(g);
   g.check(`the palette lists the app's commands (${names.length})`, names.length > 100, String(names.length));
   // Commands that close tabs run near the end, so the file the others act on stays open.

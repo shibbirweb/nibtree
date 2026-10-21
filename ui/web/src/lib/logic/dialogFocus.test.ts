@@ -22,4 +22,11 @@ describe("ownsStrayKey", () => {
     expect(ownsStrayKey(conflicts, body, body, [conflicts, confirm])).toBe(false);
     expect(ownsStrayKey(confirm, body, body, [conflicts, confirm])).toBe(true);
   });
+
+  it("gives it to a popup that is not modal while no modal dialog is open", () => {
+    const popup = element("navigation bar popup");
+    expect(ownsStrayKey(popup, body, body, [])).toBe(true);
+    expect(ownsStrayKey(popup, body, body, [confirm])).toBe(false);
+    expect(ownsStrayKey(popup, field, body, [])).toBe(false);
+  });
 });
