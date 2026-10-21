@@ -148,7 +148,7 @@
   <PanelHead
     title="AI Agents"
     hideTitle={withCommandKeys("Hide", "view.aiPanel")}
-    onhide={() => settings.toggleRightPanel("ai")}
+    onhide={() => settings.hidePanel("ai")}
   >
     <IconButton
       icon="chevrons-left"

@@ -187,9 +187,9 @@ async function showPanel(args: ToolArgs): Promise<Structured> {
     case "branches":
     case "scripts":
       if (visible) {
-        settings.setLeftPanel(panel);
-      } else if (settings.leftPanel === panel) {
-        settings.setLeftPanel(null);
+        settings.showPanel(panel);
+      } else {
+        settings.hidePanel(panel);
       }
       break;
     case "log":

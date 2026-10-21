@@ -33,6 +33,7 @@ import { fileCommands } from "$lib/stores/fileCommands.svelte";
 import { repoStore } from "$lib/stores/repo.svelte";
 import { isUntitledTab } from "$lib/stores/untitledTabs";
 import { settings } from "$lib/stores/settings.svelte";
+import { SIDE_PANELS } from "$lib/stores/sidePanels";
 import { terminalStore } from "$lib/terminal/terminalStore.svelte";
 import { dialogs } from "$lib/ui/dialog.svelte";
 import { toast } from "$lib/ui/toast.svelte";
@@ -133,6 +134,7 @@ export function currentMenuInputs(mode: MenuMode): MenuInputs {
       canSplit: repoStore.canSplit(activePath),
     },
     leftPanel: settings.leftPanel,
+    shownPanels: SIDE_PANELS.filter((panel) => settings.panelShown(panel)),
     explorerOpen: settings.filesPanelShown,
     aiPanelOpen: settings.aiPanelShown,
     leftBarVisible: settings.leftBarVisible,

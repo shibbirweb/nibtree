@@ -139,7 +139,7 @@
   <PanelHead
     title="Scripts"
     hideTitle={withCommandKeys("Hide", "view.sidebar")}
-    onhide={() => settings.setLeftPanel(null)}
+    onhide={() => settings.hidePanel("scripts")}
   >
     <IconButton
       icon="chevrons-left"

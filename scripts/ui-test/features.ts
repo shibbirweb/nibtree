@@ -1,10 +1,28 @@
 // Features with no Git menu item: the editor, Find in Files, Settings, the theme button, a split editor, the
-// terminal, the Files panel (rename, duplicate, move to Trash) and a commit from the Changes panel. Each result is
+// terminal, the Files panel (rename, duplicate, move to Trash), a commit from the Changes panel and moving the
+// activity bar icons (their menu, dragging, Reset Positions). Each result is
 // checked on disk, in the settings file or with plain git.
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Group } from "./harness";
+
+/** The layout state (state.json) next to the settings: where the activity bar icons sit. */
+function layoutState(g: Group): Record<string, string[]> {
+  for (const folder of readdirSync(g.home).filter((name) => name.startsWith(".nibtree"))) {
+    const file = join(g.home, folder, "state.json");
+    if (existsSync(file)) {
+      try {
+        return (
+          (JSON.parse(readFileSync(file, "utf8")) as { activityLayout?: Record<string, string[]> }).activityLayout ?? {}
+        );
+      } catch {
+        return {};
+      }
+    }
+  }
+  return {};
+}
 
 /** The app's settings, read from the group's own home folder (`.nibtree` or `.nibtree-browser`). */
 function settings(g: Group): Record<string, unknown> {
@@ -29,6 +47,7 @@ export async function features(g: Group): Promise<void> {
   await terminal(g);
   await filesPanel(g);
   await commitFromChanges(g);
+  await activityPositions(g);
 }
 
 async function editor(g: Group): Promise<void> {
@@ -102,9 +121,11 @@ async function terminal(g: Group): Promise<void> {
     g.check("Terminal opens with Ctrl+`", false);
     return;
   }
-  await g.until(async () => (await screen.innerText()).trim().length > 0, 10_000);
+  // Wait for the shell's prompt, and a moment for it to take keys: letters typed earlier are lost.
+  await g.until(async () => /[%$#>]\s*$/.test((await screen.innerText()).trim()), 15_000);
+  await page.waitForTimeout(800);
   await screen.click();
-  await page.keyboard.type("echo terminal-ok > term-check.txt");
+  await page.keyboard.type("echo terminal-ok > term-check.txt", { delay: 20 });
   await page.keyboard.press("Enter");
   await g.expect(
     "Terminal: a typed command runs in the repository",
@@ -178,4 +199,61 @@ async function commitFromChanges(g: Group): Promise<void> {
     () => g.git(["log", "-1", "--format=%s"]) === "commit from the Changes panel",
     () => g.git(["status", "--porcelain"]),
   );
+}
+
+async function activityPositions(g: Group): Promise<void> {
+  const page = g.page;
+  const left = page.getByRole("navigation", { name: "Sidebar", exact: true });
+  const right = page.getByRole("navigation", { name: "Right sidebar", exact: true });
+  const icon = (bar: typeof left, name: string) => bar.getByRole("button", { name, exact: true });
+  const moveTo = async (bar: typeof left, name: string, item: string) => {
+    await icon(bar, name).click({ button: "right" });
+    await page.getByRole("menuitem", { name: item }).click();
+  };
+  if (
+    !(await icon(left, "Changes")
+      .getAttribute("aria-pressed")
+      .then((on) => on === "true"))
+  ) {
+    await icon(left, "Changes").click();
+  }
+
+  await moveTo(left, "Changes", "Move to Right Top");
+  await g.expect("Activity bar: Move to Right Top puts the Changes icon in the right bar", async () => {
+    return (await icon(right, "Changes").isVisible()) && (await icon(left, "Changes").count()) === 0;
+  });
+  await g.expect("...and its panel moves to the right side with it", () =>
+    page
+      .locator("aside.panel.right")
+      .getByRole("textbox", { name: /message/i })
+      .first()
+      .isVisible(),
+  );
+  await g.expect("...and the place is saved", () => (layoutState(g)["right-top"] ?? []).includes("changes"));
+
+  // Drag the Files icon from the right bar into the left bar's bottom group.
+  const from = await icon(right, "Files").boundingBox();
+  const to = await icon(left, "Terminal").boundingBox();
+  if (from && to) {
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x - 40, from.y + 20, { steps: 5 });
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height + 4, { steps: 10 });
+    await page.mouse.up();
+  }
+  await g.expect(
+    "Activity bar: dragging the Files icon moves it to the left bar's bottom",
+    () => (layoutState(g)["left-bottom"] ?? []).at(-1) === "files",
+  );
+  if ((await icon(left, "Files").getAttribute("aria-pressed")) !== "true") {
+    await icon(left, "Files").click();
+  }
+  await g.expect("...and the Files panel opens on the left", () =>
+    page.locator("aside.panel.left").getByText("notes.txt", { exact: true }).first().isVisible(),
+  );
+
+  await moveTo(right, "Changes", "Reset Positions");
+  await g.expect("Activity bar: Reset Positions puts every icon back", async () => {
+    return (await icon(left, "Changes").isVisible()) && (await icon(right, "Files").isVisible());
+  });
 }

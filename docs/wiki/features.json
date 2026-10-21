@@ -7,6 +7,7 @@
     { "page": "usage/Files-Panel.md", "summary": "Browse your files and see at a glance what git thinks of each one." },
     { "page": "usage/File-Operations.md", "summary": "Create, rename, copy, move and trash files and folders right in the Files panel." },
     { "page": "usage/File-Icons.md", "summary": "Show an icon for each file type: no icons, simple Minimal shapes, or full Material Icons." },
+    { "page": "usage/Activity-Bars.md", "summary": "Move the activity bar icons to either edge, top or bottom; their panels go along." },
     { "page": "usage/Rounded-Panels.md", "summary": "Turn the sidebars, editors and terminal into rounded panels with space between them, in any color theme." },
     { "page": "usage/Editor-and-Tabs.md", "summary": "Edit files in tabs, jump between changes and keep an eye on what you changed." },
     { "page": "usage/Pin-Reorder-and-Wrap-Tabs.md", "summary": "Drag tabs into the order you like, pin the ones you always need, and wrap a long row of tabs." },
@@ -576,6 +577,13 @@
       "usage": "usage/Color-Themes.md",
       "developer": "developer/How-Color-Themes-Work.md",
       "screenshots": ["color-theme-pickers.png", "color-theme-dracula.png", "color-theme-solarized-light.png", "color-theme-high-contrast.png"]
+    },
+    {
+      "id": "activity-bar-positions",
+      "title": "Activity bar positions",
+      "usage": "usage/Activity-Bars.md",
+      "developer": "developer/How-Activity-Bar-Positions-Work.md",
+      "screenshots": ["activity-bar-menu.png"]
     },
     {
       "id": "rounded-panels",

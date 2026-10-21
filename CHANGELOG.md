@@ -13,6 +13,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Added
 
+- Move the activity bar icons: right-click an icon for **Move to Left Top**, **Left Bottom**, **Right Top** or **Right Bottom**, or drag it to a new place on either bar. A panel goes with its icon, so Changes can open on the right and the file tree on the left. **Reset Positions** puts everything back, and the places are remembered.
 - Nibtree for Linux (x64): an `.AppImage` that runs on any distribution and a `.deb` for Ubuntu and Debian. A GitHub token is kept in your desktop's keyring (GNOME Keyring or KWallet), opening Nibtree again brings the running window forward (with the folder you opened), and the update check links to the new AppImage. The memory readout is not on Linux yet.
 - Click a change bar beside the line numbers in the editor to open a change peek under it, like VS Code: the change's diff against the staged version in your Diff layout, with **Stage this change**, **Revert this change**, the next and previous change, and Close (or Escape). Every change in the peek's diff has its own Revert button too.
 - Switch between worktrees from the top bar: when a repository has more than one, a worktree button after the branch lists them all with their branch and folder, changed files, commits to push and pull, a stopped merge or rebase, and when each last changed. Click one to make it active: it joins the window's workspace, and the tabs, terminals and AI agents of every worktree keep running.

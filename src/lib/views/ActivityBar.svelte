@@ -1,90 +1,20 @@
-<!-- Activity bar: picks what the left sidebar shows, or hides it. -->
+<!-- The activity bar at the window's left edge: the icons whose place is on the left (settings.activityLayout). Any
+     icon can be dragged to either bar, or moved from its right-click menu (activityItems.svelte.ts). -->
 <script lang="ts">
-  import { withCommandKeys } from "$lib/commands/commandRuntime";
-  import type { CommandId } from "$lib/commands/registry";
-  import { repoStore } from "$lib/stores/repo.svelte";
-  import { type LeftPanel, settings } from "$lib/stores/settings.svelte";
-  import { terminalStore } from "$lib/terminal/terminalStore.svelte";
+  import { settings } from "$lib/stores/settings.svelte";
+  import { contextMenu } from "$lib/ui/menu.svelte";
   import ActivityBar from "@nibtree/ui/components/ActivityBar.svelte";
-  import type { IconName } from "@nibtree/ui/icons";
-  import { changesSelection } from "./changes/selection.svelte";
+  import { activityBarItems } from "@nibtree/ui/logic/activityLayout";
+  import { activityItem, activityMenu, selectActivity } from "./activityItems.svelte";
 
-  interface Item {
-    panel: Exclude<LeftPanel, null>;
-    icon: IconName;
-    label: string;
-    /** The command whose keys the tooltip shows. */
-    commandId: CommandId;
-  }
-
-  const items: Item[] = [
-    { panel: "changes", icon: "git-compare", label: "Changes", commandId: "view.changes" },
-    { panel: "branches", icon: "branch", label: "Branches and Stashes", commandId: "view.branches" },
-  ];
-
-  const conflicts = $derived(
-    Object.values(repoStore.statuses).reduce(
-      (sum, status) => sum + status.files.filter((file) => file.conflicted).length,
-      0,
-    ),
-  );
-
-  /** The tooltip: the name with its keys, and how to hide it while it is on. */
-  function tip(text: string, on: boolean): string {
-    return `${text}${on ? ", click to hide" : ""}`;
-  }
-
-  const bar = $derived([
-    ...items.map((item) => ({
-      id: item.panel,
-      icon: item.icon,
-      label: item.label,
-      active: settings.leftPanel === item.panel,
-      title: tip(withCommandKeys(item.label, item.commandId), settings.leftPanel === item.panel),
-      badge: item.panel === "changes" ? repoStore.totalChanges : undefined,
-      badgeTone: conflicts > 0 ? ("danger" as const) : ("accent" as const),
-    })),
-    "divider" as const,
-    // The Log opens in the main area rather than in the sidebar.
-    {
-      id: "log",
-      icon: "history" as const,
-      label: "Log",
-      active: changesSelection.logShown,
-      title: tip(withCommandKeys("Log: commit history and graph", "view.log"), changesSelection.logShown),
-    },
-    null,
-    // Scripts of package.json, composer.json, Makefiles and the like, run in a terminal.
-    {
-      id: "scripts",
-      icon: "play" as const,
-      label: "Scripts",
-      smallIcon: true,
-      active: settings.leftPanel === "scripts",
-      title:
-        settings.leftPanel === "scripts"
-          ? "Scripts, click to hide"
-          : "Scripts: run npm, Composer, Make and other project scripts",
-    },
-    // The terminal panel opens below the editor.
-    {
-      id: "terminal",
-      icon: "terminal" as const,
-      label: "Terminal",
-      active: terminalStore.panelOpen,
-      title: tip(withCommandKeys("Terminal", "view.terminal"), terminalStore.panelOpen),
-    },
-  ]);
-
-  function select(id: string): void {
-    if (id === "log") {
-      changesSelection.toggleLog();
-    } else if (id === "terminal") {
-      terminalStore.toggle();
-    } else {
-      settings.toggleLeftPanel(id as Exclude<LeftPanel, null>);
-    }
-  }
+  const items = $derived(activityBarItems(settings.activityLayout, "left", activityItem));
 </script>
 
-<ActivityBar label="Sidebar" items={bar} onselect={select} />
+<ActivityBar
+  label="Sidebar"
+  {items}
+  movable
+  onselect={selectActivity}
+  onmove={(id, target) => settings.moveActivity(id, target.slot, target.index)}
+  oncontextmenu={(id, event) => contextMenu.open(event, activityMenu(id))}
+/>

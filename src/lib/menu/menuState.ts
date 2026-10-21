@@ -2,6 +2,7 @@
 // appMenu.svelte.ts gathers the inputs and sends only what changed to the native menu.
 
 import type { FileIconMode, LeftPanel, MarkdownViewMode, ThemeSetting } from "$lib/stores/settingsData";
+import type { SidePanel } from "$lib/stores/sidePanels";
 import type { OpKind } from "$lib/types";
 import { type MenuAction, type MenuMode, waitsForGit } from "./menuIds";
 
@@ -29,6 +30,8 @@ export interface MenuInputs {
   /** Editor groups (Window > Split Right / Split Down); missing means one group with splitting off. */
   editorGroups?: EditorGroupInputs;
   leftPanel: LeftPanel;
+  /** The side panels on screen, on either side; missing means only `leftPanel` and the Files panel. */
+  shownPanels?: SidePanel[];
   explorerOpen: boolean;
   /** The right sidebar shows the AI panel. */
   aiPanelOpen?: boolean;
@@ -220,9 +223,10 @@ export function menuState(inputs: MenuInputs): MenuState {
     state[action] = { enabled: workspace };
   }
 
-  state["view.changes"] = { enabled: workspace, checked: workspace && inputs.leftPanel === "changes" };
-  state["view.branches"] = { enabled: workspace, checked: workspace && inputs.leftPanel === "branches" };
-  state["view.scripts"] = { enabled: workspace, checked: workspace && inputs.leftPanel === "scripts" };
+  const shown = (panel: SidePanel) => inputs.shownPanels?.includes(panel) ?? inputs.leftPanel === panel;
+  state["view.changes"] = { enabled: workspace, checked: workspace && shown("changes") };
+  state["view.branches"] = { enabled: workspace, checked: workspace && shown("branches") };
+  state["view.scripts"] = { enabled: workspace, checked: workspace && shown("scripts") };
   state["view.log"] = { enabled: workspace, checked: workspace && (inputs.logShown ?? inputs.shownView === "log") };
   state["view.filesPanel"] = { enabled: workspace, checked: workspace && inputs.explorerOpen };
   state["view.aiPanel"] = { enabled: workspace, checked: workspace && (inputs.aiPanelOpen ?? false) };

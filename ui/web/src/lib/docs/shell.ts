@@ -146,7 +146,9 @@ export const shellDocs: ComponentDoc[] = [
     summary: "The vertical icon bar beside a side panel; the open panel is tinted with an accent line.",
     usage:
       "Use at the window's left or right edge. A `null` item pushes the rest to the bottom; \"divider\" draws a " +
-      "short line between groups. Give an item `active` when it is on by itself (the Log, the terminal).",
+      "short line between groups. Give an item `active` when it is on by itself (the Log, the terminal). With " +
+      "`movable`, icons drag between both bars' top and bottom groups: keep the places in an ActivityLayout " +
+      "(logic/activityLayout.ts) and apply `onmove` with `moveActivity`; offer the same moves in `oncontextmenu`.",
     aliases: ["Sidebar"],
     props: [
       prop(
@@ -161,9 +163,27 @@ export const shellDocs: ComponentDoc[] = [
       prop("side", '"left" | "right"', "Which window edge; moves the border and accent line.", {
         default: '"left"',
       }),
+      prop("movable", "boolean", "Icons can be dragged to another place in either bar; a line shows where.", {
+        default: "false",
+      }),
       prop("onselect", "(id: string) => void", "A panel button was clicked."),
+      prop(
+        "onmove",
+        "(id: string, target: { slot: " +
+          '"left-top" | "left-bottom" | "right-top" | "right-bottom"; index: number }) => void',
+        "A dragged icon was dropped: the group and the place in it (the bar it came from calls it).",
+      ),
+      prop("oncontextmenu", "(id: string, event: MouseEvent) => void", "An icon was right-clicked, for a menu."),
     ],
-    examples: [{ title: "Left bar", code: '<ActivityBar label="Side panels" {items} bind:active />' }],
+    examples: [
+      { title: "Left bar", code: '<ActivityBar label="Side panels" {items} bind:active />' },
+      {
+        title: "Movable",
+        code:
+          '<ActivityBar label="Side panels" items={barItems(layout, "left")} movable\n' +
+          "  onmove={(id, target) => (layout = moveActivity(layout, id, target.slot, target.index))} />",
+      },
+    ],
     replaces: ['<nav class="activity"> in ActivityBar.svelte and RightActivityBar.svelte'],
   },
 ];

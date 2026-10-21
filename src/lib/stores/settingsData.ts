@@ -3,11 +3,13 @@
 // written and which session to restore on start. Kept free of Svelte and Tauri
 // so it can be tested directly.
 
+import { type ActivityLayout, normalizeActivityLayout } from "@nibtree/ui/logic/activityLayout";
 import { readThreeSplit, type ThreeSplit } from "@nibtree/ui/logic/threeSplit";
 import type { AgentOverride } from "$lib/ai/agentConfig";
 import { pickRecentCommands } from "../commands/recentCommands";
 import { AUTO_SAVE_DELAY_RANGE, DEFAULT_AUTO_SAVE_DELAY } from "../editor/autoSave";
 import { AUTO_FETCH_INTERVAL_RANGE, DEFAULT_AUTO_FETCH_MINUTES } from "./autoFetchPlan";
+import { DEFAULT_ACTIVITY_LAYOUT, followLayout, isSidePanel, type SidePanel } from "./sidePanels";
 import { NO_TAB_LIMIT, pickTabLimit } from "./tabLimit";
 import { pickUnloadTabMinutes } from "./tabSleep";
 import { parseRecentFiles, type RecentFile } from "./recentFiles";
@@ -20,11 +22,11 @@ import { type CommitTemplate, parseCommitTemplates } from "../views/changes/comm
 
 export type ThemeSetting = "system" | "light" | "dark";
 
-/** Which panel the left sidebar shows; null hides it. */
-export type LeftPanel = "changes" | "branches" | "scripts" | null;
+/** Which panel the left sidebar shows; null hides it. Any panel whose icon is on the left (see sidePanels.ts). */
+export type LeftPanel = SidePanel | null;
 
-/** What the right sidebar shows while it is open: the file tree or the AI agents. */
-export type RightPanel = "files" | "ai" | "notifications";
+/** What the right sidebar shows while it is open: any panel whose icon is on the right. */
+export type RightPanel = SidePanel;
 
 /**
  * How a diff shows its two versions: in two columns that each scroll (joined by bands), in two columns that scroll
@@ -735,6 +737,8 @@ export interface UiState {
   rightPanel: RightPanel;
   /** The icon strips at the left and right edges of the window (the activity bars). */
   leftBarVisible: boolean;
+  /** Where each activity bar icon sits: which bar, its top or bottom group, and the order. */
+  activityLayout: ActivityLayout;
   rightBarVisible: boolean;
   /** The left side's share of a side-by-side diff (see src/lib/diff/split.ts). */
   diffSplitRatio: number;
@@ -928,6 +932,7 @@ const STATE_KEYS = [
   "explorerOpen",
   "rightPanel",
   "leftBarVisible",
+  "activityLayout",
   "rightBarVisible",
   "diffSplitRatio",
   "threePaneSplit",
@@ -1215,14 +1220,15 @@ export function parseState(value: unknown): { state: UiState; extra: Json } {
         .slice(-MAX_SCRIPT_NODE_VERSIONS),
     ),
     explorerOpen: pickBoolean(data.explorerOpen, true),
-    rightPanel: data.rightPanel === "ai" || data.rightPanel === "notifications" ? data.rightPanel : "files",
+    rightPanel: isSidePanel(data.rightPanel) ? data.rightPanel : "files",
     leftBarVisible: pickBoolean(data.leftBarVisible, true),
+    activityLayout: normalizeActivityLayout(data.activityLayout, DEFAULT_ACTIVITY_LAYOUT),
     rightBarVisible: pickBoolean(data.rightBarVisible, true),
     diffSplitRatio: pickNumber(data.diffSplitRatio, 0.5, 0.15, 0.85),
     threePaneSplit: readThreeSplit(data.threePaneSplit),
     mergeStackHeight: pickNumber(data.mergeStackHeight, 0, 0, 4000),
     mergeStackRatio: pickNumber(data.mergeStackRatio, 0.5, 0.15, 0.85),
-    leftPanel: panel === "changes" || panel === "branches" || panel === "scripts" || panel === null ? panel : "changes",
+    leftPanel: isSidePanel(panel) || panel === null ? panel : "changes",
     sidebarWidth: pickNumber(data.sidebarWidth, DEFAULT_PANEL_WIDTH, 120, 2000),
     explorerWidth: pickNumber(data.explorerWidth, DEFAULT_PANEL_WIDTH, 120, 2000),
     commitInfoHeight: pickNumber(data.commitInfoHeight, DEFAULT_COMMIT_INFO_HEIGHT, 80, 2000),
@@ -1240,6 +1246,14 @@ export function parseState(value: unknown): { state: UiState; extra: Json } {
     openTabs: parseTabSessions(data.openTabs),
     recentFileLists: parseRecentFiles(data.recentFileLists),
   };
+  // Each side shows only panels whose icon is on it.
+  const slots = followLayout(
+    { left: state.leftPanel, right: state.rightPanel, rightOpen: state.explorerOpen },
+    state.activityLayout,
+  );
+  state.leftPanel = slots.left;
+  state.rightPanel = slots.right;
+  state.explorerOpen = slots.rightOpen;
   const known = new Set([...STATE_KEYS, ...Object.keys(defaultPreferences)]);
   const extra = Object.fromEntries(Object.entries(data).filter(([key]) => !known.has(key)));
   return { state, extra };
@@ -1288,6 +1302,7 @@ export function stateToJson(state: UiState, extra: Json): Json {
     rightPanel: state.rightPanel,
     leftBarVisible: state.leftBarVisible,
     rightBarVisible: state.rightBarVisible,
+    activityLayout: state.activityLayout,
     diffSplitRatio: state.diffSplitRatio,
     threePaneSplit: [...state.threePaneSplit],
     mergeStackHeight: state.mergeStackHeight,

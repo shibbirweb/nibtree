@@ -12,6 +12,7 @@
   import MergeView from "$lib/merge/MergeView.svelte";
   import { repoStore } from "$lib/stores/repo.svelte";
   import { settings } from "$lib/stores/settings.svelte";
+  import type { SidePanel } from "$lib/stores/sidePanels";
   import { groupRects, layoutSplitters, type Splitter } from "$lib/stores/groupLayout";
   import TerminalHost from "$lib/terminal/TerminalHost.svelte";
   import TerminalPanel from "$lib/terminal/TerminalPanel.svelte";
@@ -41,11 +42,14 @@
 
   /** Each side of a split keeps at least this many pixels. */
   const MIN_GROUP_SIZE = 120;
-  const RIGHT_LABELS = {
+  const RIGHT_LABELS: Record<SidePanel, string> = {
+    changes: "Resize changes sidebar",
+    branches: "Resize branches sidebar",
+    scripts: "Resize scripts sidebar",
     files: "Resize files sidebar",
     ai: "Resize AI sidebar",
     notifications: "Resize notifications sidebar",
-  } as const;
+  };
   const FULL_RECT = { x: 0, y: 0, width: 1, height: 1 };
   const leftOpen = $derived(settings.leftPanel !== null);
   let areaWidth = $state(0);
@@ -97,19 +101,32 @@
   <ActivityBar />
 {/snippet}
 
-{#snippet sidebar()}
-  {#if settings.leftPanel === "changes"}
+<!-- Either side shows any panel: the one whose activity bar icon is on that side (stores/sidePanels.ts). -->
+{#snippet sidePanel(panel: SidePanel)}
+  {#if panel === "changes"}
     <ChangesView />
-  {:else if settings.leftPanel === "scripts"}
+  {:else if panel === "scripts"}
     {#await loadScriptsPanel() then module}
       <module.default />
     {/await}
+  {:else if panel === "ai"}
+    <AiPanel />
+  {:else if panel === "notifications"}
+    <NotificationsPanel />
+  {:else if panel === "files"}
+    <FileExplorer />
   {:else if repoStore.repo}
     {#key repoStore.repo.root}
       <Sidebar />
     {/key}
   {:else}
     <NoRepository compact />
+  {/if}
+{/snippet}
+
+{#snippet sidebar()}
+  {#if settings.leftPanel}
+    {@render sidePanel(settings.leftPanel)}
   {/if}
 {/snippet}
 
@@ -164,13 +181,7 @@
 {/snippet}
 
 {#snippet right()}
-  {#if settings.rightPanel === "ai"}
-    <AiPanel />
-  {:else if settings.rightPanel === "notifications"}
-    <NotificationsPanel />
-  {:else}
-    <FileExplorer />
-  {/if}
+  {@render sidePanel(settings.rightPanel)}
 {/snippet}
 
 {#snippet rightBar()}
