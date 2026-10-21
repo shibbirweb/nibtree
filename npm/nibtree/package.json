@@ -1,6 +1,6 @@
 {
   "name": "nibtree",
-  "version": "0.1.0-beta.15",
+  "version": "0.1.0-beta.16",
   "description": "Nibtree in your browser: a Git client with a 3-way merge tool, blame, history and a terminal",
   "keywords": [
     "git",
@@ -33,11 +33,11 @@
     "node": ">=18"
   },
   "optionalDependencies": {
-    "@nibtree/darwin-arm64": "0.1.0-beta.15",
-    "@nibtree/darwin-x64": "0.1.0-beta.15",
-    "@nibtree/linux-x64": "0.1.0-beta.15",
-    "@nibtree/linux-arm64": "0.1.0-beta.15",
-    "@nibtree/win32-x64": "0.1.0-beta.15",
-    "@nibtree/win32-arm64": "0.1.0-beta.15"
+    "@nibtree/darwin-arm64": "0.1.0-beta.16",
+    "@nibtree/darwin-x64": "0.1.0-beta.16",
+    "@nibtree/linux-x64": "0.1.0-beta.16",
+    "@nibtree/linux-arm64": "0.1.0-beta.16",
+    "@nibtree/win32-x64": "0.1.0-beta.16",
+    "@nibtree/win32-arm64": "0.1.0-beta.16"
   }
 }
