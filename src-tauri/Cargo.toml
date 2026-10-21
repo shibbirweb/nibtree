@@ -91,10 +91,16 @@ keyring = { version = "3.6.3", features = ["apple-native"] }
 # The MCP screenshot reads the window number of the app's NSWindow (already in the tree through tauri).
 objc2 = "0.6"
 
+[target.'cfg(target_os = "linux")'.dependencies]
+# The Secret Service (GNOME Keyring, KWallet) over zbus: pure Rust, so no libdbus to build or ship.
+keyring = { version = "3.6.3", features = ["async-secret-service", "async-io", "crypto-rust"] }
+
+# Windows and Linux start a new copy of the app for every launch; this hands its arguments to the running one.
+[target.'cfg(any(windows, target_os = "linux"))'.dependencies]
+tauri-plugin-single-instance = { version = "2", optional = true }
+
 [target.'cfg(windows)'.dependencies]
 keyring = { version = "3.6.3", features = ["windows-native"] }
-# Windows starts a new copy of the app for every launch; this hands its arguments to the running one.
-tauri-plugin-single-instance = { version = "2", optional = true }
 # Cancel stops git and everything it started through a Job Object (git/cancel.rs); already in the tree.
 # The MCP screenshot draws the window with PrintWindow and crops it to its DWM frame (mcp/host.rs);
 # the memory readout walks the WebView2 processes and reads their private working set (memory.rs).

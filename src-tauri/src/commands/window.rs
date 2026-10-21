@@ -13,7 +13,7 @@ use crate::windows::WindowStart;
 
 #[cfg(feature = "desktop")]
 mod desktop;
-#[cfg(all(feature = "desktop", windows))]
+#[cfg(all(feature = "desktop", any(windows, target_os = "linux")))]
 pub use desktop::on_second_launch;
 #[cfg(feature = "desktop")]
 pub use desktop::{on_quit, on_window_event, restore_at_start};

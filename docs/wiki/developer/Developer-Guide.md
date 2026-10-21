@@ -84,6 +84,7 @@ Before you say a change is done, run the checks listed in [Testing](Testing.md#w
 | [Windows Support](Windows-Support.md) | Console windows, the home folder, PATH and paths on Windows. |
 | [Windows Bugs We Fixed](Windows-Bugs-We-Fixed.md) | Bugs the Windows CI job found, and the fixes. |
 | [Windows MCP and CLI](Windows-MCP-and-CLI.md) | The console program, the screenshot and quoting on Windows. |
+| [Linux Support](Linux-Support.md) | The AppImage and .deb, their CI, the keyring and one copy at a time on Linux. |
 | [Docs and Screenshots](Docs-and-Screenshots.md) | How this wiki is checked, how screenshots are taken, and recipes for keeping docs in sync. |
 | [Contributing](Contributing.md) | Code style, commits, pull requests and the docs checklist. |
 

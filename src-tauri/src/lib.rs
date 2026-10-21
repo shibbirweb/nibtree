@@ -88,7 +88,7 @@ pub fn run() {
     let builder = tauri::Builder::default();
     // Registered first, as the plugin asks. Never for the merge tool: `git mergetool` starts it next to
     // the running app on purpose.
-    #[cfg(windows)]
+    #[cfg(any(windows, target_os = "linux"))]
     let builder = if launch.is_mergetool() {
         builder
     } else {

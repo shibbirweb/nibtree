@@ -68,10 +68,10 @@ pub enum WindowStart {
     Default { label: String },
 }
 
-/// What a second start of the app asks for (Windows hands its arguments to the running app): its
+/// What a second start of the app asks for (Windows and Linux hand its arguments to the running app): its
 /// first argument, resolved against the folder it was started in, as a folder or a workspace file.
 /// None when it names nothing, like `LaunchMode::from_args` (an option, or the merge tool).
-#[cfg(any(windows, test))]
+#[cfg(any(windows, target_os = "linux", test))]
 pub fn open_for_arguments(args: &[String], cwd: &Path) -> Option<WindowOpen> {
     let arg = args.first().filter(|arg| !arg.starts_with('-') && arg.as_str() != "merge")?;
     let path = cwd.join(arg);

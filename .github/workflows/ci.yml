@@ -52,7 +52,7 @@ jobs:
 
   rust:
     name: Rust (cargo test + clippy)
-    # The backend has macOS-only code (memory readout) and the app targets macOS.
+    # The backend has macOS-only code (memory readout); Windows and Linux have their own jobs below.
     runs-on: macos-latest
     defaults:
       run:
@@ -156,4 +156,48 @@ jobs:
       - name: Clippy
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         working-directory: src-tauri
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings
+
+  # Linux needs no frontend job of its own: the page is the same as on macOS (POSIX paths, WebKit).
+  linux-rust:
+    name: Linux Rust (cargo test + clippy)
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: src-tauri
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # WebKitGTK and the rest of Tauri's Linux build dependencies.
+      - name: Linux libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libxdo-dev libssl-dev librsvg2-dev pkg-config
+
+      # tauri::generate_context! embeds the frontend build output, so it must exist.
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build frontend
+        id: build
+        working-directory: .
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+
+      # Clippy runs even when a test failed, so one run lists every Linux failure.
+      - name: Tests
+        run: cargo test --locked --workspace --no-fail-fast
+
+      - name: Clippy
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: cargo clippy --locked --workspace --all-targets -- -D warnings

@@ -137,6 +137,7 @@
     { "page": "developer/Windows-Support.md", "summary": "What the code does differently on Windows: console windows, the home folder, PATH and paths." },
     { "page": "developer/Windows-Bugs-We-Fixed.md", "summary": "Bugs the Windows CI job found, why they happened and the fixes." },
     { "page": "developer/Windows-MCP-and-CLI.md", "summary": "The command line tool as a console program, the screenshot and quoting on Windows." },
+    { "page": "developer/Linux-Support.md", "summary": "The Linux packages, their CI and release job, the keyring, one copy at a time and what is missing." },
     { "page": "developer/Docs-and-Screenshots.md", "summary": "How this wiki is built, how screenshots are taken, and keeping docs in sync." },
     { "page": "developer/UI-Library.md", "summary": "The Svelte component library, its showcase and the design tokens shared by every platform." },
     { "page": "developer/UI-Library-MCP.md", "summary": "The MCP server that answers AI agents' questions about components, tokens, icons and rules." },

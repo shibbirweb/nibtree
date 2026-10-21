@@ -1,10 +1,10 @@
 //! Where the GitHub token lives: only the operating system's keychain (macOS Keychain,
-//! Windows Credential Manager). Behind a trait so the tests use an in-memory store.
+//! Windows Credential Manager, the Secret Service on Linux). Behind a trait so the tests use an in-memory store.
 
 use crate::error::{AppError, AppResult};
 
 /// The keychain item's service; the account is the GitHub host.
-#[cfg(any(target_os = "macos", windows))]
+#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
 const SERVICE: &str = "io.github.shibbirweb.nibtree.github";
 
 pub trait SecretStore: Send + Sync {
@@ -16,22 +16,35 @@ pub trait SecretStore: Send + Sync {
 
 pub struct KeychainStore;
 
-#[cfg(any(target_os = "macos", windows))]
+#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
 fn entry(host: &str) -> AppResult<keyring::Entry> {
     keyring::Entry::new(SERVICE, host).map_err(keychain_error)
 }
 
-#[cfg(any(target_os = "macos", windows))]
+#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
 fn keychain_error(err: keyring::Error) -> AppError {
+    if no_keyring(&err) {
+        return AppError::invalid(format!(
+            "No keyring to save the token in. Start GNOME Keyring or KWallet, or use the GitHub CLI instead. ({err})"
+        ));
+    }
     AppError::invalid(format!("Keychain: {err}"))
 }
 
-#[cfg(any(target_os = "macos", windows))]
+/// Linux only: no Secret Service on the session bus, or it refused access (a locked keyring left locked).
+#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+fn no_keyring(err: &keyring::Error) -> bool {
+    cfg!(target_os = "linux") && matches!(err, keyring::Error::NoStorageAccess(_) | keyring::Error::PlatformFailure(_))
+}
+
+#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
 impl SecretStore for KeychainStore {
     fn read(&self, host: &str) -> AppResult<Option<String>> {
         match entry(host)?.get_password() {
             Ok(token) => Ok(Some(token)),
             Err(keyring::Error::NoEntry) => Ok(None),
+            // A Linux box without a Secret Service (a server, a container) simply has no saved token.
+            Err(err) if no_keyring(&err) => Ok(None),
             Err(err) => Err(keychain_error(err)),
         }
     }
@@ -43,13 +56,14 @@ impl SecretStore for KeychainStore {
     fn remove(&self, host: &str) -> AppResult<()> {
         match entry(host)?.delete_credential() {
             Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
+            Err(err) if no_keyring(&err) => Ok(()),
             Err(err) => Err(keychain_error(err)),
         }
     }
 }
 
 // No keychain backend yet on other platforms: refuse rather than keep the token in a file.
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(not(any(target_os = "macos", windows, target_os = "linux")))]
 impl SecretStore for KeychainStore {
     fn read(&self, _host: &str) -> AppResult<Option<String>> {
         Ok(None)
