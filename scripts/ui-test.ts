@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
 /**
- * The Git menu UI tests: every Git menu item and its dialog, clicked in the browser version's page by Playwright,
- * each result checked with plain git (.github/workflows/browser.yml runs them on Linux).
+ * The Git menu UI tests: every Git menu item and its dialog, every Command Palette command and the features with no
+ * menu item, clicked in the browser version's page by Playwright, each result checked with plain git, on disk or in
+ * the settings (.github/workflows/browser.yml runs them on Linux).
  *
  *     bun scripts/ui-test.ts [--binary <nibtree-browser>] [--assets <page folder>] [--browser chromium|webkit]
  *                            [group ...]
@@ -18,6 +19,7 @@ import { chromium, webkit, type Browser } from "playwright";
 import { branchesAndHistory } from "./ui-test/branches";
 import { uncommittedChanges } from "./ui-test/changes";
 import { conflicts } from "./ui-test/conflicts";
+import { features } from "./ui-test/features";
 import { currentFile, historyAndPatches } from "./ui-test/files";
 import { Group, type Options } from "./ui-test/harness";
 import { lfs } from "./ui-test/lfs";
@@ -35,6 +37,7 @@ const GROUPS: Record<string, (group: Group) => Promise<void>> = {
   repos: worktreesSubmodulesClone,
   lfs,
   palette,
+  features,
 };
 
 const ROOT = join(import.meta.dir, "..");
