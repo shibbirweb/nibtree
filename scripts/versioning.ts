@@ -52,6 +52,16 @@ export function isBeta(version: string): boolean {
   return /-beta\.\d+$/.test(version);
 }
 
+/**
+ * The version as Debian writes it. dpkg reads everything after a `-` as the package revision, so
+ * `0.2.0-beta.1` would sort above `0.2.0` and apt would never upgrade a beta to its stable release.
+ * A `~` sorts before everything, even the end of the version: `0.2.0~beta.1` < `0.2.0`.
+ */
+export function debianVersion(version: string): string {
+  const [core, ...pre] = version.split("-");
+  return pre.length > 0 ? `${core}~${pre.join(".")}` : version;
+}
+
 export type Level = "patch" | "minor" | "major" | "beta" | "release";
 
 /**

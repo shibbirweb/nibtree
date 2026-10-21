@@ -4,6 +4,7 @@ import {
   cargoTomlVersion,
   changelogSection,
   dateChangelog,
+  debianVersion,
   isPlaceholderNotes,
   nextTicket,
   nextVersion,
@@ -108,5 +109,13 @@ describe("changelog", () => {
     expect(isPlaceholderNotes("## What's Changed\n* thing by @me")).toBe(true);
     expect(isPlaceholderNotes("**Full Changelog**: https://x")).toBe(true);
     expect(isPlaceholderNotes("### Added\n- Real notes.")).toBe(false);
+  });
+});
+
+describe("debianVersion", () => {
+  it("writes a pre-release with a tilde so it sorts before its stable release", () => {
+    expect(debianVersion("0.2.0-beta.1")).toBe("0.2.0~beta.1");
+    expect(debianVersion("1.0.0-rc-2")).toBe("1.0.0~rc.2");
+    expect(debianVersion("0.2.0")).toBe("0.2.0");
   });
 });
