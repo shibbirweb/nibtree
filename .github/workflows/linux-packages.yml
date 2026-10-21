@@ -49,6 +49,11 @@ jobs:
       - name: Build the packages
         run: bun run tauri build
 
+      # The Debian version (0.2.0~beta.1, so apt upgrades a beta to its stable release) and a check of the fields
+      # apt shows. The same step as build-linux in release.yml.
+      - name: Finish the .deb
+        run: bun scripts/deb-package.ts src-tauri/target/release/bundle/deb/*.deb
+
       # The .deb must install with its dependencies and put `nibtree` on the PATH; without FUSE on the runner, the
       # AppImage unpacks itself and runs from there. Both must answer: exit code 2 with "not running" is right, the
       # app is installed but not started.
@@ -69,8 +74,8 @@ jobs:
             fi
           }
           deb="$(find src-tauri/target/release/bundle/deb -name '*.deb' | head -n 1)"
-          dpkg-deb --info "$deb"
           sudo apt-get install -y "./$deb"
+          dpkg-query --show nibtree
           check nibtree
           appimage="$(find src-tauri/target/release/bundle/appimage -name '*.AppImage' | head -n 1)"
           echo "AppImage: $appimage"

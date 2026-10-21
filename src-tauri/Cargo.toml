@@ -2,7 +2,7 @@
 name = "nibtree"
 version = "0.1.0-beta.15"
 description = "Native Git GUI with a 3-way merge tool"
-authors = ["MD. Shibbir Ahmed"]
+authors = ["MD. Shibbir Ahmed <shibbirweb@gmail.com>"]
 homepage = "https://github.com/shibbirweb/nibtree"
 repository = "https://github.com/shibbirweb/nibtree"
 license = "MIT"
