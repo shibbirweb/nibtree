@@ -37,7 +37,7 @@ Opening a Markdown file moved the whole app up under the title bar, and screensh
 
 ### Example: the invisible selection
 
-A selection inside one line showed nothing. `inspect_elements` on `.cm-selectionBackground` showed the selection was drawn, with the right color, and on `.cm-activeLine` showed an opaque background on the same line, above it. CodeMirror draws the selection behind the text, so the current line highlight covered it. The fix is in [How the editor works](How-the-Editor-Works.md#bugs-we-fixed).
+A selection inside one line showed nothing. `inspect_elements` on `.cm-selectionBackground` showed the selection was drawn, with the right color, and on `.cm-activeLine` showed an opaque background on the same line, above it. CodeMirror draws the selection behind the text, so the current line highlight covered it. The fix is in [Editor Bugs We Fixed](Editor-Bugs-We-Fixed.md).
 
 ## Measure memory
 

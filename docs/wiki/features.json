@@ -99,6 +99,7 @@
     { "page": "developer/Blame-Bugs-We-Fixed.md", "summary": "The blame bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Project-Color-And-Title-Bar.md", "summary": "The project's color glow and the macOS window buttons in the top bar." },
     { "page": "developer/One-Diff-View.md", "summary": "How every place that shows a diff shares one view, its panes and its buttons." },
+    { "page": "developer/Editor-Bugs-We-Fixed.md", "summary": "The file editor bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Diff-Bugs-We-Fixed.md", "summary": "The diff view bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Merge-Tool-Layouts.md", "summary": "The merge tool's Columns and Stacked layouts: one set of editors moved between two frames." },
     { "page": "developer/Merge-Tool-Bugs-We-Fixed.md", "summary": "The merge tool bugs we found, why they happened and how we fixed them." },

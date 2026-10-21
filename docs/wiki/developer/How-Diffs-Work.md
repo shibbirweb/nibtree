@@ -124,7 +124,7 @@ In the Log, `CommitDetails.svelte` loads `getCommitFileDiff` and shows the view 
 
 ## Bugs we fixed
 
-See [Diff Bugs We Fixed](Diff-Bugs-We-Fixed.md), [Folder Watching Bugs We Fixed](Folder-Watching-Bugs-We-Fixed.md) (diffs not following edits), [How the editor works](How-the-Editor-Works.md) (the Diff tab that would not close) and [How changes and commits work](How-Changes-and-Commits-Work.md) (staged renames).
+See [Diff Bugs We Fixed](Diff-Bugs-We-Fixed.md), [Folder Watching Bugs We Fixed](Folder-Watching-Bugs-We-Fixed.md) (diffs not following edits), [Editor Bugs We Fixed](Editor-Bugs-We-Fixed.md) (the Diff tab that would not close) and [How changes and commits work](How-Changes-and-Commits-Work.md) (staged renames).
 
 ## Tests
 

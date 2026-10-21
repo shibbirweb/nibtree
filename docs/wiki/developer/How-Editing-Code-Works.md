@@ -75,4 +75,4 @@ Most commands are CodeMirror's own (`toggleComment`, `deleteLine`, `moveLineUp`,
 
 ## Bugs we fixed
 
-None on this page yet. The selection hidden by the current line highlight is in [How code appearance works](How-Code-Appearance-Works.md#bugs-we-fixed) and [How the editor works](How-the-Editor-Works.md#bugs-we-fixed).
+None on this page yet. The selection hidden by the current line highlight is in [How code appearance works](How-Code-Appearance-Works.md#bugs-we-fixed) and [Editor Bugs We Fixed](Editor-Bugs-We-Fixed.md).
