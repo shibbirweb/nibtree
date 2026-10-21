@@ -94,12 +94,15 @@ describe("runDialogKey", () => {
 });
 
 describe("dismissDialog", () => {
+  const open = () => true;
+
   it("hides the dialog after telling its owner", () => {
     const calls: string[] = [];
     dismissDialog(
       () => {
         calls.push("owner");
       },
+      open,
       () => calls.push("hide"),
     );
     expect(calls).toEqual(["owner", "hide"]);
@@ -107,14 +110,27 @@ describe("dismissDialog", () => {
 
   it("hides it without an owner, and when the owner answers true", () => {
     const hide = vi.fn();
-    dismissDialog(undefined, hide);
-    dismissDialog(() => true, hide);
+    dismissDialog(undefined, open, hide);
+    dismissDialog(() => true, open, hide);
     expect(hide).toHaveBeenCalledTimes(2);
   });
 
   it("keeps it open when the owner answers false (a form going back a step)", () => {
     const hide = vi.fn();
-    dismissDialog(() => false, hide);
+    dismissDialog(() => false, open, hide);
+    expect(hide).not.toHaveBeenCalled();
+  });
+
+  it("leaves it alone when the owner already closed it (a shared Dialog would stay hidden for the next one)", () => {
+    let shown = true;
+    const hide = vi.fn();
+    dismissDialog(
+      () => {
+        shown = false;
+      },
+      () => shown,
+      hide,
+    );
     expect(hide).not.toHaveBeenCalled();
   });
 });

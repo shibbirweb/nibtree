@@ -66,8 +66,9 @@
   const mover = new DialogMover();
   const grab = () => (movable ? dialogEl : null);
   const dragHint = $derived(movable ? "Drag to move, double-click to center" : undefined);
+  const hide = () => (open = false);
   function close(): void {
-    dismissDialog(onclose, () => (open = false));
+    dismissDialog(onclose, () => open, hide);
   }
 
   $effect(() => {
