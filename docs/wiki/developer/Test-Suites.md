@@ -51,6 +51,7 @@ Most modules test themselves in a `#[cfg(test)]` block; the bigger ones have a `
 | `shelf/` | patch sections and the store |
 | `github/tests.rs` | every GitHub path against a fake network, keychain and gh |
 | `mcp/tests.rs` and `mcp/*.rs` | the server over real HTTP, tokens, paths, the tool registry, install, the CLI client |
+| `mcp/tests/git_tools/` | every git tool end to end on real repositories: changes and commits, branches, tags, stashes, history rewrites, conflicts, continue and abort |
 | `preview_scheme/tests.rs` | the `gmpreview` scheme: URL decoding, ranges, the folder check, work tree files and revisions of real repositories |
 | `memory.rs`, `memory_log.rs`, `images.rs`, `media.rs`, `config.rs`, `state.rs`, `workspace_file.rs` | the smaller modules |
 

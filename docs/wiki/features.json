@@ -107,6 +107,7 @@
     { "page": "developer/Rounded-Panels-Bugs-We-Fixed.md", "summary": "The rounded panels bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Update-Bugs-We-Fixed.md", "summary": "The update check and link bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Status-Bar-Bugs-We-Fixed.md", "summary": "The status bar and Help link bugs we found, why they happened and how we fixed them." },
+    { "page": "developer/Conflict-Resolution-Bugs-We-Fixed.md", "summary": "The conflict resolution bugs we found, why they happened and how we fixed them." },
     { "page": "developer/MCP-and-CLI-Bugs-We-Fixed.md", "summary": "The MCP server and command line tool bugs we found, why they happened and how we fixed them." },
     { "page": "developer/Repository-Actions-Bugs-We-Fixed.md", "summary": "The repository row and Changes title bar bugs we found, why they happened and how we fixed them." },
     { "page": "developer/How-the-Changes-Tab-Works.md", "summary": "The Changes tab opened from the status bar: every uncommitted file compared with the last commit." },

@@ -513,7 +513,7 @@ fn push_schema() -> Value {
             "force": { "type": "boolean", "description": "Overwrite the remote branch with --force-with-lease (default false)." },
             "remoteName": { "type": "string", "description": "Push to this remote instead of the upstream." },
             "remoteBranch": { "type": "string", "description": "The branch name on the remote (with remoteName; default the current branch's name)." },
-            "pushTags": { "type": "boolean", "description": "Push tags too (with remoteName, default false)." },
+            "pushTags": { "type": "boolean", "description": "Push tags too (default false)." },
         }),
         &["repoPath"],
     )
@@ -522,7 +522,13 @@ fn push_schema() -> Value {
 fn git_push(ctx: &ToolCtx, args: &Args) -> ToolResult {
     let repo_path = ctx.repo(args)?;
     let force = args.bool("force", false)?;
+    let push_tags = args.bool("pushTags", false)?;
     let result = match args.opt_str("remoteName")? {
+        // The upstream push has no tags option, so the tags follow in a second push to the same remote.
+        None if push_tags => remote::run_push(&repo_path, force, &mut quiet()).and_then(|branch| {
+            let tags = remote::run_push_tags(&repo_path, &mut quiet())?;
+            Ok(OpOutcome { output: format!("{}\n{}", branch.output, tags.output), conflicts: false })
+        }),
         None => remote::run_push(&repo_path, force, &mut quiet()),
         Some(remote_name) => {
             let remote_branch = match args.opt_str("remoteBranch")? {
@@ -532,7 +538,6 @@ fn git_push(ctx: &ToolCtx, args: &Args) -> ToolResult {
                     status::head_info(&repo).branch.ok_or("Cannot push a detached HEAD")?
                 }
             };
-            let push_tags = args.bool("pushTags", false)?;
             remote::run_push_with_options(&repo_path, remote_name, &remote_branch, force, push_tags, &mut quiet())
         }
     };

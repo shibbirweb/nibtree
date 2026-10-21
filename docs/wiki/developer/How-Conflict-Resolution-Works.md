@@ -94,15 +94,7 @@ In `FileView.svelte`, a file with markers or one git lists as conflicted gets a 
 
 ## Bugs we fixed
 
-**Escape closed two dialogs at once.**
-- **The issue:** pressing Escape on a confirmation shown over the Conflicts dialog closed both.
-- **Why it happened:** its window Escape handler also got the key meant for the confirmation.
-- **The fix and why we chose it:** its `onKeydown` returns early when `event.defaultPrevented` or `dialogs.active` is set. The same check is now a project rule for every window-level key handler.
-
-**The conflict counter was hidden.**
-- **The issue:** in a file with several conflicts, the "Conflict 1 of 2" counter at the end of the inline actions row never showed at normal window sizes.
-- **Why it happened:** the actions row is a block inside the editor content, which is as wide as its longest line, so the row never wrapped and the counter sat past the visible edge.
-- **The fix and why we chose it:** the ViewPlugin `barWidth` in `conflictDecorations.ts` measures the visible editor width on every geometry change and sets `--cm-conflict-bar-width`. The row is capped at that width and wraps, so the counter moves to a second line instead of disappearing.
+The conflict resolution bugs and their fixes are in [Conflict Resolution Bugs We Fixed](Conflict-Resolution-Bugs-We-Fixed.md).
 
 ## Tests
 
