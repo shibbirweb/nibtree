@@ -20,6 +20,7 @@ import { uncommittedChanges } from "./ui-test/changes";
 import { conflicts } from "./ui-test/conflicts";
 import { currentFile, historyAndPatches } from "./ui-test/files";
 import { Group, type Options } from "./ui-test/harness";
+import { lfs } from "./ui-test/lfs";
 import { worktreesSubmodulesClone } from "./ui-test/repos";
 import { commitAndSync } from "./ui-test/sync";
 
@@ -31,6 +32,7 @@ const GROUPS: Record<string, (group: Group) => Promise<void>> = {
   "current-file": currentFile,
   history: historyAndPatches,
   repos: worktreesSubmodulesClone,
+  lfs,
 };
 
 const ROOT = join(import.meta.dir, "..");

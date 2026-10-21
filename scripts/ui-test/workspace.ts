@@ -89,12 +89,18 @@ export class Workspace {
   // --- git and files ---
 
   gitIn(dir: string, args: string[]): string {
-    const output = execFileSync("git", ["-C", dir, ...args], {
-      env: this.checkEnv,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    return output.trim();
+    try {
+      const output = execFileSync("git", ["-C", dir, ...args], {
+        env: this.checkEnv,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+      return output.trim();
+    } catch (error) {
+      // git's own message says why, not just which command failed.
+      const stderr = String((error as { stderr?: string }).stderr ?? "").trim();
+      throw new Error(`git ${args.join(" ")} failed: ${stderr.split("\n").slice(-3).join(" / ")}`);
+    }
   }
 
   /** Plain git for checks: the output, or "" when git fails. */

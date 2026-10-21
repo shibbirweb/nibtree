@@ -20,7 +20,7 @@ flowchart LR
 ```
 
 - **The browser version is the app.** It is the same page, menu and dialogs as the desktop app, on the same Rust commands, so a test of the page tests both. Playwright only sends events to the page, never to the operating system.
-- **Groups are independent.** `sync`, `branches`, `conflicts`, `changes`, `current-file`, `history` and `repos` each get new repositories (`play`, one commit behind `origin.git`, which `other` pushed to), their own home folder with its own git config, and their own server. Run one with `bun scripts/ui-test.ts conflicts`.
+- **Groups are independent.** `sync`, `branches`, `conflicts`, `changes`, `current-file`, `history`, `repos` and `lfs` each get new repositories (`play`, one commit behind `origin.git`, which `other` pushed to), their own home folder with its own git config, and their own server. Run one with `bun scripts/ui-test.ts conflicts`.
 - **Checks wait for git, not for time.** `expect(name, condition)` polls a git condition for up to 15 seconds; `until` waits without recording. A failed check records the toasts and the notification center, and saves a screenshot in `ui-test-failures/`, which CI keeps as an artifact.
 - **A page error fails the run.** `pageerror` is a failed check, which is how a dialog that throws gets caught.
 - **Chromium by default.** It lets the test grant clipboard access, so Apply Patch from Clipboard is checked; `--browser webkit` (the engine of the macOS app) skips that one check.
@@ -48,11 +48,13 @@ UI_TEST_TRACE=/tmp/trace bun scripts/ui-test.ts changes   # a screenshot after e
 | `scripts/ui-test/changes.ts` | Stash, Unstash, Shelve, Rollback and the selected-lines items |
 | `scripts/ui-test/files.ts` | Current File, Log, Reflog, Bisect and Patch |
 | `scripts/ui-test/repos.ts` | Worktrees, Submodules and Clone |
+| `scripts/ui-test/lfs.ts` | Git LFS: Install Hooks, Track and Untrack, Fetch, Pull and Prune against the local origin; without git-lfs, the "not installed" answer |
 
 ## Design decisions
 
 - **The tests' own git runs with `GIT_OPTIONAL_LOCKS=0`.** Polling `git status` takes the index lock now and then, and the app's next write then failed with "could not write index". The app never polls git that way, so the lock belongs to the test.
-- **Not covered:** LFS (`git-lfs` may be missing), the GitHub items (they need an account) and Open Repository in Browser (it needs a web remote).
+- **LFS runs where git-lfs is installed** (GitHub's Linux runner has it). Elsewhere the `lfs` group checks only that each item says where to get git-lfs, and prints SKIP for the rest.
+- **Not covered:** the GitHub items (they need an account) and Open Repository in Browser (it needs a web remote).
 
 ## Bugs we fixed
 
