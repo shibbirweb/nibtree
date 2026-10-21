@@ -213,6 +213,10 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- Esc closes a dialog again after a button in it went away, such as the Conflicts dialog once Accept Yours or Accept Theirs resolved the last conflict.
+- Pull, Push, Merge, Rebase, Reset HEAD, Rollback, Shelve, New Worktree and the Branches popup's Checkout Tag or Revision now do what their button says: they closed without running git before.
+- Git > Commit... (Cmd+K) puts the caret in the commit message again.
+- In the browser version, choosing an item from a submenu closes the menu, Apply Patch from Clipboard reads your browser's clipboard instead of the server's, and a folder typed in the save or open picker is used even without pressing Enter.
 - When git refuses to abort a merge or rebase (for example a file has staged changes and more changes on top), Abort now shows git's reason as an error, instead of "Abort stopped with conflicts".
 - `nibtree cli call git_push pushTags=true` (and the MCP `git_push` tool) now pushes the tags too when no remote name is given, instead of only the branch.
 - Typing in the Rich Editor no longer rewrites the rest of a file whose fenced code block is followed by a code span holding a tag, such as `` `name@<version>` ``. Before, the code span was saved with a placeholder in it and lists were reindented.

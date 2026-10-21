@@ -5,7 +5,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { IconName } from "../icons";
-  import { focusInto } from "../logic/dialogFocus";
+  import { focusInto, strayKeys } from "../logic/dialogFocus";
   import { DIALOG_OVERLAY, URGENT_DIALOG_LAYER, type DialogVariant } from "../logic/dialogLayout";
   import { runDialogKey } from "../logic/dialogKeys";
   import { DialogMover } from "../logic/dialogMover.svelte";
@@ -82,6 +82,7 @@
   }
 </script>
 
+<svelte:window onkeydown={strayKeys(() => (open ? dialogEl : null), onkeydown)} />
 {#snippet heading()}
   <h2 id={titleId} class:handle={movable} title={dragHint} use:mover.handle={grab}>{title}</h2>
 {/snippet}

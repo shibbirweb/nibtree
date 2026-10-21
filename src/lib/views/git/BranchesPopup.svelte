@@ -92,8 +92,11 @@
   }
 
   function checkoutRevision(): void {
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const revision = target();
+    const targetRepo = repoRoot;
     close();
-    void checkoutTo(target(), repoRoot);
+    void checkoutTo(revision, targetRepo);
   }
 </script>
 

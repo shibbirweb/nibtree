@@ -74,9 +74,11 @@
     }
     const paths = rollbackPaths(files);
     const remove = deleteAdded;
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
     close();
     await repoStore.run("Rollback", (repoPath) => api.rollbackFiles(repoPath, paths, remove), {
-      repoPath: repoRoot,
+      repoPath: targetRepo,
       success: files.length === 1 ? `Rolled back ${files[0].path}` : `Rolled back ${files.length} files`,
     });
   }

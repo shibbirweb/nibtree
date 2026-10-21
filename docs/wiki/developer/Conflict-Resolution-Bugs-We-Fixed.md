@@ -16,3 +16,8 @@ The bugs we found in the conflict banner, the Conflicts dialog, the inline actio
 - **The issue:** in a file with several conflicts, the "Conflict 1 of 2" counter at the end of the inline actions row never showed at normal window sizes.
 - **Why it happened:** the actions row is a block inside the editor content, which is as wide as its longest line, so the row never wrapped and the counter sat past the visible edge.
 - **The fix and why we chose it:** the ViewPlugin `barWidth` in `conflictDecorations.ts` measures the visible editor width on every geometry change and sets `--cm-conflict-bar-width`. The row is capped at that width and wraps, so the counter moves to a second line instead of disappearing.
+
+**Esc stopped closing the Conflicts dialog.**
+- **The issue:** after Accept Yours or Accept Theirs resolved the last conflict, Esc no longer closed the Conflicts dialog; only its close button did. The Git menu UI tests found it.
+- **Why it happened:** the clicked button went away with the list, so the focus fell to the page, and `Dialog` handled keys only on its own element.
+- **The fix and why we chose it:** `Dialog` also listens on the window, and `ownsStrayKey` (`ui/web/src/lib/logic/dialogFocus.ts`) gives it a key only when the focus is on the page and it is the topmost dialog; it then takes the focus back. Every dialog gets this, and a key meant for a field or for a dialog above is never taken. `conflicts.ts` in `scripts/ui-test/` presses Esc right after the last Accept.

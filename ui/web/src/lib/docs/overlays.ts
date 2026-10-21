@@ -134,9 +134,12 @@ export const overlayDocs: ComponentDoc[] = [
       prop("alignEnd", "boolean", "Line up the menu's right edge with x.", { default: "false" }),
       prop("keyboard", "boolean", "Highlight the first item at once (opened with the keyboard).", { default: "false" }),
       prop("label", "string", "Accessible name.", { default: '"Menu"' }),
-      prop("onclose", "(restoreFocus: boolean) => void", "Close it; restoreFocus is true after Esc or a command.", {
-        required: true,
-      }),
+      prop(
+        "onclose",
+        "(restoreFocus: boolean, chosen: boolean) => void",
+        "Close it; restoreFocus is true after Esc or a command, chosen when a command ran (from a submenu too).",
+        { required: true },
+      ),
       prop("onstep", "(step: 1 | -1) => void", "Left and Right go here instead of closing (MenuBar's next menu)."),
     ],
     examples: [

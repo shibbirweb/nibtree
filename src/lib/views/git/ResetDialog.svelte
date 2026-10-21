@@ -127,11 +127,14 @@
       }
     }
     const resetMode = mode;
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
+    const resetBranch = branch;
     close();
     await repoStore.run("Reset", (repoPath) => api.resetTo(repoPath, target.commitId, resetMode), {
-      repoPath: repoRoot,
-      success: `Reset ${branch} to ${shortId} (${resetMode})`,
-      action: () => undoAction(repoRoot, ["reset"]),
+      repoPath: targetRepo,
+      success: `Reset ${resetBranch} to ${shortId} (${resetMode})`,
+      action: () => undoAction(targetRepo, ["reset"]),
     });
   }
 </script>

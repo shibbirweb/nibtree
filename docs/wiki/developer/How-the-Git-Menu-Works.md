@@ -92,10 +92,7 @@ Open Repository in Browser and the GitHub link items only build URLs and open th
 
 ## Bugs we fixed
 
-**Show History for Selection traced the wrong lines.**
-- **The issue:** with uncommitted lines added or deleted above the selection, the tab showed the history of other lines.
-- **Why it happened:** the menu passed the editor's line numbers, but `git log -L` reads them against HEAD.
-- **The fix and why we chose it:** `headLineRange` maps the selection to HEAD lines before the tab opens, with the same line diff as the change markers, and only new lines give a message. Mapping in the frontend uses the unsaved editor text, which the backend never sees; the tab keeps HEAD numbers, so Refresh stays right while you keep editing.
+The Git menu bugs and their fixes are in [Git Menu Bugs We Fixed](Git-Menu-Bugs-We-Fixed.md).
 
 ## Tests
 

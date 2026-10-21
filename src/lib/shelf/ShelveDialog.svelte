@@ -66,8 +66,10 @@
     const paths = selected.flatMap((file) => (file.origPath ? [file.path, file.origPath] : [file.path]));
     const shelfName = name.trim();
     const keep = keepInWorkingTree;
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
     close();
-    await shelveFiles(repoRoot, shelfName, paths, keep);
+    await shelveFiles(targetRepo, shelfName, paths, keep);
   }
 </script>
 

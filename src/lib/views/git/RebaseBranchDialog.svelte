@@ -118,12 +118,14 @@
     const request = rebaseRequest(options);
     const label = branchLabel;
     const target = request.root && !request.useOnto ? "its root" : (request.onto ?? onto);
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
     close();
     await repoStore.runOp(
       "Rebase",
       (repoPath) => api.rebaseWithOptions(repoPath, request),
       `Rebased ${label} onto ${target}`,
-      repoRoot,
+      targetRepo,
     );
   }
 </script>

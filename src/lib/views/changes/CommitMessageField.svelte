@@ -13,6 +13,7 @@
   import Text from "@nibtree/ui/components/Text.svelte";
   import TextArea from "@nibtree/ui/components/TextArea.svelte";
   import { type CommitDraft, commitDraft } from "./commitDraft.svelte";
+  import { registerCommitField } from "./commitFields";
   import { historyMenuItems, templateMenuItems } from "./commitMessageMenus";
   import { MAX_MESSAGE_HISTORY, mergeHistory } from "./commitMessages";
   import { expandTemplate, splitGitTemplate, subjectWarning } from "./commitTemplates";
@@ -35,6 +36,13 @@
   const historyKeys = localKeys("CmdOrCtrl+E");
 
   const draft = $derived(commitDraft.for(repoRoot));
+
+  // So Git > Commit (focusCommitMessage) finds this box.
+  $effect(() => {
+    if (messageEl) {
+      return registerCommitField(repoRoot, messageEl);
+    }
+  });
   const subjectNote = $derived(settings.commitSubjectGuide ? subjectWarning(draft.message) : null);
 
   // commit.template fills an empty box once per commit, like git's editor would.

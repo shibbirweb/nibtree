@@ -133,12 +133,14 @@
     const force = forceWithLease;
     const tags = pushTags;
     const targetRemote = remoteName;
+    // Read before close(): the props follow gitDialogs.active, which close() clears.
+    const targetRepo = repoRoot;
     close();
     await repoStore.runOp(
       "Push",
       (repoPath) => api.pushWithOptions(repoPath, targetRemote, targetBranch, force, tags),
       force ? `Force pushed ${branch}` : `Pushed ${branch} to ${targetRemote}/${targetBranch}`,
-      repoRoot,
+      targetRepo,
     );
   }
 </script>

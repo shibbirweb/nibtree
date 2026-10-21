@@ -21,7 +21,8 @@ menu. Item shapes match the app's contextMenu items.
 - `alignEnd` (`boolean`, default `false`): Line up the menu's right edge with x.
 - `keyboard` (`boolean`, default `false`): Highlight the first item at once (opened with the keyboard).
 - `label` (`string`, default `"Menu"`): Accessible name.
-- `onclose` (`(restoreFocus: boolean) => void`, required): Close it; restoreFocus is true after Esc or a command.
+- `onclose` (`(restoreFocus: boolean, chosen: boolean) => void`, required): Close it; restoreFocus is true after Esc or
+  a command, chosen when a command ran (from a submenu too).
 - `onstep` (`(step: 1 | -1) => void`): Left and Right go here instead of closing (MenuBar's next menu).
 
 ## Rules

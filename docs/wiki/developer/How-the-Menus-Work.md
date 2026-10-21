@@ -87,6 +87,11 @@ Undo, Redo, Delete and Select All have no guard, so they work in dialog fields; 
 
 ## Bugs we fixed
 
+**The page's menu stayed open after a submenu item.**
+- **The issue:** in the browser version, choosing an item from a submenu (Git > Patch, Bisect, Current File...) ran it but left the Git menu open until Escape. The Git menu UI tests found it.
+- **Why it happened:** a submenu closed itself and told its parent, which could not tell a chosen item from Left or Escape, so it only took the focus back.
+- **The fix and why we chose it:** `Menu`'s `onclose` has a second argument, `chosen`, which each parent passes up, so the whole chain closes, like a system menu. Left and Escape still go back one level.
+
 **Settings... and About did nothing when clicked.**
 - **The issue:** Nibtree > Settings..., About Nibtree and the Open Recent entries did nothing on click, while View > Scripts worked.
 - **Why it happened:** Tauri routes a click to the handler registered for the item's id, and freeing any menu item removes the handler of its id. An item passed as options inside `Submenu.new` gets a handle that Tauri frees right away, so its handler was gone. Only items created with `MenuItem.new` and kept by the page (the ones with a state, like View > Scripts) still fired.

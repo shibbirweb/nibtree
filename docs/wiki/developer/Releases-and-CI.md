@@ -50,7 +50,7 @@ gitGraph
 | `stable-promote.yml` (Promote stable) | CI finishing on `develop` | opens the `develop` to `master` pull request |
 | `stable-publish.yml` (Publish stable) | CI finishing on `master` | publishes the stable release as the latest one |
 | `release.yml` (Release) | a call, a release published by hand, or a manual run | builds the macOS app and attaches it |
-| `browser.yml` (Browser version) | push to `master`, any pull request, a call from `release.yml` | tests the browser version on six platforms and in Docker; publishes it to npm and Docker for a release, then checks it |
+| `browser.yml` (Browser version) | push to `master`, any pull request, a call from `release.yml` | tests the browser version on six platforms and in Docker, and on Linux x64 runs the [Git Menu UI Tests](Git-Menu-UI-Tests.md); publishes it to npm and Docker for a release, then checks it |
 | `browser-rehearsal.yml` (Browser release rehearsal) | push to `develop`, or a manual run | the browser version's whole release path, uploading nothing |
 | `browser-verify.yml` (Browser release check) | a call from `release.yml`, or a manual run | installs and runs the published npm packages and Docker image |
 | `windows-installer.yml`, `macos-app.yml`, `linux-packages.yml` | any pull request | build, check and keep the Windows, macOS and Linux apps |
