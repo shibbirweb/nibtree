@@ -13,7 +13,7 @@ Files are `<name>.test.ts` next to the module they test. Folders are under `src/
 | `diff/` | `split`, `binaryPreview` | the resizable split ratio and its limits, the side by side image and PDF preview: sides, shared zoom and scroll |
 | `log/` | `graph`, `lineMatch` | graph lanes and merges, finding the blamed line |
 | `stores/` | `tabs`, `navHistory`, `workspacePaths`, `fontFamily`, `commitTabs`, `gitTabs`, `branchTabs`, `settingsData`, `openingProgress` | preview tabs, Back and Forward, path helpers, font lists, pseudo tab paths, settings validation and migration, the opening progress text |
-| `menu/` | `menuSpec`, `menuState` | ids, accelerators and per-platform layout of the menu bar; enabled, checked and renamed items |
+| `menu/` | `menuSpec`, `menuState`, `menuIds` | ids, accelerators and per-platform layout of the menu bar; enabled, checked and renamed items |
 | `help/` | `shortcuts` | the Keyboard Shortcuts window lists every menu key plus the others |
 | `terminal/` | `terminals`, `terminalTabs`, `runs`, `keys`, `fonts`, `options`, `theme`, `find`, `fileLinks`, `splitPanes`, `dropPaths` | naming and the active terminal after a close, terminals in editor tabs, script runs, key handling, fonts, xterm options and the addon plan, terminal colors, find, clickable file paths, split groups and pane sizes, dropped paths |
 | `scripts/` | `scriptsModel`, `scriptRun`, `nodeVersion` | the Scripts tree, the run command, Node version ranges and LTS names |

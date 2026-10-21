@@ -3,7 +3,7 @@
 
 import type { FileIconMode, LeftPanel, MarkdownViewMode, ThemeSetting } from "$lib/stores/settingsData";
 import type { OpKind } from "$lib/types";
-import type { MenuAction, MenuMode } from "./menuIds";
+import { type MenuAction, type MenuMode, waitsForGit } from "./menuIds";
 
 export interface MenuInputs {
   mode: MenuMode;
@@ -420,6 +420,15 @@ export function gitMenuState(
   state["git.github.createPullRequest"] = { enabled: github && repo?.branch !== null };
   state["git.github.pullRequests"] = { enabled: github };
   state["git.github.copyLink"] = { enabled: github && file !== null };
+  // A Git command is ignored while another one runs (menuActions.ts `git()`), so the menu shows it greyed out:
+  // a click then waits instead of doing nothing.
+  if (repo?.busy) {
+    for (const [action, item] of Object.entries(state)) {
+      if (item && waitsForGit(action as MenuAction)) {
+        item.enabled = false;
+      }
+    }
+  }
   return state;
 }
 

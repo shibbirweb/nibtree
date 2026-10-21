@@ -11,3 +11,9 @@ The bugs we found in the Git menu and its dialogs, why they happened and how we 
 - **The issue:** with uncommitted lines added or deleted above the selection, the tab showed the history of other lines.
 - **Why it happened:** the menu passed the editor's line numbers, but `git log -L` reads them against HEAD.
 - **The fix and why we chose it:** `headLineRange` maps the selection to HEAD lines before the tab opens, with the same line diff as the change markers, and only new lines give a message. Mapping in the frontend uses the unsaved editor text, which the backend never sees; the tab keeps HEAD numbers, so Refresh stays right while you keep editing.
+
+**A Git command chosen while another was finishing did nothing.**
+- **The issue:** now and then Fetch All Remotes, or Mark Good during a bisect, did nothing at all: no git command, no message. The Git menu UI tests on Linux found it.
+- **Why it happened:** every Git action that changes the repository runs through `git()` in `menuActions.ts`, which skips it while `repoStore.busy` is set. The menu greys those items out while busy, but a click that lands just as a command starts got past that and was dropped silently.
+- **The fix and why we chose it:** `git()` now says "Wait for ... to finish" instead of nothing, and `menuState.ts` greys out every Git action that waits (`waitsForGit`), not each one by hand. `GIT_VIEW_ACTIONS` in `menuIds.ts` lists the ones that never wait, and `menuIds.test.ts` reads `menuActions.ts` so the two lists cannot drift. Queueing the command was left out: running the next git command blind after another changed the repository is not what the person saw when they chose it.
+

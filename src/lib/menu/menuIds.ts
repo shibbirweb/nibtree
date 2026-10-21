@@ -227,3 +227,37 @@ export type MenuPlatform = "macos" | "windows" | "linux";
 
 /** The main window, or the reduced window git opens as its mergetool. */
 export type MenuMode = "app" | "mergeTool";
+
+/**
+ * Git menu actions that only show something, open a link or talk to GitHub, so they run while a git command is
+ * busy. Every other
+ * Git action waits for it (`git()` in menuActions.ts), and the menu greys it out meanwhile (menuState.ts).
+ */
+export const GIT_VIEW_ACTIONS = [
+  "git.updateProject",
+  "git.showLog",
+  "git.showConsole",
+  "git.showReflog",
+  "git.showShelf",
+  "git.showLocalChanges",
+  "git.file.annotate",
+  "git.file.showDiff",
+  "git.file.compareRevision",
+  "git.file.compareBranch",
+  "git.file.history",
+  "git.file.historySelection",
+  "git.worktree.show",
+  "git.submodule.open",
+  "git.openRemote",
+  "git.clone",
+  "git.github.open",
+  "git.github.createPullRequest",
+  "git.github.pullRequests",
+  "git.github.copyLink",
+  "git.github.createGist",
+] as const satisfies readonly MenuAction[];
+
+/** A Git action that cannot run while another git command is busy. */
+export function waitsForGit(action: MenuAction): boolean {
+  return action.startsWith("git.") && !(GIT_VIEW_ACTIONS as readonly MenuAction[]).includes(action);
+}

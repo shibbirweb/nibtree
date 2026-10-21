@@ -21,6 +21,7 @@ import { conflicts } from "./ui-test/conflicts";
 import { currentFile, historyAndPatches } from "./ui-test/files";
 import { Group, type Options } from "./ui-test/harness";
 import { lfs } from "./ui-test/lfs";
+import { palette } from "./ui-test/palette";
 import { worktreesSubmodulesClone } from "./ui-test/repos";
 import { commitAndSync } from "./ui-test/sync";
 
@@ -33,6 +34,7 @@ const GROUPS: Record<string, (group: Group) => Promise<void>> = {
   history: historyAndPatches,
   repos: worktreesSubmodulesClone,
   lfs,
+  palette,
 };
 
 const ROOT = join(import.meta.dir, "..");

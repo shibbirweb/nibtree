@@ -49,6 +49,18 @@ export class Group extends Workspace {
 
   /** Clicks Git, then each submenu, then the item; a string matches the label, a RegExp the whole name. */
   async menu(...path: (string | RegExp)[]): Promise<void> {
+    // A git command still finishing refuses the click with "Wait for ... to finish"; then click again once it is done.
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const waits = (await this.toasts()).split("Wait for").length;
+      await this.clickMenu(path);
+      if ((await this.toasts()).split("Wait for").length === waits) {
+        return;
+      }
+      await this.page.waitForTimeout(800);
+    }
+  }
+
+  private async clickMenu(path: (string | RegExp)[]): Promise<void> {
     // A dialog left open (the Conflicts dialog opens by itself) would cover the menu bar.
     await this.closeDialogs();
     await this.closeMenus();
@@ -170,7 +182,16 @@ export class Group extends Workspace {
 
   /** Opens a file from the Files panel. */
   async openFile(name: string): Promise<void> {
-    await this.page.locator("aside.panel.right").getByText(name, { exact: true }).first().click();
+    const entry = this.page.locator("aside.panel.right").getByText(name, { exact: true }).first();
+    if (await entry.isVisible()) {
+      await entry.click();
+    } else {
+      // The Files panel may be hidden (a View command did it): Go to File reaches the file anyway.
+      await this.page.keyboard.press("ControlOrMeta+P");
+      await this.page.keyboard.type(name);
+      await this.page.waitForTimeout(400);
+      await this.page.keyboard.press("Enter");
+    }
     await this.page.waitForTimeout(1000);
   }
 

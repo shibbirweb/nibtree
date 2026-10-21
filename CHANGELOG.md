@@ -213,6 +213,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- Choosing a Git command while another one is still finishing now says to wait for it, instead of doing nothing.
 - The buttons of a list row, such as a shelf's Unshelve and Delete, also show on the selected row, so they can be reached with the keyboard and by screen readers, not only by hovering with the mouse.
 - Esc closes a dialog again after a button in it went away, such as the Conflicts dialog once Accept Yours or Accept Theirs resolved the last conflict.
 - Pull, Push, Merge, Rebase, Reset HEAD, Rollback, Shelve, New Worktree and the Branches popup's Checkout Tag or Revision now do what their button says: they closed without running git before.

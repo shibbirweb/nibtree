@@ -20,7 +20,7 @@ flowchart LR
 ```
 
 - **The browser version is the app.** It is the same page, menu and dialogs as the desktop app, on the same Rust commands, so a test of the page tests both. Playwright only sends events to the page, never to the operating system.
-- **Groups are independent.** `sync`, `branches`, `conflicts`, `changes`, `current-file`, `history`, `repos` and `lfs` each get new repositories (`play`, one commit behind `origin.git`, which `other` pushed to), their own home folder with its own git config, and their own server. Run one with `bun scripts/ui-test.ts conflicts`.
+- **Groups are independent.** `sync`, `branches`, `conflicts`, `changes`, `current-file`, `history`, `repos`, `lfs` and `palette` each get new repositories (`play`, one commit behind `origin.git`, which `other` pushed to), their own home folder with its own git config, and their own server. Run one with `bun scripts/ui-test.ts conflicts`.
 - **Checks wait for git, not for time.** `expect(name, condition)` polls a git condition for up to 15 seconds; `until` waits without recording. A failed check records the toasts and the notification center, and saves a screenshot in `ui-test-failures/`, which CI keeps as an artifact.
 - **A page error fails the run.** `pageerror` is a failed check, which is how a dialog that throws gets caught.
 - **Chromium by default.** It lets the test grant clipboard access, so Apply Patch from Clipboard is checked; `--browser webkit` (the engine of the macOS app) skips that one check.
@@ -31,7 +31,7 @@ flowchart LR
 bun run build                          # the page
 cd src-tauri && cargo build -p nibtree-browser && cd ..
 bunx playwright install chromium       # once
-bun scripts/ui-test.ts                 # every group, about two minutes
+bun scripts/ui-test.ts                 # every group, about seven minutes
 UI_TEST_TRACE=/tmp/trace bun scripts/ui-test.ts changes   # a screenshot after every step
 ```
 
@@ -48,6 +48,7 @@ UI_TEST_TRACE=/tmp/trace bun scripts/ui-test.ts changes   # a screenshot after e
 | `scripts/ui-test/changes.ts` | Stash, Unstash, Shelve, Rollback and the selected-lines items |
 | `scripts/ui-test/files.ts` | Current File, Log, Reflog, Bisect and Patch |
 | `scripts/ui-test/repos.ts` | Worktrees, Submodules and Clone |
+| `scripts/ui-test/palette.ts` | Every Command Palette (Shift+Cmd+P) command, run from the palette: no page error, no error toast |
 | `scripts/ui-test/lfs.ts` | Git LFS: Install Hooks, Track and Untrack, Fetch, Pull and Prune against the local origin; without git-lfs, the "not installed" answer |
 
 ## Design decisions
