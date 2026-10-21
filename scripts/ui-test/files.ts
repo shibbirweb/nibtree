@@ -93,7 +93,8 @@ export async function historyAndPatches(g: Group): Promise<void> {
       .git(["bisect", "log"])
       .split("\n")
       .filter((line) => /^git bisect (good|bad) /.test(line));
-  const found = () => g.git(["bisect", "log"]).includes("first bad commit");
+  // Newer git writes "first 'bad' commit", older git "first bad commit".
+  const found = () => /first '?bad'? commit/.test(g.git(["bisect", "log"]));
   for (let n = 0; n < 10 && !found(); n++) {
     const bad = g.exists("step3.txt");
     const before = { head: g.git(["rev-parse", "HEAD"]), marks: marked().length };
@@ -107,7 +108,7 @@ export async function historyAndPatches(g: Group): Promise<void> {
   }
   await g.expect(
     "Bisect > Mark Good and Mark Bad find the first bad commit",
-    () => g.git(["bisect", "log"]).includes("first bad commit"),
+    found,
     () => `marked ${marks.join(", ")}; git bisect log: ${g.git(["bisect", "log"]).replace(/\n/g, " / ")}`,
   );
   await g.menu("Bisect", "Reset");

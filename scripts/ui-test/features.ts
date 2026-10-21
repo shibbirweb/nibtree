@@ -179,13 +179,7 @@ async function commitFromChanges(g: Group): Promise<void> {
   const page = g.page;
   g.write("from-panel.txt", "committed from the Changes panel\n");
   await g.waitForChange("from-panel.txt");
-  const row = g.changes().locator(".row", { hasText: "from-panel.txt" }).last();
-  const stage = row.getByRole("button", { name: "Stage", exact: true });
-  await g.until(async () => {
-    await row.hover();
-    return stage.isVisible();
-  });
-  await stage.click();
+  await g.stageRow("from-panel.txt");
   await g.until(() => g.git(["diff", "--cached", "--name-only"]) === "from-panel.txt");
   const message = g
     .changes()

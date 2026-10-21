@@ -59,7 +59,8 @@ Chromium, which is how the Git Remotes bug below was found on a Mac.
 ## Design decisions
 
 - **The tests' own git runs with `GIT_OPTIONAL_LOCKS=0`.** Polling `git status` takes the index lock now and then, and the app's next write then failed with "could not write index". The app never polls git that way, so the lock belongs to the test.
-- **Bisect marks are clicked once.** `menu()` clicks again after a new "Wait for ..." toast, but on a slow CI machine an older toast can show up after a mark that worked, and a second click marks the next commit with the wrong answer, so git never finds the culprit. The bisect loop uses `menuOnce()` and counts the marks in `git bisect log`, trying again only when git did not take one.
+- **Bisect marks are clicked once.** `menu()` clicks again after a new "Wait for ..." toast, but on a slow CI machine an older toast can show up after a mark that worked, and a second click marks the next commit with the wrong answer, so git never finds the culprit. The bisect loop uses `menuOnce()` and counts the marks in `git bisect log`, trying again only when git did not take one. It accepts both ways git names the result: newer git writes "first 'bad' commit", older git "first bad commit".
+- **Rows are staged by clicking them first** (`stageRow()`), not by hovering: a selected row always shows its buttons, while a hover is lost each time the list redraws.
 - **Move to Trash runs on Linux only.** macOS keeps one Trash per user and ignores the test's home folder, so a local run checks only the question and prints SKIP for the move.
 - **LFS runs where git-lfs is installed** (GitHub's Linux runner has it). Elsewhere the `lfs` group checks only that each item says where to get git-lfs, and prints SKIP for the rest.
 - **Not covered:** the GitHub items (they need an account) and Open Repository in Browser (it needs a web remote).

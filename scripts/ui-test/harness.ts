@@ -190,6 +190,22 @@ export class Group extends Workspace {
     return this.page.locator("aside.panel.left");
   }
 
+  /**
+   * Stages a file with its row's Stage button. The row is clicked, not hovered: a selected row always shows its
+   * buttons, while a hover is lost each time the list redraws (often on a slow CI machine).
+   */
+  async stageRow(fileName: string): Promise<void> {
+    const row = this.changes().locator(".row", { hasText: fileName }).last();
+    const stage = row.getByRole("button", { name: "Stage", exact: true });
+    await this.until(async () => {
+      if (!(await stage.isVisible())) {
+        await row.click();
+      }
+      return stage.isVisible();
+    });
+    await stage.click();
+  }
+
   /** Opens a file from the Files panel. */
   async openFile(name: string): Promise<void> {
     const entry = this.page.locator("aside.panel.right").getByText(name, { exact: true }).first();
