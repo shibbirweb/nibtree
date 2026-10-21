@@ -10,8 +10,8 @@ const LAST = ["File: Close Folder"];
 /** Never run: closing the window closes the browser tab the test drives. */
 const SKIP = ["Window: Close Window", "File: Close Window"];
 const ERROR_TOAST = /\b(failed|error|could not)\b/i;
-/** The run blocks the network, so these may only say they could not reach it. */
-const OFFLINE = ["App: Check for Updates"];
+/** The run blocks the network, so these may only say they could not reach it (App: on macOS, Help: elsewhere). */
+const OFFLINE = ["App: Check for Updates", "Help: Check for Updates"];
 
 /** A row's name ("Git: Pull"), without its shortcut, disabled reason or counts such as "(1 behind)". */
 export function commandName(label: string): string {

@@ -112,12 +112,14 @@
     await load();
   }
 
-  function close(): void {
+  /** Esc in the form goes back to the list and keeps the dialog open. */
+  function close(): boolean {
     if (editing) {
       editing = null;
-      return;
+      return false;
     }
     gitDialogs.close();
+    return true;
   }
 </script>
 

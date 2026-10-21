@@ -87,6 +87,12 @@ export async function commitAndSync(g: Group): Promise<void> {
 
   g.gitIn(g.root, ["init", "-q", "--bare", "backup.git"]);
   await g.menu("Manage Remotes...");
+  // Esc in the form goes back to the list; the dialog must stay (it once vanished and blocked every Git command).
+  await g.press("Add Remote...");
+  await page.keyboard.press("Escape");
+  await g.expect("Manage Remotes > Esc in the Add form goes back to the list", async () => {
+    return (await g.dialogOpen()) && (await g.dialog().getByRole("button", { name: "Add Remote..." }).isVisible());
+  });
   await g.press("Add Remote...");
   const inputs = g.dialog().locator("input");
   await inputs.nth(0).fill("backup");

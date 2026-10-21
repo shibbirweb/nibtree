@@ -33,7 +33,11 @@ cd src-tauri && cargo build -p nibtree-browser && cd ..
 bunx playwright install chromium       # once
 bun scripts/ui-test.ts                 # every group, about seven minutes
 UI_TEST_TRACE=/tmp/trace bun scripts/ui-test.ts changes   # a screenshot after every step
+UI_TEST_CPU=6 bun scripts/ui-test.ts sync history          # the page six times slower, like a busy CI machine
 ```
+
+A failure that only shows on CI is usually timing: CI machines are slower. `UI_TEST_CPU` slows the page down in
+Chromium, which is how the Git Remotes bug below was found on a Mac.
 
 ## Where the code lives
 

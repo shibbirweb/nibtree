@@ -13,6 +13,10 @@
   import Text from "$ui/components/Text.svelte";
 
   let open = $state<"message" | "form" | "split" | "panel" | "prompt" | "view" | null>(null);
+
+  function close(): void {
+    open = null;
+  }
   let filter = $state("");
   let name = $state("");
   let section = $state<string | null>("editor");
@@ -30,7 +34,7 @@
   <Button onclick={() => (open = "prompt")}>Password (icon)</Button>
   <Button onclick={() => (open = "view")}>Local History (view)</Button>
 </Stack>
-<Dialog open={open === "panel"} variant="panel" title="Keyboard Shortcuts" width="xlarge" onclose={() => (open = null)}>
+<Dialog open={open === "panel"} variant="panel" title="Keyboard Shortcuts" width="xlarge" onclose={close}>
   {#snippet toolbar()}
     <Toolbar variant="dialog" label="Filter">
       <SearchField label="Filter shortcuts" placeholder="Filter shortcuts" bind:value={filter} />
@@ -50,7 +54,7 @@
   title="Password for github.com"
   subtitle="git asks for this to continue in storefront."
   icon="lock"
-  onclose={() => (open = null)}
+  onclose={close}
   onsubmit={() => (open = null)}
   enterSubmits
 >
@@ -60,20 +64,14 @@
     <Button variant="primary" onclick={() => (open = null)}>Continue</Button>
   {/snippet}
 </Dialog>
-<Dialog open={open === "message"} title="Stash your changes?" onclose={() => (open = null)}>
+<Dialog open={open === "message"} title="Stash your changes?" onclose={close}>
   <Text tone="dim">Checkout needs a clean working tree.</Text>
   {#snippet actions()}
     <Button onclick={() => (open = null)}>Cancel</Button>
     <Button variant="primary" onclick={() => (open = null)}>Stash</Button>
   {/snippet}
 </Dialog>
-<Dialog
-  open={open === "form"}
-  variant="form"
-  title="New Branch"
-  onclose={() => (open = null)}
-  onsubmit={() => (open = null)}
->
+<Dialog open={open === "form"} variant="form" title="New Branch" onclose={close} onsubmit={() => (open = null)}>
   <Field label="Name" look="compact" hint="Created from main">
     <Input bind:value={name} placeholder="feature/login" width="fill" />
   </Field>
@@ -83,7 +81,7 @@
     <Button variant="primary" disabled={!name.trim()} onclick={() => (open = null)}>Create</Button>
   {/snippet}
 </Dialog>
-<Dialog open={open === "split"} variant="split" title="Settings" onclose={() => (open = null)}>
+<Dialog open={open === "split"} variant="split" title="Settings" onclose={close}>
   {#snippet sidebar()}
     <SideNav
       label="Sections"
@@ -103,7 +101,7 @@
   title="Local History: cart.ts"
   subtitle="storefront/src/lib"
   icon="history"
-  onclose={() => (open = null)}
+  onclose={close}
 >
   <Stack direction="row" grow>
     <Stack padding="md" surface="alt"><Text>Today</Text></Stack>

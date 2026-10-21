@@ -7,7 +7,7 @@
   import type { IconName } from "../icons";
   import { focusInto, strayKeys } from "../logic/dialogFocus";
   import { DIALOG_OVERLAY, URGENT_DIALOG_LAYER, type DialogVariant } from "../logic/dialogLayout";
-  import { runDialogKey } from "../logic/dialogKeys";
+  import { dismissDialog, runDialogKey } from "../logic/dialogKeys";
   import { DialogMover } from "../logic/dialogMover.svelte";
   import { presetVar, type DialogWidth } from "../logic/presets";
   import DialogHead from "./DialogHead.svelte";
@@ -24,7 +24,7 @@
     urgent?: boolean;
     /** Drag the title to move it; double-click the title to center it again. */
     movable?: boolean;
-    onclose?: () => void;
+    onclose?: () => void | boolean;
     onsubmit?: () => void;
     enterSubmits?: boolean;
     actions?: Snippet;
@@ -67,8 +67,7 @@
   const grab = () => (movable ? dialogEl : null);
   const dragHint = $derived(movable ? "Drag to move, double-click to center" : undefined);
   function close(): void {
-    open = false;
-    onclose?.();
+    dismissDialog(onclose, () => (open = false));
   }
 
   $effect(() => {

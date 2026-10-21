@@ -34,6 +34,11 @@ export class Group extends Workspace {
       await this.context.grantPermissions(permissions, { origin: new URL(url).origin });
     }
     this.page = await this.context.newPage();
+    // UI_TEST_CPU=6 runs the page six times slower (Chromium), like a busy CI machine, to bring out timing bugs.
+    if (process.env.UI_TEST_CPU) {
+      const cdp = await this.context.newCDPSession(this.page);
+      await cdp.send("Emulation.setCPUThrottlingRate", { rate: Number(process.env.UI_TEST_CPU) });
+    }
     this.page.on("pageerror", (error) => this.check(`no page error (${error.message})`, false));
     await this.page.goto(url);
     await this.page.getByRole("menubar").waitFor();

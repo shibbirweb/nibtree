@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { dialogKeyAction, isLineField, runDialogKey, type DialogKey, type DialogKeyOptions } from "./dialogKeys";
+import {
+  dialogKeyAction,
+  dismissDialog,
+  isLineField,
+  runDialogKey,
+  type DialogKey,
+  type DialogKeyOptions,
+} from "./dialogKeys";
 
 function key(name: string, extra: Partial<DialogKey> = {}): DialogKey {
   return {
@@ -83,5 +90,31 @@ describe("runDialogKey", () => {
     runDialogKey(escape as unknown as KeyboardEvent, { dismissible: true, enterSubmits: false }, { close });
     expect(close).toHaveBeenCalled();
     expect(escape.preventDefault).toHaveBeenCalled();
+  });
+});
+
+describe("dismissDialog", () => {
+  it("hides the dialog after telling its owner", () => {
+    const calls: string[] = [];
+    dismissDialog(
+      () => {
+        calls.push("owner");
+      },
+      () => calls.push("hide"),
+    );
+    expect(calls).toEqual(["owner", "hide"]);
+  });
+
+  it("hides it without an owner, and when the owner answers true", () => {
+    const hide = vi.fn();
+    dismissDialog(undefined, hide);
+    dismissDialog(() => true, hide);
+    expect(hide).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps it open when the owner answers false (a form going back a step)", () => {
+    const hide = vi.fn();
+    dismissDialog(() => false, hide);
+    expect(hide).not.toHaveBeenCalled();
   });
 });

@@ -213,6 +213,7 @@ GitHub release notes, and the app shows it as "What's New".
 
 ### Fixed
 
+- Pressing Esc in the Add or Edit form of Git Remotes goes back to the list again. It used to close the whole dialog and leave every Git command and shortcut doing nothing until another Git dialog opened. The same could happen to the name and email dialog before a commit when Esc was pressed while it saved.
 - Choosing a Git command while another one is still finishing now says to wait for it, instead of doing nothing.
 - The buttons of a list row, such as a shelf's Unshelve and Delete, also show on the selected row, so they can be reached with the keyboard and by screen readers, not only by hovering with the mouse.
 - Esc closes a dialog again after a button in it went away, such as the Conflicts dialog once Accept Yours or Accept Theirs resolved the last conflict.

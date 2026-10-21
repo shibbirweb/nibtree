@@ -38,7 +38,8 @@ export const overlayDocs: ComponentDoc[] = [
       prop("iconTone", '"accent" | "success" | "warning" | "danger"', "The tile's color.", { default: '"accent"' }),
       prop("toolbar", "Snippet", "A bar under the head, such as a Toolbar with a filter (panel dialogs)."),
       prop("footnote", "Snippet", "Content at the footer's start, such as a Link or a hint."),
-      prop("onclose", "() => void", "Called when the user dismisses it (Esc or outside click)."),
+      prop("onclose", "() => void | boolean", "Called when the user dismisses it (Esc, the close button or an " +
+        "outside click); return false to keep it open, such as a form that goes back a step or a save still running."),
       prop("onsubmit", "() => void", "Cmd+Enter (Ctrl+Enter): the main action of a form."),
       prop("enterSubmits", "boolean", "A plain Enter in a one-line field submits too, like a one-field prompt or " +
         "a password; Enter in a text area or on a button does not.", { default: "false" }),
