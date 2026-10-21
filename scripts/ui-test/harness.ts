@@ -65,6 +65,11 @@ export class Group extends Workspace {
     }
   }
 
+  /** Clicks once, without the retry: for an item that must not run twice, such as Bisect > Mark Good. */
+  async menuOnce(...path: (string | RegExp)[]): Promise<void> {
+    await this.clickMenu(path);
+  }
+
   private async clickMenu(path: (string | RegExp)[]): Promise<void> {
     // A dialog left open (the Conflicts dialog opens by itself) would cover the menu bar.
     await this.closeDialogs();

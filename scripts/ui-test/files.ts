@@ -85,19 +85,30 @@ export async function historyAndPatches(g: Group): Promise<void> {
   await g.dialog().getByText("Current commit (HEAD)").first().click();
   await g.dialog().getByText("first commit").first().click();
   await g.expect("Bisect > Start... starts a bisect", () => g.exists(".git/BISECT_LOG"));
-  // The "bug" came in with step 3.
-  for (let n = 0; n < 6 && !g.git(["bisect", "log"]).includes("first bad commit"); n++) {
+  // The "bug" came in with step 3. Each mark is clicked once and counted in git's bisect log: a click retried after
+  // a "Wait for" toast could mark the next commit with this one's answer, and git then never finds the culprit.
+  const marks: string[] = [];
+  const marked = () =>
+    g
+      .git(["bisect", "log"])
+      .split("\n")
+      .filter((line) => /^git bisect (good|bad) /.test(line));
+  const found = () => g.git(["bisect", "log"]).includes("first bad commit");
+  for (let n = 0; n < 10 && !found(); n++) {
     const bad = g.exists("step3.txt");
-    const before = g.git(["rev-parse", "HEAD"]);
-    await g.menu("Bisect", bad ? "Mark Bad" : "Mark Good");
-    // Wait for git to check out the next commit (or to name the culprit) before judging it.
-    await g.until(
-      () => g.git(["rev-parse", "HEAD"]) !== before || g.git(["bisect", "log"]).includes("first bad commit"),
-    );
+    const before = { head: g.git(["rev-parse", "HEAD"]), marks: marked().length };
+    marks.push(`${g.git(["log", "-1", "--format=%s"])}: ${bad ? "bad" : "good"}`);
+    await g.menuOnce("Bisect", bad ? "Mark Bad" : "Mark Good");
+    // A click refused while git is busy leaves the log as it was, and the next round tries again. Once git took
+    // the mark, wait for it to check out the next commit before judging that one.
+    if (await g.until(() => marked().length > before.marks)) {
+      await g.until(() => found() || g.git(["rev-parse", "HEAD"]) !== before.head);
+    }
   }
-  g.check(
+  await g.expect(
     "Bisect > Mark Good and Mark Bad find the first bad commit",
-    g.git(["bisect", "log"]).includes("first bad commit"),
+    () => g.git(["bisect", "log"]).includes("first bad commit"),
+    () => `marked ${marks.join(", ")}; git bisect log: ${g.git(["bisect", "log"]).replace(/\n/g, " / ")}`,
   );
   await g.menu("Bisect", "Reset");
   await g.expect(
