@@ -56,6 +56,12 @@ export async function uncommittedChanges(g: Group): Promise<void> {
   await g.expect("Git > Uncommitted Changes > Show Shelf lists the shelf", () =>
     page.getByText("my shelf").first().isVisible(),
   );
+  // A selected row shows its buttons without the mouse on it, so the keyboard and screen readers reach them.
+  await page.getByText("my shelf").first().click();
+  await page.mouse.move(1, 1);
+  await g.expect("a selected shelf row shows its Unshelve button without hovering", () =>
+    page.getByRole("button", { name: "Unshelve my shelf" }).isVisible(),
+  );
   await page.getByText("my shelf").first().click({ button: "right" });
   await page
     .getByRole("menu")

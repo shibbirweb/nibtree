@@ -4,7 +4,7 @@
 
 ## Why we need it
 
-The Rust tests (`mcp/tests/git_tools/`) prove each git action works, but not that the buttons reach it. The first runs of these tests found nine dialogs whose button never ran git, a menu item that lost the caret, a menu that stayed open, a dialog that ignored Esc and three browser version gaps. None of them showed in any other test.
+The Rust tests (`mcp/tests/git_tools/`) prove each git action works, but not that the buttons reach it. The first runs of these tests found nine dialogs whose button never ran git, a menu item that lost the caret, a menu that stayed open, a dialog that ignored Esc and three browser version gaps. A run in the desktop app, driving the real macOS menu bar through Accessibility, found that a shelf could be unshelved only with a mouse. None of them showed in any other test.
 
 ## How it works
 

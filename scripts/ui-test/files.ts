@@ -88,8 +88,12 @@ export async function historyAndPatches(g: Group): Promise<void> {
   // The "bug" came in with step 3.
   for (let n = 0; n < 6 && !g.git(["bisect", "log"]).includes("first bad commit"); n++) {
     const bad = g.exists("step3.txt");
+    const before = g.git(["rev-parse", "HEAD"]);
     await g.menu("Bisect", bad ? "Mark Bad" : "Mark Good");
-    await page.waitForTimeout(1200);
+    // Wait for git to check out the next commit (or to name the culprit) before judging it.
+    await g.until(
+      () => g.git(["rev-parse", "HEAD"]) !== before || g.git(["bisect", "log"]).includes("first bad commit"),
+    );
   }
   g.check(
     "Bisect > Mark Good and Mark Bad find the first bad commit",

@@ -26,7 +26,7 @@ export const builderDocs: ComponentDoc[] = [
         default: "null",
       }),
       prop("align", '"center" | "baseline"', "Baseline for rows of words in two sizes.", { default: '"center"' }),
-      prop("actionsShown", '"hover" | "always"', "Show `actions` only on hover and focus, or always.", {
+      prop("actionsShown", '"hover" | "always"', "Show `actions` on hover, focus and the selected row, or always.", {
         default: '"hover"',
       }),
       prop("line", "boolean", "A line under the row, for rows in a ListBox (the last one has none).", {

@@ -16,8 +16,13 @@ export async function commitAndSync(g: Group): Promise<void> {
   await page.keyboard.type("edit notes from the Commit menu");
   for (const [index, file] of ["notes.txt", "new.txt"].entries()) {
     const row = g.changes().locator(".row", { hasText: file }).last();
-    await row.hover();
-    await row.getByRole("button", { name: "Stage", exact: true }).click();
+    const stage = row.getByRole("button", { name: "Stage", exact: true });
+    // The list redraws as files move to Staged; hover until the row shows its button again.
+    await g.until(async () => {
+      await row.hover();
+      return stage.isVisible();
+    });
+    await stage.click();
     // The list redraws after each stage; the next row is clicked only once git has the file.
     await g.until(() => g.git(["diff", "--cached", "--name-only"]).split("\n").filter(Boolean).length === index + 1);
   }

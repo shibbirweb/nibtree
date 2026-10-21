@@ -25,7 +25,8 @@ keyboard and selection; alone, a Row with `onclick` is a button.
 - `depth` (`number`, default `0`): Indent levels, for nested rows.
 - `expanded` (`boolean | "leaf" | null`, default `null`): A fold chevron; leaf keeps its room empty, null has none.
 - `align` (`"center" | "baseline"`, default `"center"`): Baseline for rows of words in two sizes.
-- `actionsShown` (`"hover" | "always"`, default `"hover"`): Show `actions` only on hover and focus, or always.
+- `actionsShown` (`"hover" | "always"`, default `"hover"`): Show `actions` on hover, focus and the selected row, or
+  always.
 - `line` (`boolean`, default `false`): A line under the row, for rows in a ListBox (the last one has none).
 - `mark` (`boolean`, default `false`): An accent stripe on its left edge, such as the active repository's header.
 - `cursor` (`"default" | "pointer"`, default `"default"`): The hand cursor, for rows that open something like a link
