@@ -148,7 +148,8 @@
     { "page": "developer/UI-Library-MCP.md", "summary": "The MCP server that answers AI agents' questions about components, tokens, icons and rules." },
     { "page": "developer/UI-Library-Bugs.md", "summary": "Bugs fixed in the UI library: what you saw, why, and the fix." },
     { "page": "developer/UI-Library-Migration.md", "summary": "How the app uses the library as a local package and moves onto it, screen by screen." },
-    { "page": "developer/Contributing.md", "summary": "Code style, commits, pull requests and the docs checklist." }
+    { "page": "developer/Contributing.md", "summary": "Code style, commits, pull requests and the docs checklist." },
+    { "page": "developer/Project-Tracking.md", "summary": "Issue forms, labels, milestones, known issues, security reports and dependency updates." }
   ],
   "features": [
     {

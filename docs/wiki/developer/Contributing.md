@@ -84,11 +84,7 @@ Why does the type matter so much? The release tools read it. `feat` and `fix` de
 
 ## Issues and triage
 
-Issues use the forms in `.github/ISSUE_TEMPLATE/`:
-
-- **`bug_report.yml`** (labeled `bug`, titled `[Bug]: ...`) asks what happened, the steps to reproduce, the Nibtree version, the operating system, the `git --version` output and any screenshots. Report a Bug in the app (Settings, About, the status bar help menu or the welcome screen) opens this form with the version and operating system already filled in, using the field ids `version` and `platform` (see `bugReportUrl` in `src/lib/update/releases.ts`). Keep those ids if you edit the form, or the pre-filling stops working.
-- **`feature_request.yml`** (labeled `enhancement`, titled `[Feature]: ...`) asks what the person wants to do, how it should work and what they tried instead. The app links to it from the same places.
-- **`config.yml`** keeps blank issues allowed and adds a link to the releases page, for people looking for release notes.
+Issues come in through the forms in `.github/ISSUE_TEMPLATE/`, and each one gets kind, area and priority labels and a milestone. [Project Tracking](Project-Tracking.md) explains the forms, the labels, the milestones, known issues and private security reports.
 
 When you triage a bug, first reproduce it with a demo script (see [Debugging](Debugging.md)). Ask for the missing steps or versions if you cannot. A confirmed bug gets a `GM` ticket before work starts.
 
