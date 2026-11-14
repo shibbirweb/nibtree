@@ -1,5 +1,14 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Known issues
+    url: https://github.com/shibbirweb/nibtree/issues?q=is%3Aissue+is%3Aopen+label%3A%22known+issue%22
+    about: Problems we already know about, with workarounds. Please check here first.
+  - name: User guide
+    url: https://github.com/shibbirweb/nibtree/wiki
+    about: How every feature works, with screenshots and troubleshooting pages.
+  - name: Report a security problem
+    url: https://github.com/shibbirweb/nibtree/security/advisories/new
+    about: Please report vulnerabilities privately, never in a public issue.
   - name: Releases and release notes
     url: https://github.com/shibbirweb/nibtree/releases
     about: What changed in each version.

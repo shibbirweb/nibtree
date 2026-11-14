@@ -1,0 +1,40 @@
+# Monthly dependency updates, grouped into one pull request per ecosystem, against develop.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore
+    groups:
+      actions:
+        patterns:
+          - "*"
+  - package-ecosystem: cargo
+    directory: /src-tauri
+    target-branch: develop
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: chore
+    groups:
+      cargo-minor:
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: bun
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: chore
+    groups:
+      bun-minor:
+        update-types:
+          - minor
+          - patch

@@ -2,6 +2,11 @@
 
 # Nibtree
 
+[![CI](https://github.com/shibbirweb/nibtree/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/shibbirweb/nibtree/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/shibbirweb/nibtree?include_prereleases&sort=semver)](https://github.com/shibbirweb/nibtree/releases)
+[![npm](https://img.shields.io/npm/v/nibtree/next?label=npx%20nibtree)](https://www.npmjs.com/package/nibtree)
+[![License: MIT](https://img.shields.io/github/license/shibbirweb/nibtree)](LICENSE)
+
 A native desktop Git client with a 3-way merge tool, multi-folder workspaces, tabs, blame and history, and a place to run and watch AI coding agents side by side. Built with Rust (Tauri 2) and a small Svelte 5 UI running in the system web view, so it starts fast and stays light on memory.
 
 ![Nibtree: Changes, the editor with blame, and the Files panel](docs/wiki/images/window-overview.png)
@@ -10,6 +15,7 @@ A native desktop Git client with a 3-way merge tool, multi-folder workspaces, ta
 - **In your browser**: `npx nibtree` ([npm](#in-your-browser-with-npm)), or [Docker](#in-docker) with `docker run` or `docker compose`
 - **[User guide and developer docs](https://github.com/shibbirweb/nibtree/wiki)**
 - **[Report a bug or request a feature](https://github.com/shibbirweb/nibtree/issues/new/choose)**
+- **[Roadmap](https://github.com/shibbirweb/nibtree/milestones)** and **[known issues](https://github.com/shibbirweb/nibtree/issues?q=is%3Aissue+is%3Aopen+label%3A%22known+issue%22)**
 
 ## Screenshots
 
@@ -375,6 +381,12 @@ scripts/                 versioning, wiki build, screenshots and demo repositori
 ```
 
 The [Project Layout page](https://github.com/shibbirweb/nibtree/wiki/Project-Layout) explains every folder.
+
+## Contributing
+
+Bug reports, ideas, docs fixes and code are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md); everyone
+taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md). Help and questions: [SUPPORT.md](SUPPORT.md).
+Security problems: report them privately as [SECURITY.md](SECURITY.md) explains.
 
 ## License
 

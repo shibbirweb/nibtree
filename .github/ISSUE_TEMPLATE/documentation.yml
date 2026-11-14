@@ -1,0 +1,25 @@
+name: Documentation
+description: Something in the user guide, the developer docs or the README is wrong, missing or unclear.
+title: "[Docs]: "
+labels: ["documentation", "area: docs"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: A link to the page, or its name.
+      placeholder: https://github.com/shibbirweb/nibtree/wiki/Merge-Tool
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing?
+      description: Quote the sentence if it is wrong, or say what you looked for and did not find.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested text
+      description: Optional. How you would write it.
